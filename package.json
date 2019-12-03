@@ -1,0 +1,11 @@
+{
+  "name": "ggpo-server",
+  "version": "1.0.0",
+  "description": "ggpo server",
+  "main": "startup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "raphael gako",
+  "license": "ISC"
+}
