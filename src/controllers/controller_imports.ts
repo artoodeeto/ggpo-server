@@ -1,1 +1,1 @@
-export * from './users_controller'
+export * from './parent_controller';
