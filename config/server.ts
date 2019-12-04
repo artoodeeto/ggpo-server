@@ -1,17 +1,25 @@
-require('dotenv').config(); // this should be the very top, should be called before the controllers
+// this should be the very top, should be called before the controllers
+require('dotenv').config();
+
+import 'reflect-metadata';
 
 import { Server } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
+import { createConnection } from 'typeorm';
+import helmet from 'helmet';
+import * as bodyParser from 'body-parser';
 import * as controllers from '../src/controllers/controller_imports';
 
 export class AppServer extends Server {
   constructor() {
     super(process.env.NODE_ENV === 'development');
+    this.app.use(helmet());
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({ extended: true }));
     this.setupControllers();
   }
 
   private setupControllers(): void {
-    Logger.Info('Setting up controllers...');
     const controllerInstances = [];
 
     // eslint-disable-next-line
@@ -26,10 +34,22 @@ export class AppServer extends Server {
     super.addControllers(controllerInstances);
   }
 
-  public startServer(portNum?: number): void {
+  private startServer(portNum?: number): void {
     const port = portNum || 8000;
     this.app.listen(port, () => {
       Logger.Info(`Server Running on port: ${port}`);
     });
+  }
+
+  public async startDB(): Promise<any> {
+    Logger.Info('Setting up database ...');
+    try {
+      await createConnection();
+      this.startServer();
+      Logger.Info('Database connected');
+    } catch (error) {
+      Logger.Warn(error);
+      return Promise.reject('Server Failed, Restart again...');
+    }
   }
 }
