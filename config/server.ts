@@ -19,6 +19,13 @@ export class AppServer extends Server {
     this.setupControllers();
   }
 
+  /**
+   * this is being export into the test file so request package can use this instance
+   */
+  get appInstance(): any {
+    return this.app;
+  }
+
   private setupControllers(): void {
     const controllerInstances = [];
 
@@ -41,6 +48,9 @@ export class AppServer extends Server {
     });
   }
 
+  /**
+   * start Database first then the server
+   */
   public async startDB(): Promise<any> {
     Logger.Info('Setting up database ...');
     try {

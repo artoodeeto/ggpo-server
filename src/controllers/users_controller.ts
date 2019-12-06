@@ -1,21 +1,27 @@
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import { BaseController } from './base_controller';
-import { UserModel } from '../models/user_model';
+import { User } from '../models/user_model';
 
 @Controller('users')
 export class UsersController extends BaseController {
   @Get()
   private async getAllUsers(req: Request, res: Response) {
-    res.json({
-      message: 'hello from users'
-    });
+    try {
+      res.json({
+        users: await User.findOneOrFail(2)
+      })
+    } catch (error) {
+      res.status(200).json({
+        errorMsg: error.message
+      })
+    }
   }
 
   @Post('signup')
   private async userSignUp(req: Request, res: Response) {
     try {
-      const user = await UserModel.create({
+      const user = await User.create({
         ...req.body
       }).save();
 
@@ -26,6 +32,20 @@ export class UsersController extends BaseController {
     } catch (error) {
       res.json({
         errorMsg: error.message
+      })
+    }
+  }
+
+  @Get(':id')
+  private async singleUser(req: Request, res: Response) {
+    const id = req.params.id
+    try {
+      res.json({
+        user: await User.findOneOrFail(id)
+      })
+    } catch (error) {
+      res.json({
+        errorMsg: error
       })
     }
   }
