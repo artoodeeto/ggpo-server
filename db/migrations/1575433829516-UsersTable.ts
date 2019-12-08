@@ -1,9 +1,8 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class UsersTable1575433829516 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<any> {
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<any> {
+    await queryRunner.query(`
             CREATE TABLE users (
                 id INT AUTO_INCREMENT,
                 username VARCHAR(100) NOT NULL,
@@ -12,10 +11,9 @@ export class UsersTable1575433829516 implements MigrationInterface {
                 PRIMARY KEY(id)
             );
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<any> {
-        await queryRunner.dropTable('users', true);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<any> {
+    await queryRunner.dropTable('users', true);
+  }
 }

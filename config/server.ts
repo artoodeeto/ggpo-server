@@ -9,6 +9,7 @@ import { createConnection } from 'typeorm';
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
 import * as controllers from '../src/controllers/controller_imports';
+import ormConfig from '../ormconfig';
 
 export class AppServer extends Server {
   constructor() {
@@ -54,7 +55,7 @@ export class AppServer extends Server {
   public async startDB(): Promise<any> {
     Logger.Info('Setting up database ...');
     try {
-      await createConnection();
+      await createConnection(ormConfig);
       this.startServer();
       Logger.Info('Database connected');
     } catch (error) {

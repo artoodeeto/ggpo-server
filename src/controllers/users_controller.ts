@@ -9,12 +9,12 @@ export class UsersController extends BaseController {
   private async getAllUsers(req: Request, res: Response) {
     try {
       res.json({
-        users: await User.findOneOrFail(2)
-      })
+        users: await User.find()
+      });
     } catch (error) {
       res.status(200).json({
         errorMsg: error.message
-      })
+      });
     }
   }
 
@@ -28,25 +28,24 @@ export class UsersController extends BaseController {
       res.json({
         user
       });
-
     } catch (error) {
       res.json({
         errorMsg: error.message
-      })
+      });
     }
   }
 
   @Get(':id')
   private async singleUser(req: Request, res: Response) {
-    const id = req.params.id
+    const { id } = req.params;
     try {
       res.json({
         user: await User.findOneOrFail(id)
-      })
+      });
     } catch (error) {
       res.json({
         errorMsg: error
-      })
+      });
     }
   }
 }
