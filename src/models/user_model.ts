@@ -18,4 +18,5 @@ export class User extends BaseModel {
 
   @Column()
   password!: string;
+
 }
