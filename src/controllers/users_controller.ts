@@ -21,13 +21,15 @@ export class UsersController extends BaseController {
   @Post('signup')
   private async userSignUp(req: Request, res: Response) {
     try {
+      // if validation fail lets hope it throws.
       const user = await User.create({
         ...req.body
-      }).save();
+      }).validateModel();
 
       res.json({
-        user
+        user: await user.save()
       });
+
     } catch (error) {
       res.json({
         errorMsg: error.message
