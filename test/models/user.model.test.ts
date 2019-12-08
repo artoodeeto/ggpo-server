@@ -45,18 +45,18 @@ describe('User model test', () => {
     done();
   });
 
-  it('should not be saved if email is not in right format', async (done) => {
+  it('should throw if email is incorrect format', async (done) => {
 
-    try {
-      await User.create({
-        username: 'bar',
-        email: 'foo',
-        password: 'password'
-      }).save();
+    const user = await User.create({
+      username: 'bar',
+      email: 'foo',
+      password: 'password'
+    });
 
-    } catch (error) {
-      expect(error.message).toMatch(/Duplicate entry /);
-    }
+    expect(async () => {
+      await user.validateModel()
+    }).rejects.toThrow
+
     done();
   });
 
