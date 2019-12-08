@@ -9,6 +9,7 @@ import { createConnection } from 'typeorm';
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
 import * as controllers from '../src/controllers/controller_imports';
+import ormConfig from '../ormconfig';
 
 export class AppServer extends Server {
   constructor() {
@@ -17,6 +18,13 @@ export class AppServer extends Server {
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.setupControllers();
+  }
+
+  /**
+   * this is being export into the test file so request package can use this instance
+   */
+  get appInstance(): any {
+    return this.app;
   }
 
   private setupControllers(): void {
@@ -41,10 +49,13 @@ export class AppServer extends Server {
     });
   }
 
+  /**
+   * start Database first then the server
+   */
   public async startDB(): Promise<any> {
     Logger.Info('Setting up database ...');
     try {
-      await createConnection();
+      await createConnection(ormConfig);
       this.startServer();
       Logger.Info('Database connected');
     } catch (error) {

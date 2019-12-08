@@ -1,20 +1,21 @@
-import { BaseModel } from "./base_model";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
+import { BaseModel } from './base_model';
+import { Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max } from "class-validator";
 /**
  * users table name
  */
 @Entity('users')
-export class UserModel extends BaseModel {
+export class User extends BaseModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  username!: string
+  username!: string;
+
+  @Column({ unique: true })
+  @IsEmail()
+  email!: string;
 
   @Column()
-  email!: string
-
-  @Column()
-  password!: string
+  password!: string;
 }
