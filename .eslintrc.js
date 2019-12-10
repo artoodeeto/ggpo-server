@@ -28,12 +28,15 @@ module.exports = {
     "no-console": 2,
     "comma-dangle": 0,
     "import/first": 0,
-    "no-unused-vars": 1
+    "no-unused-vars": 1,
+    "consistent-return": 2,
+    "import/no-mutable-exports": 1,
+    "no-undef": 1
   },
   overrides: [
     {
       files: ['src/controllers/*.ts'], // overiding the rule for this file because overnightjs doesnt use the methods in its class
-      excludedFiles:[],
+      excludedFiles: [],
       rules: {
         "class-methods-use-this": 0
       }
