@@ -1,4 +1,5 @@
 import { Connection, createConnection } from 'typeorm';
+import { ValidationError, validate } from 'class-validator';
 import { User } from '../../src/models/user_model';
 import ormConfig from '../../ormconfig';
 
@@ -11,7 +12,7 @@ describe('User model test', () => {
 
   afterEach(async () => {
     connection.close();
-  })
+  });
 
   it('should create a user', async (done) => {
     const user = await User.create({
@@ -24,40 +25,36 @@ describe('User model test', () => {
     done();
   });
 
+  it('should not create a user with the same email', async () => {
+    await User.create({
+      username: 'bar',
+      email: 'foo@gmail.com',
+      password: 'password'
+    }).save();
 
-  it('should not create a user with the same email', async (done) => {
+    const user2 = User.create({
+      username: 'foo',
+      email: 'foo@gmail.com',
+      password: 'password'
+    });
 
-    try {
-      await User.create({
-        username: 'bar',
-        email: 'foo@gmail.com',
-        password: 'password'
-      }).save();
-
-      await User.create({
-        username: 'foo',
-        email: 'foo@gmail.com',
-        password: 'password'
-      }).save();
-    } catch (error) {
-      expect(error.message).toMatch(/Duplicate entry /);
-    }
-    done();
+    await expect(user2.save()).rejects.toThrowError();
   });
 
-  it('should throw if email is incorrect format', async (done) => {
-
-    const user = await User.create({
+  it('should throw an error if email is incorrect format', async () => {
+    const user = User.create({
       username: 'bar',
       email: 'foo',
       password: 'password'
     });
 
-    expect(async () => {
-      await user.validateModel()
-    }).rejects.toThrow
+    // ? toResolve() is from jest-extended
+    // ? if your thinking whats the 3dots below the await its because I don't know too so i filled a bug report on jest-extended
+    // ? https://github.com/jest-community/jest-extended/issues/256
+    await expect(user.validateModel()).toReject();
 
-    done();
+    // ? this errors out when testing async code
+    // ? this code throwing but for some reason jest doesn't know it
+    // await expect(user.validateModel()).rejects.toThrowError();
   });
-
 });
