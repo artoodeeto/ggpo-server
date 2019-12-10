@@ -64,9 +64,8 @@
     "*.ts",
     "config/*.ts",
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "node_modules/jest-extended/types/**/*d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": []
 }
