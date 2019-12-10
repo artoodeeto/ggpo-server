@@ -52,7 +52,7 @@ export class AppServer extends Server {
   /**
    * start Database first then the server
    */
-  public async startDB(): Promise<any> {
+  public async startDB(): Promise<void> {
     Logger.Info('Setting up database ...');
     try {
       await createConnection(ormConfig);
@@ -60,7 +60,7 @@ export class AppServer extends Server {
       Logger.Info('Database connected');
     } catch (error) {
       Logger.Warn(error);
-      return Promise.reject('Server Failed, Restart again...');
+      throw new Error(`Server failed to start. ERROR: ${error}`);
     }
   }
 }

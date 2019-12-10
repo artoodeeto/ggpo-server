@@ -8,9 +8,11 @@ const server = new AppServer();
  * so we have to wait and call it every time it fails.
  * I don't like this solution but for now this is a work around
  */
-function runner() {
-  server.startDB().catch(async () => {
-    const promiseTimer: NodeJS.Timer = await new Promise((res, rej) => {
+async function runner() {
+  try {
+    await server.startDB();
+  } catch (error) {
+    const promiseTimer: NodeJS.Timer = await new Promise((res) => {
       const timer = setTimeout(() => {
         res(timer);
       }, 10000);
@@ -18,6 +20,6 @@ function runner() {
     clearTimeout(promiseTimer);
     runner();
     Logger.Info('still awaiting for database...');
-  });
+  }
 }
 runner();
