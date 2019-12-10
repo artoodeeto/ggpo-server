@@ -13,7 +13,7 @@ export class UsersController extends BaseController {
       });
     } catch (error) {
       res.status(200).json({
-        errorMsg: error.message
+        error
       });
     }
   }
@@ -22,17 +22,16 @@ export class UsersController extends BaseController {
   private async userSignUp(req: Request, res: Response) {
     try {
       // if validation fail lets hope it throws.
-      const user = await User.create({
+      const user: User = await User.create({
         ...req.body
       }).validateModel();
 
       res.json({
         user: await user.save()
       });
-
     } catch (error) {
       res.json({
-        errorMsg: error.message
+        error
       });
     }
   }

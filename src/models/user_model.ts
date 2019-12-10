@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
+import { IsEmail } from 'class-validator';
 import { BaseModel } from './base_model';
-import { Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max } from "class-validator";
 /**
  * users table name
  */
@@ -18,5 +18,4 @@ export class User extends BaseModel {
 
   @Column()
   password!: string;
-
 }
