@@ -1,7 +1,8 @@
-import { Controller, Get, Post } from '@overnightjs/core';
+import { Controller, Get, Post, Middleware } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user_model';
+import { UserMiddleware } from '../middlewares/user_middlewares';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -36,8 +37,17 @@ export class UsersController extends BaseController {
     }
   }
 
+  @Post('login')
+  @Middleware([UserMiddleware.checkUserPasswordBeforeLogin])
+  private async userLogin(req: Request, res: Response) {
+    const { user } = res.locals
+    res.status(200).json({
+      user
+    });
+  }
+
   @Get(':id')
-  private async singleUser(req: Request, res: Response) {
+  private async getSingleUser(req: Request, res: Response) {
     const { id } = req.params;
     try {
       res.json({

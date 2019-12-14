@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 import { IsEmail } from 'class-validator';
+import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 /**
  * users table name
@@ -18,4 +19,13 @@ export class User extends BaseModel {
 
   @Column()
   password!: string;
+
+  @BeforeInsert()
+  public async hashPassword() {
+    try {
+      this.password = await bcrypt.hash(this.password, Number(process.env.SALT_ROUNDS));
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
