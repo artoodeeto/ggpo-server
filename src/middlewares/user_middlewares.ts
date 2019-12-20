@@ -1,9 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
+import { JwtManager } from '@overnightjs/jwt';
 import bcrypt from 'bcrypt';
 import { User } from '../models/user_model';
 
 export class UserMiddleware {
-  static async checkUserPasswordBeforeLogin(req: Request, res: Response, next: NextFunction) {
+  static async validateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // if validation fail lets hope it throws.
+      const user: User = await User.create({
+        ...req.body
+      }).validateModel();
+      res.locals = {
+        user: await user.save()
+      };
+      next();
+    } catch (error) {
+      res.json({
+        error
+      });
+    }
+  }
+
+  static async checkUserBeforeLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { email, password } = req.body;
 
     try {
@@ -23,6 +41,27 @@ export class UserMiddleware {
     } catch (error) {
       res.status(404).json({
         error: `no user with ${email}`
+      });
+    }
+  }
+
+  static generateTokenUsingJWT(req: Request, res: Response, next: NextFunction): void {
+    const { user } = res.locals;
+    const { id, email } = user;
+
+    const jwt = JwtManager.jwt({
+      id,
+      email
+    });
+    if (jwt) {
+      res.locals = {
+        jwt,
+        user
+      };
+      next();
+    } else {
+      res.status(500).json({
+        error: 'Can not generate token'
       });
     }
   }
