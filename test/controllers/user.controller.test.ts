@@ -13,7 +13,7 @@ describe('Get all users', () => {
     done();
   });
 
-  it('should return a content type of application/json', async (done) => {
+  it('should return a content type of application/json', (done) => {
     rekwest
       .get('/api/v1/users/')
       .expect('Content-Type', /json/)
