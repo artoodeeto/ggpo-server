@@ -4,7 +4,8 @@ if (process.env.NODE_ENV === 'test') {
   // test environment database should be drop every time. so synchronize should be true for this config
   ormConfig = {
     type: 'mysql',
-    host: 'localhost',
+    host: '0.0.0.0',
+    // host: 'localhost', // not needed if run on docker
     username: 'root',
     password: 'password',
     database: 'test_db',
@@ -15,8 +16,9 @@ if (process.env.NODE_ENV === 'test') {
 } else {
   ormConfig = {
     type: 'mysql',
-    host: 'localhost',
-    port: 3306,
+    host: 'db', // docker service database name
+    // host: 'localhost', // not needed if run on docker
+    // port: 3306, // not needed if run on docker
     username: 'root',
     password: 'password',
     database: 'development_db',

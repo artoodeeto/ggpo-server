@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  db:
+    build: ./db
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network
+  server:
+    depends_on:
+      - "db" # this is important for sql connection. it has to wait for mysql to establish connection then run this bish
+    build: .
+    command: ["npm", "run", "dev"]
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - /server/node_modules/ # added this because of bcrypt elm error
+      - type: bind
+        source: .
+        target: /server # this name is from dockerfile workdir
+    networks:
+      - app_network
+
+networks:
+  app_network:
+volumes:
+  app_volume:
