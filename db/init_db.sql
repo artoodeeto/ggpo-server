@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS production_db;
 CREATE DATABASE IF NOT EXISTS development_db;
+CREATE DATABASE IF NOT EXISTS test_db;
 
 USE development_db;
 
