@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsEmpty, IsNotEmpty } from 'class-validator';
 import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 /**
@@ -11,13 +11,16 @@ export class User extends BaseModel {
   id!: number;
 
   @Column()
+  @IsNotEmpty()
   username!: string;
 
   @Column({ unique: true })
   @IsEmail()
+  @IsNotEmpty()
   email!: string;
 
   @Column()
+  @IsNotEmpty()
   password!: string;
 
   @BeforeInsert()
