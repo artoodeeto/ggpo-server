@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { User } from '../models/user_model';
 
 export class UserMiddleware {
-  static async validateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async validateUserOnSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // if validation fail lets hope it throws.
       const user: User = await User.create({
@@ -15,7 +15,7 @@ export class UserMiddleware {
       };
       next();
     } catch (error) {
-      res.json({
+      res.status(400).json({
         error
       });
     }
@@ -25,8 +25,11 @@ export class UserMiddleware {
     const { email, password } = req.body;
 
     try {
-      const user = await User.findOneOrFail({ select: ['id', 'email', 'password'], where: { email } });
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      const user: User = await User.findOneOrFail({
+        select: ['id', 'email', 'password', 'username'],
+        where: { email }
+      });
+      const isPasswordCorrect: boolean = await bcrypt.compare(password, user.password);
 
       if (isPasswordCorrect) {
         res.locals = {
@@ -34,8 +37,8 @@ export class UserMiddleware {
         };
         next();
       } else {
-        res.json({
-          error: 'incorrect password'
+        res.status(400).json({
+          error: 'incorrect credentials'
         });
       }
     } catch (error) {
@@ -47,15 +50,16 @@ export class UserMiddleware {
 
   static generateTokenUsingJWT(req: Request, res: Response, next: NextFunction): void {
     const { user } = res.locals;
-    const { id, email } = user;
+    const { id, email, username } = user;
 
-    const jwt = JwtManager.jwt({
+    const token = JwtManager.jwt({
       id,
-      email
+      email,
+      username
     });
-    if (jwt) {
+    if (token) {
       res.locals = {
-        jwt,
+        token,
         user
       };
       next();
