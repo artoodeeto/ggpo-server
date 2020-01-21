@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'test') {
     type: 'mysql',
     host: 'db', // docker service database name
     // host: 'localhost', // not needed if run on docker
-    // port: 3306, // not needed if run on docker
+    port: 3306, // not needed if run on docker
     username: 'root',
     password: 'password',
     database: 'development_db',
@@ -35,4 +35,4 @@ if (process.env.NODE_ENV === 'test') {
   };
 }
 
-export default ormConfig;
+export = ormConfig;
