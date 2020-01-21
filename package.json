@@ -11,7 +11,7 @@
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "migration:show": "ts-node ./node_modules/typeorm/cli.js migration:show",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "author": "raphael gako",
   "license": "ISC",
@@ -28,7 +28,7 @@
     "helmet": "3.21.2",
     "mysql2": "2.0.1",
     "reflect-metadata": "0.1.13",
-    "typeorm": "0.2.21",
+    "typeorm": "0.2.22",
     "typescript": "3.7.2"
   },
   "devDependencies": {
