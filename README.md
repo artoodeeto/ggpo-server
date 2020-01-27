@@ -4,6 +4,12 @@ For Gamers By Gamers
 
 This will be the backend. API services
 
+## Documentation
+
+For detailed documentation:
+1. cd into `website` folder
+2. `npm start`
+
 ## Installation
 
 ### Prerequisites
