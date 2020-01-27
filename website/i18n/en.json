@@ -45,6 +45,10 @@
         "title": "Creating Branch 🌉",
         "sidebar_label": "Creating Branch 🌉"
       },
+      "documentation": {
+        "title": "Documentation 📖",
+        "sidebar_label": "Documentation 📖"
+      },
       "doc4": {
         "title": "Other Document"
       },
