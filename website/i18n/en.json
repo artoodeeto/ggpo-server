@@ -3,23 +3,69 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A website for testing",
+    "tagline": "Good Game Peace Out",
     "docs": {
-      "doc1": {
-        "title": "Latin-ish",
-        "sidebar_label": "Example Page"
+      "architecture": {
+        "title": "Architecture 🏗",
+        "sidebar_label": "Architecture 🏗"
       },
-      "doc2": {
-        "title": "document number 2"
+      "b_docker": {
+        "title": "Docker 🐳",
+        "sidebar_label": "Docker 🐳"
       },
-      "doc3": {
-        "title": "This is document number 3"
+      "b_env": {
+        "title": "Environment Variables 📝",
+        "sidebar_label": "Environment Variables 📝"
+      },
+      "b_forking": {
+        "title": "Forking 🍴",
+        "sidebar_label": "Forking 🍴"
+      },
+      "b_linux": {
+        "title": "Linux 🐧",
+        "sidebar_label": "Linux 🐧"
+      },
+      "b_macos": {
+        "title": "MacOS 🍎",
+        "sidebar_label": "MacOS 🍎"
+      },
+      "b_windows": {
+        "title": "Windows 🖼",
+        "sidebar_label": "Windows 🖼"
+      },
+      "bugs": {
+        "title": "Bugs 🐞",
+        "sidebar_label": "Bugs 🐞"
+      },
+      "commits": {
+        "title": "Committing 🤞",
+        "sidebar_label": "Committing 🤞"
+      },
+      "creating_branch": {
+        "title": "Creating Branch 🌉",
+        "sidebar_label": "Creating Branch 🌉"
       },
       "doc4": {
         "title": "Other Document"
       },
       "doc5": {
         "title": "Fifth Document"
+      },
+      "migrations": {
+        "title": "Migrations",
+        "sidebar_label": "Migrations"
+      },
+      "pull_request": {
+        "title": "Pull Request",
+        "sidebar_label": "Pull Request"
+      },
+      "stack": {
+        "title": "Stack 📚",
+        "sidebar_label": "Stack 📚"
+      },
+      "sync": {
+        "title": "Syncing Local Branch",
+        "sidebar_label": "Syncing"
       }
     },
     "links": {
@@ -29,9 +75,19 @@
       "Blog": "Blog"
     },
     "categories": {
-      "Docusaurus": "Docusaurus",
-      "First Category": "First Category",
-      "Second Category": "Second Category"
+      "Technical Overview": "Technical Overview",
+      "Installation Backend": "Installation Backend",
+      "Installation Frontend": "Installation Frontend",
+      "Getting Started": "Getting Started",
+      "Backend Guide": "Backend Guide",
+      "Frontend Guide": "Frontend Guide",
+      "Internal Guide": "Internal Guide",
+      "Design Guide": "Design Guide",
+      "Deployment and CI/CD Process": "Deployment and CI/CD Process",
+      "Testing/QA Guide": "Testing/QA Guide",
+      "Contributing to the Docs": "Contributing to the Docs",
+      "Headaches 🐞🤯🦟": "Headaches 🐞🤯🦟",
+      "First Category": "First Category"
     }
   },
   "pages-strings": {

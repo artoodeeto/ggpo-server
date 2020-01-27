@@ -1,10 +1,56 @@
 {
   "docs": {
-    "Docusaurus": ["doc1"],
-    "First Category": ["doc2"],
-    "Second Category": ["doc3"]
+    "Technical Overview": [
+      "stack",
+      "architecture"
+    ],
+    "Installation Backend": [
+      "b_forking",
+      "b_env",
+      "b_macos",
+      "b_windows",
+      "b_linux",
+      "b_docker"
+    ],
+    "Installation Frontend": [
+      ""
+    ],
+    "Getting Started": [
+      "creating_branch",
+      "commits",
+      "pull_request",
+      "sync",
+      "migrations"
+    ],
+    "Backend Guide": [
+      ""
+    ],
+    "Frontend Guide": [
+      ""
+    ],
+    "Internal Guide": [
+      ""
+    ],
+    "Design Guide": [
+      ""
+    ],
+    "Deployment and CI/CD Process": [
+      ""
+    ],
+    "Testing/QA Guide": [
+      ""
+    ],
+    "Contributing to the Docs": [
+      "documentations"
+    ],
+    "Headaches 🐞🤯🦟": [
+      "bugs"
+    ]
   },
   "docs-other": {
-    "First Category": ["doc4", "doc5"]
+    "First Category": [
+      "doc4",
+      "doc5"
+    ]
   }
 }
