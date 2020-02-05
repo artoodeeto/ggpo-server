@@ -1,4 +1,4 @@
-// this should be the very top, should be called before the controllers
+// ! this should be the very top, should be called before the controllers
 require('dotenv').config();
 
 import 'reflect-metadata';
@@ -6,10 +6,17 @@ import 'reflect-metadata';
 import { Server } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
 import { createConnection } from 'typeorm';
+import ormConfig from '../ormconfig';
+import * as controllers from '../src/controllers/controller_imports';
+
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
-import * as controllers from '../src/controllers/controller_imports';
-import ormConfig from '../ormconfig';
+
+import YAML from 'js-yaml';
+import * as swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+
+const swaggerDocument = YAML.load(fs.readFileSync('docs/api-docs.yml').toString());
 
 export class AppServer extends Server {
   constructor() {
@@ -17,6 +24,7 @@ export class AppServer extends Server {
     this.app.use(helmet());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.setupControllers();
   }
 
