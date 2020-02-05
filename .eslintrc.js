@@ -32,7 +32,8 @@ module.exports = {
     "no-unused-vars": 1,
     "consistent-return": 2,
     "import/no-mutable-exports": 1,
-    "no-undef": 1
+    "no-undef": 1,
+    "import/order": 0
   },
   overrides: [
     {
