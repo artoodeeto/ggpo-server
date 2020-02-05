@@ -1,0 +1,275 @@
+openapi: 3.0.2
+info:
+  version: "1.0.0"
+  title: "GOOD GAME PEACE OUT!"
+  description: "FOR GAMERS BY GAMERS"
+
+servers:
+  - description: Development Server
+    url: "http://localhost:8000"
+
+tags:
+  - name: Users
+    description: All users with parameters
+
+paths:
+  # ++====================================== USERS PATH ====================================++
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: Returns list of users in ORDER by id ASC.
+      description: Use this path if you need to get users. Using query params offset=0
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: header bearer token schema
+          schema:
+            type: string
+            format: bearer TOKEN
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: number of users to be skipped
+      responses:
+        "200":
+          description: Success response will give you a list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                  payload:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        example:
+                          - id: 1
+                            username: user1
+                            email: user1@gmail.com
+                          - id: 2
+                            username: user2
+                            email: user2@gmail.com
+        "400":
+          description: error cant find all users
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: "error message"
+        "401":
+          description: If token is expired or empty
+          content:
+            text/plain:
+              example: "UnauthorizedError: Error message here"
+
+  /api/v1/users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Gets a specific using user ID
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: header bearer token schema
+          schema:
+            type: string
+            format: bearer TOKEN
+        - name: userId
+          in: path
+          description: user that needs to be fetch
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: success query user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/metaAndPayload"
+        "400":
+          description: Invalid user Id
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+        "401":
+          description: If token is expired or empty
+          content:
+            text/plain:
+              example: "UnauthorizedError: Error message here"
+
+  /api/v1/users/signup:
+    post:
+      tags:
+        - Users
+      summary: User signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: success sigining up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/loginAndSignupResponse"
+        "400":
+          description: payload is incorrect (email is not in correct format)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      properties:
+                        value:
+                          type: string
+                        property:
+                          type: string
+                        children:
+                          items:
+                            children: null
+                        constraints:
+                          type: object
+                          example:
+                            "isEmail": "email must be an email"
+  /api/v1/users/login:
+    post:
+      tags:
+        - Users
+      summary: User signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: success login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/loginAndSignupResponse"
+        "400":
+          description: failed login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    oneOf:
+                      - example: incorrect credentials
+                      - example: no user with EMAIL
+
+# ++====================================== USERS PATH ====================================++
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - password
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    metaAndPayload:
+      type: object
+      properties:
+        meta:
+          type: object
+        payload:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  # REQUEST BODY
+  requestBodies:
+    UserSignup:
+      content:
+        application/json:
+          schema:
+            example:
+              username: theUsername
+              email: theUseremail@email.com
+              password: theUserPassword
+      description: User information in hash form
+
+  responses:
+    loginAndSignupResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        payload:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                username:
+                  type: string
+                email:
+                  type: string
+              example:
+                id: 1
+                username: nocap
+                email: nocap@gmail.com
+            token:
+              type: string
+              example: TOKEN
