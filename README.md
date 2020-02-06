@@ -8,7 +8,11 @@ This will be the backend. API services
 
 For detailed documentation:
 1. cd into `website` folder
-2. `npm start`
+2. run `npm start`
+
+**API DOCUMENTATION**
+
+You can also checkout the API documentation by running the application and going to `http://localhost:8000/api/docs` route
 
 ## Installation
 
