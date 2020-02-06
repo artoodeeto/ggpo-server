@@ -15,6 +15,10 @@ describe('User controllers', () => {
     email: 'foobar@gmail.com',
     password: 'password'
   };
+  const EXPIRED_HEADER = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+                          eyJpZCI6NCwiZW1haWwiOiJub2NhcEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im5v
+                          Y2FwIiwiaWF0IjoxNTgwODc0OTMxLCJleHAiOjE1ODA4ODU3MzF9.
+                          -f9zq8LdOwdCuwZkS_T1oyFOoxIVJ5lSv5zWHClOiUs`;
 
   beforeEach(async () => {
     connection = await createConnection(ormConfig);
@@ -166,6 +170,33 @@ describe('User controllers', () => {
       expect(res.status).toBe(404);
       expect(res.body).toContainKey('error');
       expect(res.body.error).toContainKeys(['name', 'message']);
+    });
+  });
+
+  describe('DELETE: /delete/:id route', () => {
+    test('should delete a user', async () => {
+      await User.create({ ...userInfo }).save();
+      const loginResponse = await rekwest.post('/api/v1/users/login').send({ ...userInfo });
+      const { token, user } = loginResponse.body.payload;
+      const res = await rekwest.delete(`/api/v1/users/delete/${user.id}`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      const userCount: number = await User.count();
+      expect(userCount).toBe(0);
+    });
+
+    test('should return status code 404 if user Id is incorrect', async () => {
+      await User.create({ ...userInfo }).save();
+      const loginResponse = await rekwest.post('/api/v1/users/login').send({ ...userInfo });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest.delete('/api/v1/users/delete/123').set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(404);
+      const userCount: number = await User.count();
+      expect(userCount).toBe(1);
+    });
+
+    test('should throw error if no header or expired', async () => {
+      const res = await rekwest.delete('/api/v1/users/delete/123');
+      expect(res.status).toBe(401);
     });
   });
 });

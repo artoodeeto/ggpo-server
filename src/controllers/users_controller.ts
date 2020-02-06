@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Middleware } from '@overnightjs/core';
+import { Controller, Get, Post, Middleware, Delete } from '@overnightjs/core';
 import { JwtManager, ISecureRequest } from '@overnightjs/jwt';
 import { Request, Response } from 'express';
 import { BaseController } from './base_controller';
@@ -77,6 +77,26 @@ export class UsersController extends BaseController {
         payload: {
           username,
           email
+        }
+      });
+    } catch (error) {
+      res.status(404).json({
+        error
+      });
+    }
+  }
+
+  @Delete('delete/:id')
+  @Middleware(JwtManager.middleware)
+  private async deleteUser(req: ISecureRequest, res: Response) {
+    const { id } = req.params;
+    try {
+      const userToDelete: User = await User.findOneOrFail(id);
+      const { email, username } = await User.remove(userToDelete);
+      res.status(200).json({
+        payload: {
+          email,
+          username
         }
       });
     } catch (error) {
