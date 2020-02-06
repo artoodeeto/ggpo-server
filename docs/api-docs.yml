@@ -198,7 +198,59 @@ paths:
                       - example: incorrect credentials
                       - example: no user with EMAIL
 
-# ++====================================== USERS PATH ====================================++
+  /api/v1/users/delete/{userId}:
+    delete:
+      tags:
+        - Users
+      summary: Remove user
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: header bearer token schema
+          schema:
+            type: string
+            format: bearer TOKEN
+        - name: userId
+          in: path
+          description: user that needs to be deleted
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: success deleting user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      username:
+                        type: string
+        "404":
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+                    example:
+                      name: EntityNotFound
+                      message: 'Could not find any entity of type "User" matching: "123"'
+
+# ++====================================== COMPONENTS PATH ====================================++
 
 components:
   schemas:
