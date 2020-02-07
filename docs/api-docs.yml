@@ -306,6 +306,14 @@ components:
       properties:
         meta:
           type: object
+          properties:
+            issueDate:
+              type: string
+            expToken:
+              type: string
+          example:
+            issueDate: "1581049918568"
+            expToken: "10800000"
         payload:
           type: object
           properties:

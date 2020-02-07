@@ -32,6 +32,7 @@ You can also checkout the API documentation by running the application and going
      - `MYSQL_PASSWORD=your password`
      - `MYSQL_ROOT_PASSWORD=same as mysql_password`
      - `MYSQL_DATABASE=development_db`
+     - `TOKEN_EXP=10800000 `
 
 ##### Without Docker
 
