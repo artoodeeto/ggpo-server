@@ -14,6 +14,9 @@ These are the list of keys and values that needs to run the application:
 NODE_ENV=development
 API_VERSION=v1
 PREFIX=api
+# 3hours in milisec. this should be the same with OVERNIGHT_JWT_EXP
+# this will be use to set timeout on the frontend so user will be kicked out in the session
+TOKEN_EXP=10800000 
 
 # BCRYPT
 SALT_ROUNDS=11

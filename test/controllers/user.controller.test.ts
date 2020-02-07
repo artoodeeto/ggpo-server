@@ -33,6 +33,7 @@ describe('User controllers', () => {
       const res = await rekwest.post('/api/v1/users/signup').send({ ...userInfo });
       expect(res.status).toBe(200);
       expect(res.body).toContainKeys(['meta', 'payload']);
+      expect(res.body.meta).toContainKeys(['issueDate', 'expToken']);
       expect(res.body.payload).toContainKeys(['token', 'user']);
       expect(res.body.payload.user).toContainKeys(['id', 'email', 'username']);
     });
@@ -72,6 +73,12 @@ describe('User controllers', () => {
       const res = await rekwest.post('/api/v1/users/signup').send({ ...u });
       expect(res.status).toBe(400);
     });
+
+    test('login should have expiry of 3h max', async () => {
+      const res = await rekwest.post('/api/v1/users/signup').send({ ...userInfo });
+      const exp = Number(res.body.meta.expToken);
+      expect(exp / 1000 / 60 / 60).toEqual(3);
+    });
   });
 
   describe('POST: /users/login route', () => {
@@ -85,6 +92,7 @@ describe('User controllers', () => {
       await User.create({ ...userInfo }).save();
       const res = await rekwest.post('/api/v1/users/login').send({ ...userInfo });
       expect(res.body).toContainKeys(['meta', 'payload']);
+      expect(res.body.meta).toContainKeys(['issueDate', 'expToken']);
       expect(res.body.payload).toContainKeys(['user', 'token']);
       expect(res.body.payload.user).toContainKeys(['id', 'email', 'username']);
     });
@@ -112,6 +120,13 @@ describe('User controllers', () => {
       expect(res.status).toBe(400);
       expect(res.body).toContainKey('error');
       expect(res.body.error).toMatch('incorrect credentials');
+    });
+
+    test('login should have expiry of 3h max', async () => {
+      await User.create({ ...userInfo }).save();
+      const res = await rekwest.post('/api/v1/users/login').send({ ...userInfo });
+      const exp = Number(res.body.meta.expToken);
+      expect(exp / 1000 / 60 / 60).toEqual(3);
     });
   });
 

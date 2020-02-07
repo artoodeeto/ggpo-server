@@ -13,7 +13,10 @@ export class UsersController extends BaseController {
     const { user, token } = res.locals;
     const { id, username, email } = user;
     res.status(200).json({
-      meta: {},
+      meta: {
+        issueDate: Date.now(),
+        expToken: process.env.TOKEN_EXP
+      },
       payload: {
         user: {
           id,
@@ -31,7 +34,10 @@ export class UsersController extends BaseController {
     const { user, token } = res.locals;
     const { id, email, username } = user;
     res.status(200).json({
-      meta: {},
+      meta: {
+        issueDate: Date.now(),
+        expToken: process.env.TOKEN_EXP
+      },
       payload: {
         user: {
           id,
