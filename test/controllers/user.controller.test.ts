@@ -3,6 +3,7 @@ import { Connection, createConnection } from 'typeorm';
 import { AppServer } from '../../config/server';
 import { User } from '../../src/models/user_model';
 import ormConfig from '../../ormconfig';
+import { Response } from 'express';
 
 const server = new AppServer();
 const { appInstance } = server;
@@ -15,10 +16,8 @@ describe('User controllers', () => {
     email: 'foobar@gmail.com',
     password: 'password'
   };
-  const EXPIRED_HEADER = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
-                          eyJpZCI6NCwiZW1haWwiOiJub2NhcEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im5v
-                          Y2FwIiwiaWF0IjoxNTgwODc0OTMxLCJleHAiOjE1ODA4ODU3MzF9.
-                          -f9zq8LdOwdCuwZkS_T1oyFOoxIVJ5lSv5zWHClOiUs`;
+  const EXPIRED_HEADER =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJub2NhcEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im5vY2FwIiwiaWF0IjoxNTgwODc0OTMxLCJleHAiOjE1ODA4ODU3MzF9.-f9zq8LdOwdCuwZkS_T1oyFOoxIVJ5lSv5zWHClOiUs';
 
   beforeEach(async () => {
     connection = await createConnection(ormConfig);
@@ -132,7 +131,7 @@ describe('User controllers', () => {
 
   /**
    * since this is a protected route,
-   * let the user login first to get a token
+   * let the user login or signup first to get a token
    * then use Authorization header to get requested data
    */
   describe('GET: /users route', () => {
@@ -164,6 +163,16 @@ describe('User controllers', () => {
         .expect('Content-Type', /json/)
         .end(done);
     });
+
+    test('should fail if no headers', async () => {
+      const res = await rekwest.get('/api/v1/users?offset=2');
+      expect(res.status).toBe(401);
+    });
+
+    test('should fail if header is expired', async () => {
+      const res = await rekwest.get('/api/v1/users?offset=2').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      expect(res.status).toBe(401);
+    });
   });
 
   describe('GET: /users/:id route', () => {
@@ -185,6 +194,16 @@ describe('User controllers', () => {
       expect(res.status).toBe(404);
       expect(res.body).toContainKey('error');
       expect(res.body.error).toContainKeys(['name', 'message']);
+    });
+
+    test('should fail if no headers', async () => {
+      const res = await rekwest.get('/api/v1/users/1');
+      expect(res.status).toBe(401);
+    });
+
+    test('should fail if header is expired', async () => {
+      const res = await rekwest.get('/api/v1/users/1').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      expect(res.status).toBe(401);
     });
   });
 
@@ -211,6 +230,11 @@ describe('User controllers', () => {
 
     test('should throw error if no header or expired', async () => {
       const res = await rekwest.delete('/api/v1/users/delete/123');
+      expect(res.status).toBe(401);
+    });
+
+    test('should throw error if no header or expired', async () => {
+      const res = await rekwest.delete('/api/v1/users/delete/123').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
   });
