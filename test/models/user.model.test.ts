@@ -1,13 +1,13 @@
 import { Connection, createConnection } from 'typeorm';
 import { ValidationError, validate, validateOrReject } from 'class-validator';
-import { User } from '../../src/models/user_model';
-import ormConfig from '../../ormconfig';
+import { User } from '../../src/models/user';
+import { testSetup } from '../../config/test_setup';
 
 describe('User model test', () => {
   let connection: Connection;
 
   beforeAll(async () => {
-    connection = await createConnection(ormConfig);
+    connection = await createConnection(testSetup);
   });
 
   afterAll(async () => {

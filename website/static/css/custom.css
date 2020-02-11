@@ -25,3 +25,8 @@
 .mainContainer {
   padding: 0px;
 }
+
+a {
+  color: rgb(21, 74, 197);
+  text-decoration: underline;
+}

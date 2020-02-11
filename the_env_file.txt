@@ -1,15 +1,3 @@
----
-id: b_env
-title: Environment Variables 📝
-sidebar_label: Environment Variables 📝
----
-
-
-To configure environment variables first you have to create a `.env` file inside the root folder.
-
-These are the lists of keys and values that are needed to run the application:
-
-```
 # APPLICATION
 NODE_ENV=development
 API_VERSION=v1
@@ -21,20 +9,20 @@ TOKEN_EXP=10800000
 SALT_ROUNDS=11
 
 # TYPEORM MODIFY AND USE THIS IN PRODUCTION
-
 TYPEORM_CONNECTION=mysql
+
 # docker service database name
 TYPEORM_HOST=db
 # not needed if run on docker
 # although if you run npx typeorm to generat migration and or model you need to uncomment this and comment TYPEORM_HOST=db
 # this is because of docker that I dont know for now
-# TYPEORM_HOST=localhost
-# not needed if run on docker
-# TYPEORM_PORT=3306
+# TYPEORM_HOST = localhost
 
 TYPEORM_USERNAME=root
 TYPEORM_PASSWORD=password
 TYPEORM_DATABASE=development_db
+# not needed if run on docker
+TYPEORM_PORT=3306
 TYPEORM_LOGGING=true
 TYPEORM_ENTITIES=src/models/**/*.ts
 TYPEORM_MIGRATIONS=db/migrations/**/*.ts
@@ -52,5 +40,3 @@ MYSQL_DATABASE=development_db
 # Overnight js JWT package
 OVERNIGHT_JWT_SECRET='dis iss sikrit misig'
 OVERNIGHT_JWT_EXP='3h'
-```
-
