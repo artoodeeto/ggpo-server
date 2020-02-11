@@ -21,5 +21,5 @@ Syncing Forked Branch:
 5. Push to your forked repo `git push --f origin master`
 
 ### Additional Resources
-- [Syncing a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
-- [SO](https://stackoverflow.com/questions/7244321/how-do-i-update-a-github-forked-repository)
+- [Github Syncing a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
+- [StackOverflow](https://stackoverflow.com/questions/7244321/how-do-i-update-a-github-forked-repository)

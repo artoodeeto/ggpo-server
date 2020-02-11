@@ -6,7 +6,6 @@ import 'reflect-metadata';
 import { Server } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
 import { createConnection } from 'typeorm';
-import ormConfig from '../ormconfig';
 import * as controllers from '../src/controllers/controller_imports';
 
 import helmet from 'helmet';
@@ -63,7 +62,7 @@ export class AppServer extends Server {
   public async startDB(): Promise<void> {
     Logger.Info('Setting up database ...');
     try {
-      await createConnection(ormConfig);
+      await createConnection();
       this.startServer();
       Logger.Info('Database connected');
     } catch (error) {

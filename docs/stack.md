@@ -21,7 +21,7 @@ sidebar_label: Stack 📚
 - **[Node](https://nodejs.org/en/)**
 - **[Jest](https://jestjs.io/)** as backend test framework
 - **[Supertest](https://www.npmjs.com/package/supertest)** as HTTP testing
-- - **[Husky](https://github.com/typicode/husky)** as Git Hooks
+- **[Husky](https://github.com/typicode/husky)** as Git Hooks
 
 ## Frontend Main Stack
 

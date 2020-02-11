@@ -1,9 +1,8 @@
 import request from 'supertest';
 import { Connection, createConnection } from 'typeorm';
 import { AppServer } from '../../config/server';
-import { User } from '../../src/models/user_model';
-import ormConfig from '../../ormconfig';
-import { Response } from 'express';
+import { User } from '../../src/models/user';
+import { testSetup } from '../../config/test_setup';
 
 const server = new AppServer();
 const { appInstance } = server;
@@ -20,7 +19,7 @@ describe('User controllers', () => {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJub2NhcEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im5vY2FwIiwiaWF0IjoxNTgwODc0OTMxLCJleHAiOjE1ODA4ODU3MzF9.-f9zq8LdOwdCuwZkS_T1oyFOoxIVJ5lSv5zWHClOiUs';
 
   beforeEach(async () => {
-    connection = await createConnection(ormConfig);
+    connection = await createConnection(testSetup);
   });
 
   afterEach(async () => {
