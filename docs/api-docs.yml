@@ -6,15 +6,20 @@ info:
 
 servers:
   - description: Development Server
-    url: "http://localhost:8000"
+    url: "http://localhost:8000/api/v1"
 
 tags:
   - name: Users
-    description: All users with parameters
+    description: Users routes
+  - name: Posts
+    description: Posts routes
+
+security:
+  - bearerAuth: [bearer <TOKEN>]
 
 paths:
-  # ++====================================== USERS PATH ====================================++
-  /api/v1/users:
+  # ! ++====================================== USERS PATH START ==================================== ++
+  /users:
     get:
       tags:
         - Users
@@ -69,7 +74,7 @@ paths:
             text/plain:
               example: "UnauthorizedError: Error message here"
 
-  /api/v1/users/{userId}:
+  /users/{userId}:
     get:
       tags:
         - Users
@@ -117,8 +122,10 @@ paths:
             text/plain:
               example: "UnauthorizedError: Error message here"
 
-  /api/v1/users/signup:
+  /users/signup:
     post:
+      security:
+        - {}
       tags:
         - Users
       summary: User signup
@@ -163,8 +170,10 @@ paths:
                           type: object
                           example:
                             "isEmail": "email must be an email"
-  /api/v1/users/login:
+  /users/login:
     post:
+      security:
+        - {}
       tags:
         - Users
       summary: User signup
@@ -198,7 +207,7 @@ paths:
                       - example: incorrect credentials
                       - example: no user with EMAIL
 
-  /api/v1/users/delete/{userId}:
+  /users/delete/{userId}:
     delete:
       tags:
         - Users
@@ -249,9 +258,127 @@ paths:
                     example:
                       name: EntityNotFound
                       message: 'Could not find any entity of type "User" matching: "123"'
+  # ! ++====================================== USERS PATH END ==================================== ++
+  #
+  #
+  #
+  # ! ++====================================== POST PATH START ==================================== ++
+  /posts:
+    post:
+      tags:
+        - Posts
+      summary: Creating new posts
+      operationId: createPost
+      requestBody:
+        $ref: "#/components/requestBodies/createUpdatePost"
+      responses:
+        "200":
+          $ref: "#/components/responses/postResponse"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "404":
+          $ref: "#/components/responses/404ErrorResponse"
+  /posts/{id}:
+    get:
+      tags:
+        - Posts
+      summary: get a posts
+      operationId: readPost
+      parameters:
+        - $ref: "#/components/parameters/idPath"
+      requestBody:
+        $ref: "#"
+      responses:
+        "200":
+          $ref: "#/components/responses/postResponse"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "404":
+          $ref: "#/components/responses/404ErrorResponse"
+    put:
+      tags:
+        - Posts
+      summary: edit a posts
+      operationId: updatePost
+      parameters:
+        - $ref: "#/components/parameters/idPath"
+      requestBody:
+        $ref: "#/components/requestBodies/createUpdatePost"
+      responses:
+        "200":
+          $ref: "#/components/responses/postResponse"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "404":
+          $ref: "#/components/responses/404ErrorResponse"
+    delete:
+      tags:
+        - Posts
+      summary: delete a posts
+      operationId: deletePost
+      parameters:
+        - $ref: "#/components/parameters/idPath"
+      responses:
+        "200":
+          description: success response for creating a post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                  payload:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "success"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "404":
+          $ref: "#/components/responses/404ErrorResponse"
+  /paginated/query?offset=2&limit=5:
+    get:
+      tags:
+        - Posts
+      summary: get some posts with limit and offset
+      operationId: getSomePost
+      parameters:
+        - $ref: "#/components/parameters/offsetQuery"
+        - $ref: "#/components/parameters/limitQuery"
+      responses:
+        "200":
+          description: posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                  payload:
+                    type: object
+                    properties:
+                      post:
+                        type: array
+                        example:
+                          - id: 1
+                            title: "title"
+                            body: "body"
+                            createdAt: "2020-02-27T04:16:50.000Z"
+                          - id: 2
+                            title: "title"
+                            body: "body"
+                            createdAt: "2020-02-27T04:16:50.000Z"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "404":
+          $ref: "#/components/responses/404ErrorResponse"
+
+  # ! ++====================================== POST PATH END ==================================== ++
 
 # ++====================================== COMPONENTS PATH ====================================++
-
 components:
   schemas:
     User:
@@ -270,6 +397,29 @@ components:
           type: string
         password:
           type: string
+    Post:
+      type: object
+      properties:
+        meta:
+          type: object
+        payload:
+          type: object
+          properties:
+            post:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                title:
+                  type: string
+                  example: "the title"
+                body:
+                  type: string
+                  example: "the body"
+
+      required:
+        - null
     metaAndPayload:
       type: object
       properties:
@@ -284,12 +434,14 @@ components:
               type: string
 
   securitySchemes:
-    BearerAuth:
+    bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
 
-  # REQUEST BODY
+  # ! =============================== REQUEST BODY START ===============================
   requestBodies:
+    # ! =============================== USER START ===============================
     UserSignup:
       content:
         application/json:
@@ -299,7 +451,25 @@ components:
               email: theUseremail@email.com
               password: theUserPassword
       description: User information in hash form
+    # ! =============================== USER END ===============================
+    # ! =============================== POST START ===============================
+    createUpdatePost:
+      description: request body to create a new post
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              title:
+                type: string
+                example: "the title"
+              body:
+                type: string
+                example: "the body"
 
+    # ! =============================== USER END ===============================
+  # ! =============================== REQUEST BODY START ===============================
+  # ! =============================== RESPONSE START ===============================
   responses:
     loginAndSignupResponse:
       type: object
@@ -333,3 +503,55 @@ components:
             token:
               type: string
               example: TOKEN
+    postResponse:
+      description: success response for creating a post
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+              payload:
+                type: object
+                properties:
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "the title"
+                      body:
+                        type: string
+                        example: "the body"
+    unauthorized:
+      description: User has no token or not login
+    404ErrorResponse:
+      description: Error
+  # ! =============================== RESPONSE END ===============================
+  parameters:
+    idPath:
+      in: path
+      name: id
+      description: ID of a resource
+      required: true
+      schema:
+        type: integer
+    offsetQuery:
+      in: query
+      name: offset
+      description: number of rows to skip
+      required: true
+      schema:
+        type: integer
+    limitQuery:
+      in: query
+      name: limit
+      description: number of rows to be returned
+      required: true
+      schema:
+        type: integer
+        default: 10
