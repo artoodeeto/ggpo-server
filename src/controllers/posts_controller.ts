@@ -89,7 +89,7 @@ export class PostsController extends BaseController {
     }
   }
 
-  @Get('paginated/query')
+  @Get('query/some/posts')
   @Middleware(JwtManager.middleware)
   private async getSomePost(req: ISecureRequest, res: Response): Promise<void> {
     const offset = req.query?.offset ?? 0;

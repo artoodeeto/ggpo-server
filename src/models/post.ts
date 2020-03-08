@@ -33,7 +33,7 @@ export class Post extends BaseModel {
    * TODO: move this to base class
    */
   @BeforeInsert()
-  private async setCreatedAtDate() {
+  private setCreatedAtDate(): void {
     this.createdAt = new Date();
   }
 }
