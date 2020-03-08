@@ -1,17 +1,23 @@
 module.exports = {
   env: {
-    es6: true,
     node: true,
-    jest: true
+    jest: true,
+    es2020: true
   },
-  extends: ['airbnb-base', 'plugin:import/typescript', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
+  extends: [
+    'airbnb-base',
+    'plugin:import/typescript',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/recommended'
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 11,
     sourceType: 'module'
   },
   plugins: ['@typescript-eslint'],
@@ -22,7 +28,6 @@ module.exports = {
     'no-console': 2,
     'comma-dangle': 0,
     'import/first': 0,
-    'no-unused-vars': 1,
     'consistent-return': 2,
     'import/no-mutable-exports': 1,
     'no-undef': 1,
@@ -32,7 +37,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/controllers/*.ts'], // overiding the rule for this file because overnightjs doesnt use the methods in its class
+      files: ['src/controllers/*.ts'], // overriding rule because I didn't use "this" in controller
       excludedFiles: [],
       rules: {
         'class-methods-use-this': 0
