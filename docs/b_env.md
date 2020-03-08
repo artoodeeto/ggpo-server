@@ -4,8 +4,7 @@ title: Environment Variables 📝
 sidebar_label: Environment Variables 📝
 ---
 
-
-To configure environment variables first you have to create a `.env` file inside the root folder.
+To configure environment variables first you have to change the `the_env_file.txt` to `.env` inside the root folder. All you need to change are the MYSQL values
 
 These are the lists of keys and values that are needed to run the application:
 
@@ -15,7 +14,7 @@ NODE_ENV=development
 API_VERSION=v1
 PREFIX=api
 # 3hours in milisec. this should be the same with OVERNIGHT_JWT_EXP
-TOKEN_EXP=10800000 
+TOKEN_EXP=10800000
 
 # BCRYPT
 SALT_ROUNDS=11
@@ -53,4 +52,3 @@ MYSQL_DATABASE=development_db
 OVERNIGHT_JWT_SECRET='dis iss sikrit misig'
 OVERNIGHT_JWT_EXP='3h'
 ```
-
