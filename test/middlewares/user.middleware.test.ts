@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { AppServer } from '../../config/server';
-import { UserMiddleware } from '../../src/middlewares/user_middlewares';
+import { ValidateUserMiddleware } from '../../src/middlewares/user_middlewares';
 import { UsersController } from '../../src/controllers/users_controller';
 
 const server = new AppServer();

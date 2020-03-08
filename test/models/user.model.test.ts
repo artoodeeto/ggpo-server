@@ -6,11 +6,11 @@ import { testSetup } from '../../config/test_setup';
 describe('User model test', () => {
   let connection: Connection;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     connection = await createConnection(testSetup);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     connection.close();
   });
 

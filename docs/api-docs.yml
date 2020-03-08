@@ -1,12 +1,12 @@
 openapi: 3.0.2
 info:
-  version: "1.0.0"
-  title: "GOOD GAME PEACE OUT!"
-  description: "FOR GAMERS BY GAMERS"
+  version: '1.0.0'
+  title: 'GOOD GAME PEACE OUT!'
+  description: 'FOR GAMERS BY GAMERS'
 
 servers:
   - description: Development Server
-    url: "http://localhost:8000/api/v1"
+    url: 'http://localhost:8000/api/v1'
 
 tags:
   - name: Users
@@ -19,110 +19,7 @@ security:
 
 paths:
   # ! ++====================================== USERS PATH START ==================================== ++
-  /users:
-    get:
-      tags:
-        - Users
-      summary: Returns list of users in ORDER by id ASC.
-      description: Use this path if you need to get users. Using query params offset=0
-      parameters:
-        - in: header
-          name: Authorization
-          required: true
-          description: header bearer token schema
-          schema:
-            type: string
-            format: bearer TOKEN
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: number of users to be skipped
-      responses:
-        "200":
-          description: Success response will give you a list of users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  meta:
-                    type: object
-                  payload:
-                    type: object
-                    properties:
-                      users:
-                        type: array
-                        example:
-                          - id: 1
-                            username: user1
-                            email: user1@gmail.com
-                          - id: 2
-                            username: user2
-                            email: user2@gmail.com
-        "400":
-          description: error cant find all users
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  error: "error message"
-        "401":
-          description: If token is expired or empty
-          content:
-            text/plain:
-              example: "UnauthorizedError: Error message here"
-
-  /users/{userId}:
-    get:
-      tags:
-        - Users
-      summary: Gets a specific using user ID
-      parameters:
-        - in: header
-          name: Authorization
-          required: true
-          description: header bearer token schema
-          schema:
-            type: string
-            format: bearer TOKEN
-        - name: userId
-          in: path
-          description: user that needs to be fetch
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: success query user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/metaAndPayload"
-        "400":
-          description: Invalid user Id
-        "404":
-          description: User not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      message:
-                        type: string
-        "401":
-          description: If token is expired or empty
-          content:
-            text/plain:
-              example: "UnauthorizedError: Error message here"
-
-  /users/signup:
+  /signup:
     post:
       security:
         - {}
@@ -142,13 +39,13 @@ paths:
                 password:
                   type: string
       responses:
-        "200":
-          description: success sigining up
+        '200':
+          description: success signing up
           content:
             application/json:
               schema:
-                $ref: "#/components/responses/loginAndSignupResponse"
-        "400":
+                $ref: '#/components/responses/loginAndSignupResponse'
+        '400':
           description: payload is incorrect (email is not in correct format)
           content:
             application/json:
@@ -164,13 +61,15 @@ paths:
                         property:
                           type: string
                         children:
+                          type: array
                           items:
-                            children: null
+                            type: string
                         constraints:
                           type: object
                           example:
-                            "isEmail": "email must be an email"
-  /users/login:
+                            'isEmail': 'email must be an email'
+
+  /login:
     post:
       security:
         - {}
@@ -188,13 +87,13 @@ paths:
                 password:
                   type: string
       responses:
-        "200":
+        '200':
           description: success login
           content:
             application/json:
               schema:
-                $ref: "#/components/responses/loginAndSignupResponse"
-        "400":
+                $ref: '#/components/responses/loginAndSignupResponse'
+        '400':
           description: failed login
           content:
             application/json:
@@ -206,43 +105,38 @@ paths:
                     oneOf:
                       - example: incorrect credentials
                       - example: no user with EMAIL
-
-  /users/delete/{userId}:
-    delete:
+  /users/{id}:
+    get:
       tags:
         - Users
-      summary: Remove user
+      summary: Get a user
+      operationId: readUser
       parameters:
-        - in: header
-          name: Authorization
-          required: true
-          description: header bearer token schema
-          schema:
-            type: string
-            format: bearer TOKEN
-        - name: userId
-          in: path
-          description: user that needs to be deleted
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/idPath'
       responses:
-        "200":
-          description: success deleting user
+        '200':
+          description: OK
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  meta:
+                    type: object
                   payload:
                     type: object
                     properties:
-                      email:
-                        type: string
+                      id:
+                        type: number
+                        example: 1
                       username:
                         type: string
-        "404":
-          description: user not found
+                        example: 'username'
+                      email:
+                        type: string
+                        example: 'username@gmail.com'
+        '404':
+          description: bad request
           content:
             application/json:
               schema:
@@ -253,11 +147,86 @@ paths:
                     properties:
                       name:
                         type: string
+                        example: 'EntityNotFound'
                       message:
                         type: string
-                    example:
-                      name: EntityNotFound
-                      message: 'Could not find any entity of type "User" matching: "123"'
+                        example: 'Could not find any entity of type User matching: 2'
+    put:
+      tags:
+        - Users
+      summary: Get a user
+      operationId: updateUser
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: NOT YET DONE BISSH
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          $ref: '#/components/responses/couldNotFindUser'
+    delete:
+      tags:
+        - Users
+      summary: Delete a user
+      operationId: deleteUser
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      deleteAt:
+                        type: string
+                        format: date-time
+                        description: date in milliseconds
+                  payload:
+                    type: object
+
+        '404':
+          $ref: '#/components/responses/couldNotFindUser'
+  /users/query/some/users:
+    get:
+      tags:
+        - Users
+      summary: query some users
+      operationId: getSomeUsers
+      parameters:
+        - $ref: '#/components/parameters/offsetQuery'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                  payload:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        example:
+                          - id: 1
+                            username: 'username1'
+                            email: 'username1@gmail.com'
+                          - id: 2
+                            username: 'username2'
+                            email: 'username2@gmail.com'
+        '404':
+          $ref: '#/components/responses/400ErrorResponse'
+
   # ! ++====================================== USERS PATH END ==================================== ++
   #
   #
@@ -270,14 +239,14 @@ paths:
       summary: Creating new posts
       operationId: createPost
       requestBody:
-        $ref: "#/components/requestBodies/createUpdatePost"
+        $ref: '#/components/requestBodies/createUpdatePost'
       responses:
-        "200":
-          $ref: "#/components/responses/postResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        '200':
+          $ref: '#/components/responses/postResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
   /posts/{id}:
     get:
       tags:
@@ -285,41 +254,41 @@ paths:
       summary: get a posts
       operationId: readPost
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       requestBody:
-        $ref: "#"
+        $ref: '#'
       responses:
-        "200":
-          $ref: "#/components/responses/postResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        '200':
+          $ref: '#/components/responses/postResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
     put:
       tags:
         - Posts
       summary: edit a posts
       operationId: updatePost
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       requestBody:
-        $ref: "#/components/requestBodies/createUpdatePost"
+        $ref: '#/components/requestBodies/createUpdatePost'
       responses:
-        "200":
-          $ref: "#/components/responses/postResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        '200':
+          $ref: '#/components/responses/postResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
     delete:
       tags:
         - Posts
       summary: delete a posts
       operationId: deletePost
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       responses:
-        "200":
+        '200':
           description: success response for creating a post
           content:
             application/json:
@@ -333,22 +302,22 @@ paths:
                     properties:
                       message:
                         type: string
-                        example: "success"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-  /paginated/query?offset=2&limit=5:
+                        example: 'success'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
+  /posts/query/some/posts:
     get:
       tags:
         - Posts
       summary: get some posts with limit and offset
       operationId: getSomePost
       parameters:
-        - $ref: "#/components/parameters/offsetQuery"
-        - $ref: "#/components/parameters/limitQuery"
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/limitQuery'
       responses:
-        "200":
+        '200':
           description: posts
           content:
             application/json:
@@ -364,17 +333,17 @@ paths:
                         type: array
                         example:
                           - id: 1
-                            title: "title"
-                            body: "body"
-                            createdAt: "2020-02-27T04:16:50.000Z"
+                            title: 'title'
+                            body: 'body'
+                            createdAt: '2020-02-27T04:16:50.000Z'
                           - id: 2
-                            title: "title"
-                            body: "body"
-                            createdAt: "2020-02-27T04:16:50.000Z"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+                            title: 'title'
+                            body: 'body'
+                            createdAt: '2020-02-27T04:16:50.000Z'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
 
   # ! ++====================================== POST PATH END ==================================== ++
 
@@ -397,41 +366,40 @@ components:
           type: string
         password:
           type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
     Post:
       type: object
-      properties:
-        meta:
-          type: object
-        payload:
-          type: object
-          properties:
-            post:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 1
-                title:
-                  type: string
-                  example: "the title"
-                body:
-                  type: string
-                  example: "the body"
-
       required:
-        - null
-    metaAndPayload:
-      type: object
+        - id
+        - title
+        - body
+        - user
       properties:
-        meta:
-          type: object
-        payload:
-          type: object
-          properties:
-            username:
-              type: string
-            email:
-              type: string
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
 
   securitySchemes:
     bearerAuth:
@@ -462,10 +430,10 @@ components:
             properties:
               title:
                 type: string
-                example: "the title"
+                example: 'the title'
               body:
                 type: string
-                example: "the body"
+                example: 'the body'
 
     # ! =============================== USER END ===============================
   # ! =============================== REQUEST BODY START ===============================
@@ -482,8 +450,8 @@ components:
             expToken:
               type: string
           example:
-            issueDate: "1581049918568"
-            expToken: "10800000"
+            issueDate: '1581049918568'
+            expToken: '10800000'
         payload:
           type: object
           properties:
@@ -502,7 +470,23 @@ components:
                 email: nocap@gmail.com
             token:
               type: string
-              example: TOKEN
+              example: JWT
+    couldNotFindUser:
+      description: bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 'EntityNotFound'
+                  message:
+                    type: string
+                    example: 'Could not find any entity of type User matching: 2'
     postResponse:
       description: success response for creating a post
       content:
@@ -523,13 +507,15 @@ components:
                         example: 1
                       title:
                         type: string
-                        example: "the title"
+                        example: 'the title'
                       body:
                         type: string
-                        example: "the body"
+                        example: 'the body'
     unauthorized:
       description: User has no token or not login
     404ErrorResponse:
+      description: Error
+    400ErrorResponse:
       description: Error
   # ! =============================== RESPONSE END ===============================
   parameters:

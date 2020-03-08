@@ -1,57 +1,80 @@
-import { Controller, Get, Post, Middleware, Delete } from '@overnightjs/core';
+import { Controller, Get, Middleware, Delete, Put } from '@overnightjs/core';
 import { JwtManager, ISecureRequest } from '@overnightjs/jwt';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { BaseController } from './base_controller';
-import { User } from '../models/user_model';
-import { UserMiddleware } from '../middlewares/user_middlewares';
+import { User } from '../models/user';
+import { getManager } from 'typeorm';
 
 @Controller('users')
 export class UsersController extends BaseController {
-  @Post('signup')
-  @Middleware([UserMiddleware.validateUserOnSignup, UserMiddleware.generateTokenUsingJWT])
-  private async userSignUp(req: Request, res: Response) {
-    const { user, token } = res.locals;
-    const { id, username, email } = user;
-    res.status(200).json({
-      meta: {
-        issueDate: Date.now(),
-        expToken: process.env.TOKEN_EXP
-      },
-      payload: {
-        user: {
+  @Get(':id')
+  @Middleware(JwtManager.middleware)
+  private async readUser(req: ISecureRequest, res: Response): Promise<void> {
+    const { id } = req.params;
+    try {
+      const { username, email } = await User.findOneOrFail(id);
+      res.json({
+        meta: {},
+        payload: {
           id,
           username,
           email
-        },
-        token
-      }
-    });
+        }
+      });
+    } catch (error) {
+      res.status(404).json({
+        error
+      });
+    }
   }
 
-  @Post('login')
-  @Middleware([UserMiddleware.checkUserBeforeLogin, UserMiddleware.generateTokenUsingJWT])
-  private async userLogin(req: Request, res: Response) {
-    const { user, token } = res.locals;
-    const { id, email, username } = user;
-    res.status(200).json({
-      meta: {
-        issueDate: Date.now(),
-        expToken: process.env.TOKEN_EXP
-      },
-      payload: {
-        user: {
-          id,
-          email,
-          username
-        },
-        token
-      }
-    });
-  }
-
-  @Get('')
+  // FIXME: fix this bullshit
+  @Put(':id')
   @Middleware(JwtManager.middleware)
-  private async getAllUsers(req: ISecureRequest, res: Response) {
+  private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
+    const { id } = req.params;
+    const userBody = req.body;
+    const entityManager = getManager();
+    try {
+      const user: User = await User.findOneOrFail(id);
+      const updatedUser = User.create({ id, ...userBody });
+      console.log(updatedUser);
+      res.json({
+        meta: {},
+        payload: {
+          user: await entityManager.save(updatedUser)
+        }
+      });
+    } catch (error) {
+      res.status(404).json({
+        error
+      });
+    }
+  }
+
+  @Delete(':id')
+  @Middleware(JwtManager.middleware)
+  private async deleteUser(req: ISecureRequest, res: Response): Promise<void> {
+    const { id } = req.params;
+    try {
+      const user = await User.findOneOrFail(id);
+      await user.remove();
+      res.status(200).json({
+        meta: {
+          deleteAt: 'some date'
+        },
+        payload: {}
+      });
+    } catch (error) {
+      res.status(404).json({
+        error
+      });
+    }
+  }
+
+  @Get('query/some/users')
+  @Middleware(JwtManager.middleware)
+  private async getSomeUsers(req: ISecureRequest, res: Response): Promise<void> {
     const offset = req.query?.offset ?? 0;
     try {
       res.json({
@@ -72,49 +95,9 @@ export class UsersController extends BaseController {
     }
   }
 
-  @Get(':id')
-  @Middleware(JwtManager.middleware)
-  private async getSingleUser(req: ISecureRequest, res: Response) {
-    const { id } = req.params;
-    try {
-      const { username, email } = await User.findOneOrFail(id);
-      res.json({
-        meta: {},
-        payload: {
-          username,
-          email
-        }
-      });
-    } catch (error) {
-      res.status(404).json({
-        error
-      });
-    }
-  }
-
-  @Delete('delete/:id')
-  @Middleware(JwtManager.middleware)
-  private async deleteUser(req: ISecureRequest, res: Response) {
-    const { id } = req.params;
-    try {
-      const userToDelete: User = await User.findOneOrFail(id);
-      const { email, username } = await User.remove(userToDelete);
-      res.status(200).json({
-        payload: {
-          email,
-          username
-        }
-      });
-    } catch (error) {
-      res.status(404).json({
-        error
-      });
-    }
-  }
-
   @Get('protected/route')
   @Middleware(JwtManager.middleware)
-  private async protected(req: ISecureRequest, res: Response) {
+  private async protected(req: ISecureRequest, res: Response): Promise<void> {
     res.json({
       message: 'protected',
       payload: req.payload
