@@ -26,7 +26,7 @@ describe('Post controllers', () => {
 
   beforeEach(async () => {
     connection = await createConnection(testSetup);
-    const res = await rekwest.post('/api/v1/users/signup').send({ ...userInfo });
+    const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
     ACTIVE_JWT = res.body.payload.token;
     createPost = (): Promise<any> => {
       return rekwest
@@ -138,9 +138,9 @@ describe('Post controllers', () => {
     });
   });
 
-  describe('GET: /posts/paginated/query', () => {
+  describe('GET: /query/some/posts?offset={offset}&limit={limit} ', () => {
     test('should get success response', async () => {
-      const res = await rekwest.get('/api/v1/posts/paginated/query').set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      const res = await rekwest.get('/api/v1/posts/query/some/posts').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
     });
 
@@ -153,13 +153,13 @@ describe('Post controllers', () => {
       await createPost();
       await createPost();
       const res = await rekwest
-        .get('/api/v1/posts/paginated/query?limit=5')
+        .get('/api/v1/posts/query/some/posts?limit=5')
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.posts).toHaveLength(5);
     });
 
     test('should fail if token is invalid', async () => {
-      const res = await rekwest.get('/api/v1/posts/paginated/query').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      const res = await rekwest.get('/api/v1/posts/query/some/posts').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
   });

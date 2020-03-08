@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { JwtManager } from '@overnightjs/jwt';
 import bcrypt from 'bcrypt';
-import { User } from '../models/user_model';
+import { User } from '../models/user';
 
-export class UserMiddleware {
+export class ValidateUserMiddleware {
   static async validateUserOnSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // if validation fail lets hope it throws.
       const user: User = await User.create({
         ...req.body
       }).validateModel();
