@@ -1,7 +1,7 @@
 ---
 id: pull_request
-title: Pull Request
-sidebar_label: Pull Request
+title: Pull Request 🎣
+sidebar_label: Pull Request 🎣
 ---
 
 - Try to keep the pull requests small. A pull request should try its very best to address only a single concern.
