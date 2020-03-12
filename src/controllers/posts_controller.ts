@@ -15,7 +15,6 @@ export class PostsController extends BaseController {
     try {
       const user: User = await User.findOneOrFail(id);
       post.user = user;
-      await post.save();
       const { id: postID, title, body } = await post.save();
       res.status(200).json({
         meta: {},
