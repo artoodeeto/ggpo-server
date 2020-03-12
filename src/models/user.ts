@@ -45,7 +45,8 @@ export class User extends BaseModel {
 
   @OneToMany(
     (type) => Post,
-    (post) => post.user
+    (post) => post.user,
+    { cascade: true }
   )
   posts!: Post[];
 

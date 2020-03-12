@@ -24,7 +24,8 @@ export class Post extends BaseModel {
 
   @ManyToOne(
     (type) => User,
-    (user) => user.posts
+    (user) => user.posts,
+    { onDelete: 'CASCADE' }
   )
   user!: User;
 
