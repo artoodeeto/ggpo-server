@@ -45,10 +45,15 @@ export class PostsTable1581617587575 implements MigrationInterface {
           {
             name: 'createdAt',
             type: 'DATETIME',
-            isNullable: false
+            isNullable: true
           },
           {
             name: 'updatedAt',
+            type: 'DATETIME',
+            isNullable: true
+          },
+          {
+            name: 'deletedAt',
             type: 'DATETIME',
             isNullable: true
           },

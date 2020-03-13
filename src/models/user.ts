@@ -2,10 +2,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  BeforeInsert,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  DeleteDateColumn,
+  BeforeInsert,
   BeforeUpdate,
   AfterUpdate
 } from 'typeorm';
@@ -37,11 +38,11 @@ export class User extends BaseModel {
   @Column({ type: 'datetime' })
   createdAt!: Date;
 
-  // @UpdateDateColumn()
-  // updatedAt!: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
-  // @Column()
-  // deletedAt!: Date;
+  @DeleteDateColumn()
+  deletedAt!: Date;
 
   @OneToMany(
     (type) => Post,
@@ -67,10 +68,10 @@ export class User extends BaseModel {
     this.createdAt = new Date();
   }
 
-  @BeforeUpdate()
-  private async beforeUpdateHashPassword(): Promise<void> {
-    await this.hashP();
-  }
+  // @BeforeUpdate()
+  // private async beforeUpdateHashPassword(): Promise<void> {
+  //   await this.hashP();
+  // }
 
   // TODO: fix this for update route controller
   private async hashP(): Promise<void> {
