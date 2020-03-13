@@ -9,7 +9,9 @@ export class UsersTable1575433829516 implements MigrationInterface {
               username VARCHAR(50) NOT NULL,
               email VARCHAR(50) NOT NULL UNIQUE,
               password VARCHAR(255) NOT NULL,
-              createdAt DATETIME NOT NULL,
+              createdAt DATETIME,
+              updatedAt DATETIME,
+              deletedAt DATETIME,
               PRIMARY KEY(id)
             );
         `);

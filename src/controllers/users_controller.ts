@@ -3,7 +3,7 @@ import { JwtManager, ISecureRequest } from '@overnightjs/jwt';
 import { Response } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
-import { getManager } from 'typeorm';
+import { getManager, getRepository } from 'typeorm';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -57,8 +57,18 @@ export class UsersController extends BaseController {
   private async deleteUser(req: ISecureRequest, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-      const user = await User.findOneOrFail(id);
-      await user.remove();
+      /**
+       * @description softRemove is not yet implemented in BaseEntity
+       * for now use Repository
+       */
+      // const user = await User.findOneOrFail(id);
+      // const repo = getRepository(User);
+      // const toDeleteUser = await repo.findOneOrFail(id);
+      // await repo.softRemove(toDeleteUser);
+      // const man = await getManager();
+      // const findUser = await man.findOneOrFail(User, id);
+      // const delUser = await man.softRemove(findUser);
+
       res.status(200).json({
         meta: {
           deleteAt: 'some date'

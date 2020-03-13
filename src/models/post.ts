@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne, BeforeInsert } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  UpdateDateColumn,
+  ManyToOne,
+  BeforeInsert,
+  DeleteDateColumn
+} from 'typeorm';
 import { User } from './user';
 import { BaseModel } from './base_model';
 
@@ -19,8 +27,8 @@ export class Post extends BaseModel {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  // @Column({ type: 'datetime' })
-  // deletedAt!: Date;
+  @DeleteDateColumn()
+  deletedAt!: Date;
 
   @ManyToOne(
     (type) => User,
