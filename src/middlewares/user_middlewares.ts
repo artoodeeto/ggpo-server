@@ -6,9 +6,13 @@ import { User } from '../models/user';
 export class ValidateUserMiddleware {
   static async validateUserOnSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user: User = await User.create({
-        ...req.body
-      }).validateModel();
+      /**
+       * {@link https://github.com/typeorm/typeorm/issues/5699}
+       */
+      const user: User = User.create(req.body as User);
+
+      await user.validateModel();
+
       res.locals = {
         user: await user.save()
       };
