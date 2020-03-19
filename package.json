@@ -11,7 +11,8 @@
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "migration:show": "ts-node ./node_modules/typeorm/cli.js migration:show",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js"
   },
   "author": "raphael gako",
   "license": "ISC",

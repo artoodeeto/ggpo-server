@@ -59,15 +59,10 @@ export class UsersController extends BaseController {
     try {
       /**
        * @description softRemove is not yet implemented in BaseEntity
-       * for now use Repository
+       * softRemove doesn't work on 1:n relation.
        */
-      // const user = await User.findOneOrFail(id);
-      // const repo = getRepository(User);
-      // const toDeleteUser = await repo.findOneOrFail(id);
-      // await repo.softRemove(toDeleteUser);
-      // const man = await getManager();
-      // const findUser = await man.findOneOrFail(User, id);
-      // const delUser = await man.softRemove(findUser);
+      const user: User = await User.findOneOrFail(id);
+      await user.remove();
 
       res.status(200).json({
         meta: {

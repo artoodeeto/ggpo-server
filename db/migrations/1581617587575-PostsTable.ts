@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
-import { type } from 'os';
 
 export class PostsTable1581617587575 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {

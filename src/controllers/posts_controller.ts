@@ -11,7 +11,10 @@ export class PostsController extends BaseController {
   @Middleware(JwtManager.middleware)
   private async createPost(req: ISecureRequest, res: Response): Promise<void> {
     const { id } = req.payload;
-    const post: PostModel = PostModel.create(req.body);
+    /**
+     * {@link https://github.com/typeorm/typeorm/issues/5699}
+     */
+    const post: PostModel = PostModel.create(req.body as PostModel);
     try {
       const user: User = await User.findOneOrFail(id);
       post.user = user;
