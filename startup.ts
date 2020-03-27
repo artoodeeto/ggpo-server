@@ -1,5 +1,5 @@
-import { Logger } from '@overnightjs/logger';
 import { AppServer } from './config/server';
+import { logger } from './config/logger';
 
 const server = new AppServer();
 
@@ -8,7 +8,7 @@ const server = new AppServer();
  * so we have to wait and call it every time it fails.
  * I don't like this solution but for now this is a work around
  */
-async function runner() {
+async function runner(): Promise<void> {
   try {
     await server.startDB();
   } catch (error) {
@@ -19,7 +19,7 @@ async function runner() {
     });
     clearTimeout(promiseTimer);
     runner();
-    Logger.Info('still awaiting for database...');
+    logger.info('still awaiting for database...');
   }
 }
 runner();

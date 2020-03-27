@@ -4,23 +4,22 @@ require('dotenv').config();
 import 'reflect-metadata';
 
 import { Server } from '@overnightjs/core';
-import { Logger } from '@overnightjs/logger';
+import pinoExpress from 'express-pino-logger';
+import { logger } from './logger';
 import { createConnection } from 'typeorm';
 import * as controllers from '../src/controllers/controller_imports';
 
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
 
-import YAML from 'js-yaml';
 import * as swaggerUi from 'swagger-ui-express';
-import fs from 'fs';
-
-const swaggerDocument = YAML.load(fs.readFileSync('docs/api-docs.yml').toString());
+import { swaggerDocument } from './swagger';
 
 export class AppServer extends Server {
   constructor() {
     super(process.env.NODE_ENV === 'development');
     this.app.use(helmet());
+    this.app.use(pinoExpress({ logger }));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -52,7 +51,7 @@ export class AppServer extends Server {
   private startServer(portNum?: number): void {
     const port = portNum || 8000;
     this.app.listen(port, () => {
-      Logger.Info(`Server Running on port: ${port}`);
+      logger.info(`Server Running on port: ${port}`);
     });
   }
 
@@ -60,13 +59,13 @@ export class AppServer extends Server {
    * start Database first then the server
    */
   public async startDB(): Promise<void> {
-    Logger.Info('Setting up database ...');
+    logger.info('Setting up database ...');
     try {
       await createConnection();
       this.startServer();
-      Logger.Info('Database connected');
+      logger.info('Database connected');
     } catch (error) {
-      Logger.Warn(error);
+      logger.warn(error);
       throw new Error(`Server failed to start. ERROR: ${error}`);
     }
   }
