@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { Connection, createConnection } from 'typeorm';
 import { AppServer } from '../../config/server';
-import { User } from '../../src/models/user';
 import { testSetup } from '../../config/test_setup';
 
 const server = new AppServer();
