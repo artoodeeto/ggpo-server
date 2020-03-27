@@ -8,7 +8,8 @@ sidebar_label: Stack 📚
 
 - **[Overnightjs/core](https://github.com/seanpmaxwell/overnight/tree/master/src/core#overnight-core)** as express typescript
 - **[Overnightjs/jwt](https://github.com/seanpmaxwell/overnight/tree/master/src/core#overnight-jwt)** as jasonWebToken
-- **[Overnightjs/logger](https://github.com/seanpmaxwell/overnight/tree/master/src/core#overnight-logger)** as logger (this is not yet implemented this might change. planning to use winston)
+- **[Pino](http://getpino.io/)** as logger
+- **[Express-Pino](https://www.npmjs.com/package/express-pino-logger)** as express logger
 - **[Bcrypt](https://www.npmjs.com/package/bcrypt)** as password encryption
 - **[Class-validator](https://github.com/typestack/class-validator)** as model validator
 - **[Express](https://expressjs.com/)** as web framework
