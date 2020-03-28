@@ -12,7 +12,7 @@
     "migration:show": "ts-node ./node_modules/typeorm/cli.js migration:show",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
     "test": "jest --runInBand",
-    "typeorm": "ts-node ./node_modules/typeorm/cli.js"
+    "typeorm": "TYPEORM_HOST=localhost ts-node ./node_modules/typeorm/cli.js"
   },
   "author": "raphael gako",
   "license": "ISC",
