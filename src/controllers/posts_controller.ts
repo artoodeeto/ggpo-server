@@ -1,15 +1,18 @@
 import { BaseController } from './base_controller';
 import { Controller, Post, Middleware, Get, Put, Delete } from '@overnightjs/core';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Post as PostModel } from '../models/post';
 import { ISecureRequest, JwtManager } from '@overnightjs/jwt';
 import { User } from '../models/user';
+import { logger } from '../../config/logger';
 
 @Controller('posts')
 export class PostsController extends BaseController {
   @Post('')
   @Middleware(JwtManager.middleware)
   private async createPost(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('createPost params USER_PAYLOAD:', { ...req.payload });
+    logger.info('ceratePost params POST_BODY:', { ...req.body });
     const { id } = req.payload;
     /**
      * {@link https://github.com/typeorm/typeorm/issues/5699}
@@ -30,6 +33,7 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(400).json({ error });
     }
   }
@@ -37,6 +41,7 @@ export class PostsController extends BaseController {
   @Get(':id')
   @Middleware(JwtManager.middleware)
   private async readPost(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('readPost params POST_ID:', { ...req.params });
     const { id } = req.params;
     try {
       res.status(200).json({
@@ -46,6 +51,7 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({ error });
     }
   }
@@ -53,6 +59,8 @@ export class PostsController extends BaseController {
   @Put(':id')
   @Middleware(JwtManager.middleware)
   private async updatePost(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('updatePost params POST_ID:', { ...req.params });
+    logger.info('updatePost params POST_BODY:', { ...req.body });
     const { id } = req.params;
     const { title, body } = req.body;
     try {
@@ -69,6 +77,7 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({ error });
     }
   }
@@ -76,6 +85,7 @@ export class PostsController extends BaseController {
   @Delete(':id')
   @Middleware(JwtManager.middleware)
   private async deletePost(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('deletePost params POST_ID:', { ...req.params });
     const { id } = req.params;
     try {
       const post = await PostModel.findOneOrFail(id);
@@ -87,6 +97,7 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({ error });
     }
   }
@@ -94,6 +105,7 @@ export class PostsController extends BaseController {
   @Get('query/some/posts')
   @Middleware(JwtManager.middleware)
   private async getSomePost(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomePost params POST_QUERY:', { ...req.query });
     const offset = req.query?.offset ?? 0;
     const limit = req.query?.limit ?? 10;
     try {
@@ -110,6 +122,7 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({ error });
     }
   }
