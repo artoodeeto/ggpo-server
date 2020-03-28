@@ -4,12 +4,14 @@ import { Response } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
 import { getManager, getRepository } from 'typeorm';
+import { logger } from '../../config/logger';
 
 @Controller('users')
 export class UsersController extends BaseController {
   @Get(':id')
   @Middleware(JwtManager.middleware)
   private async readUser(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('readUser params USER_ID:', { ...req.params });
     const { id } = req.params;
     try {
       const { username, email } = await User.findOneOrFail(id);
@@ -22,6 +24,7 @@ export class UsersController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({
         error
       });
@@ -32,13 +35,15 @@ export class UsersController extends BaseController {
   @Put(':id')
   @Middleware(JwtManager.middleware)
   private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('updateUser params USER_ID:', { ...req.params });
+    logger.info('updateUser params USER_BODY:', { ...req.body });
     const { id } = req.params;
     const userBody = req.body;
     const entityManager = getManager();
     try {
       const user: User = await User.findOneOrFail(id);
       const updatedUser = User.create({ id, ...userBody });
-      console.log(updatedUser);
+      logger.info(updatedUser);
       res.json({
         meta: {},
         payload: {
@@ -46,6 +51,7 @@ export class UsersController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({
         error
       });
@@ -55,6 +61,7 @@ export class UsersController extends BaseController {
   @Delete(':id')
   @Middleware(JwtManager.middleware)
   private async deleteUser(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('deleteUser params USER_ID:', { ...req.params });
     const { id } = req.params;
     try {
       /**
@@ -71,6 +78,7 @@ export class UsersController extends BaseController {
         payload: {}
       });
     } catch (error) {
+      logger.error(error);
       res.status(404).json({
         error
       });
@@ -80,6 +88,7 @@ export class UsersController extends BaseController {
   @Get('query/some/users')
   @Middleware(JwtManager.middleware)
   private async getSomeUsers(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomeUsers params USER_ID:', { ...req.query });
     const offset = req.query?.offset ?? 0;
     try {
       res.json({
@@ -94,6 +103,7 @@ export class UsersController extends BaseController {
         }
       });
     } catch (error) {
+      logger.error(error);
       res.status(400).json({
         error
       });
