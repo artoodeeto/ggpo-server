@@ -3,7 +3,6 @@ import { JwtManager, ISecureRequest } from '@overnightjs/jwt';
 import { Response } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
-import { getManager, getRepository } from 'typeorm';
 import { logger } from '../../config/logger';
 
 @Controller('users')
@@ -31,23 +30,27 @@ export class UsersController extends BaseController {
     }
   }
 
-  // FIXME: fix this bullshit
   @Put(':id')
   @Middleware(JwtManager.middleware)
   private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('updateUser params USER_ID:', { ...req.params });
     logger.info('updateUser params USER_BODY:', { ...req.body });
     const { id } = req.params;
-    const userBody = req.body;
-    const entityManager = getManager();
+
     try {
       const user: User = await User.findOneOrFail(id);
-      const updatedUser = User.create({ id, ...userBody });
-      logger.info(updatedUser);
+      Object.assign(user, { ...req.body });
+      await user.validateModel();
+      await user.hashPasswordOnUpdate(req.body);
+      const { password, updatedAt, createdAt, deletedAt, ...restOfUserObject } = await user.save();
       res.json({
-        meta: {},
+        meta: {
+          updatedAt,
+          createdAt,
+          deletedAt
+        },
         payload: {
-          user: await entityManager.save(updatedUser)
+          user: restOfUserObject
         }
       });
     } catch (error) {
