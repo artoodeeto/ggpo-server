@@ -59,35 +59,43 @@ describe('User controllers', () => {
   });
 
   describe('PUT: /users/:id route', () => {
-    test('should delete a user', async () => {
+    test('should be response success', async () => {
       await User.create({ ...userInfo }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token, user } = loginResponse.body.payload;
-      const res = await rekwest.delete(`/api/v1/users/${user.id}`).set('Authorization', `Bearer ${token}`);
+      const res = await rekwest.put(`/api/v1/users/${user.id}`).set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(200);
-      const userCount: number = await User.count();
-      expect(userCount).toBe(0);
     });
 
-    // test('should return status code 404 if user Id is incorrect', async () => {
-    //   await User.create({ ...userInfo }).save();
-    //   const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
-    //   const { token } = loginResponse.body.payload;
-    //   const res = await rekwest.delete('/api/v1/users/delete/123').set('Authorization', `Bearer ${token}`);
-    //   expect(res.status).toBe(404);
-    //   const userCount: number = await User.count();
-    //   expect(userCount).toBe(1);
-    // });
+    test('should return status code 404 if user Id is incorrect', async () => {
+      await User.create({ ...userInfo }).save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest.put('/api/v1/users/123').set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(404);
+    });
 
-    // test('should throw error if no header or expired', async () => {
-    //   const res = await rekwest.delete('/api/v1/users/delete/123');
-    //   expect(res.status).toBe(401);
-    // });
+    test('should update a user', async () => {
+      await User.create({ ...userInfo }).save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token, user } = loginResponse.body.payload;
+      const res = await rekwest
+        .put(`/api/v1/users/${user.id}`)
+        .send({ username: 'kwala' })
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.body.payload.user.username).toBe('kwala');
+    });
 
-    // test('should throw error if no header or expired', async () => {
-    //   const res = await rekwest.delete('/api/v1/users/delete/123').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
-    //   expect(res.status).toBe(401);
-    // });
+    test('should throw error if user model in invalid', async () => {
+      await User.create({ ...userInfo }).save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token, user } = loginResponse.body.payload;
+      const res = await rekwest
+        .put(`/api/v1/users/${user.id}`)
+        .send({ email: 'kwala' })
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(404);
+    });
   });
 
   describe('DELETE: /users/:id route', () => {
