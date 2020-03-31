@@ -63,9 +63,12 @@ export class PostsController extends BaseController {
     logger.info('updatePost params POST_BODY:', { ...req.body });
     const { id } = req.params;
     const { title, body } = req.body;
+
     try {
-      await PostModel.findOneOrFail(id);
-      await PostModel.update(id, { title, body });
+      const post = await PostModel.findOneOrFail(id);
+      Object.assign(post, { ...req.body });
+      await post.save();
+
       res.status(200).json({
         meta: {},
         payload: {
