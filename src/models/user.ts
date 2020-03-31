@@ -3,14 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  BeforeInsert,
-  BeforeUpdate,
-  AfterUpdate
+  BeforeInsert
 } from 'typeorm';
-import { IsEmail, IsEmpty, IsNotEmpty, MinLength, Validator, validateOrReject } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 import { Post } from './post';
@@ -53,11 +50,7 @@ export class User extends BaseModel {
 
   @BeforeInsert()
   private async beforeInsertHashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, Number(process.env.SALT_ROUNDS));
-    } catch (error) {
-      throw new Error(error);
-    }
+    await this.hashPassword();
   }
 
   /**
@@ -68,22 +61,26 @@ export class User extends BaseModel {
     this.createdAt = new Date();
   }
 
-  // @BeforeUpdate()
-  // private async beforeUpdateHashPassword(): Promise<void> {
-  //   await this.hashP();
-  // }
-
-  // TODO: fix this for update route controller
-  private async hashP(): Promise<void> {
-    const validator = new Validator();
-    console.log(this.password, 'pas', !this.password, !validator.minLength(this.password, 6));
-    console.log(this.password ?? undefined);
-    if (this.password === undefined) return;
+  private async hashPassword(): Promise<void> {
     try {
-      if (!validator.minLength(this.password, 6)) throw new Error('Minimum password length is 6');
       this.password = await bcrypt.hash(this.password, Number(process.env.SALT_ROUNDS));
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  /**
+   * @description this if statement is a workaround
+   * for @BeforeUpdate decorator in typeorm.
+   * Because if a user updates without a property password
+   * the encrypted password will be encrypted again.
+   * So here we check if the property password is present
+   * in request body so we can update the password
+   *
+   * @param requestBody this params comes from req.body,
+   * when a user wants to update its account
+   */
+  public async hashPasswordOnUpdate(requestBody: { password?: string }): Promise<void> {
+    if ('password' in requestBody) await this.hashPassword();
   }
 }
