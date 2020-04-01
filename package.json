@@ -17,8 +17,8 @@
   "author": "raphael gako",
   "license": "ISC",
   "dependencies": {
-    "@overnightjs/core": "1.6.11",
-    "@overnightjs/jwt": "1.1.14",
+    "@overnightjs/core": "1.6.15",
+    "@overnightjs/jwt": "1.1.15",
     "bcrypt": "3.0.7",
     "body-parser": "1.19.0",
     "class-validator": "0.11.0",
