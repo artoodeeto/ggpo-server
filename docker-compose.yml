@@ -1,4 +1,4 @@
-version: "3.3"
+version: '3.3'
 services:
   db:
     build: ./db
@@ -6,18 +6,19 @@ services:
     env_file:
       - .env
     ports:
-      - "3306:3306"
+      - '3306:3306'
     # network_mode: "host"
     networks:
       - app_network
   server:
     depends_on:
-      - "db" # this is important for sql connection. it has to wait for mysql to establish connection then run this bish
+      - 'db' # this is important for sql connection. it has to wait for mysql to establish connection then run this bish
     build: .
-    command: ["npm", "run", "dev"]
+    command: ['npm', 'run', 'dev']
     restart: always
     ports:
-      - "8000:8000"
+      - '8000:8000'
+      - '9229:9229'
     volumes:
       - /server/node_modules/ # added this because of bcrypt elm error
       - type: bind

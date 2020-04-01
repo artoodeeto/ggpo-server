@@ -4,7 +4,7 @@
   "description": "ggpo server",
   "main": "startup.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly startup.ts",
+    "dev": "ts-node-dev --inspect=0.0.0.0 --respawn --transpileOnly startup.ts",
     "tsc": "tsc",
     "lint": "eslint . --ext .ts",
     "fix:lint": "eslint . --fix --ext .ts",
