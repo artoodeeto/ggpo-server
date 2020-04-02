@@ -69,11 +69,11 @@ describe('Post model test', () => {
       expect(body.null).toMatch('NO');
       expect(body.default).toBeNull();
 
-      expect(createdAt.type).toMatch('datetime');
+      expect(createdAt.type).toMatch('timestamp');
       expect(createdAt.null).toMatch('NO');
-      expect(createdAt.default).toBeNull();
+      expect(createdAt.default).toMatch('CURRENT_TIMESTAMP');
 
-      expect(updatedAt.type).toMatch('datetime');
+      expect(updatedAt.type).toMatch('timestamp');
       expect(updatedAt.null).toMatch('NO');
       expect(updatedAt.default).toMatch('CURRENT_TIMESTAMP');
       expect(updatedAt.extra).toMatch('DEFAULT_GENERATED');
