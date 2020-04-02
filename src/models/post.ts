@@ -4,8 +4,8 @@ import {
   Column,
   UpdateDateColumn,
   ManyToOne,
-  BeforeInsert,
-  DeleteDateColumn
+  DeleteDateColumn,
+  CreateDateColumn
 } from 'typeorm';
 import { User } from './user';
 import { BaseModel } from './base_model';
@@ -21,13 +21,13 @@ export class Post extends BaseModel {
   @Column({ type: 'text', width: 65000 })
   body!: string;
 
-  @Column({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamp' })
   deletedAt!: Date;
 
   @ManyToOne(
@@ -36,13 +36,4 @@ export class Post extends BaseModel {
     { onDelete: 'CASCADE' }
   )
   user!: User;
-
-  /**
-   * a work around to @CreateDateColumn()
-   * TODO: move this to base class
-   */
-  @BeforeInsert()
-  private setCreatedAtDate(): void {
-    this.createdAt = new Date();
-  }
 }

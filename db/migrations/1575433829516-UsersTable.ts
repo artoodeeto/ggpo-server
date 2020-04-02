@@ -5,13 +5,13 @@ export class UsersTable1575433829516 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     await queryRunner.query(`
             CREATE TABLE users (
-              id INT AUTO_INCREMENT,
-              username VARCHAR(50) NOT NULL,
-              email VARCHAR(50) NOT NULL UNIQUE,
-              password VARCHAR(255) NOT NULL,
-              createdAt DATETIME,
-              updatedAt DATETIME,
-              deletedAt DATETIME,
+              id        INT           AUTO_INCREMENT,
+              username  VARCHAR(50)   NOT NULL,
+              email     VARCHAR(50)   NOT NULL UNIQUE,
+              password  VARCHAR(255)  NOT NULL,
+              createdAt TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+              updatedAt TIMESTAMP,
+              deletedAt TIMESTAMP,
               PRIMARY KEY(id)
             );
         `);
