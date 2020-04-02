@@ -5,7 +5,8 @@ import {
   OneToMany,
   UpdateDateColumn,
   DeleteDateColumn,
-  BeforeInsert
+  BeforeInsert,
+  CreateDateColumn
 } from 'typeorm';
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import bcrypt from 'bcrypt';
@@ -31,14 +32,13 @@ export class User extends BaseModel {
   @MinLength(6)
   password!: string;
 
-  // @CreateDateColumn()
-  @Column({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamp' })
   deletedAt!: Date;
 
   @OneToMany(
