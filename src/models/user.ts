@@ -12,6 +12,8 @@ import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 import { Post } from './post';
+import { GameGroup } from './gameGroup';
+import { UsersGameGroup } from './usersGameGroup';
 
 @Entity({ name: 'users' })
 export class User extends BaseModel {
@@ -48,17 +50,15 @@ export class User extends BaseModel {
   )
   posts!: Post[];
 
+  @OneToMany(
+    (type) => UsersGameGroup,
+    (userGameGroup) => userGameGroup.gameGroup
+  )
+  gameGroups!: GameGroup[];
+
   @BeforeInsert()
   private async beforeInsertHashPassword(): Promise<void> {
     await this.hashPassword();
-  }
-
-  /**
-   * a work around to @CreateDateColumn()
-   */
-  @BeforeInsert()
-  private setCreatedAtDate(): void {
-    this.createdAt = new Date();
   }
 
   private async hashPassword(): Promise<void> {
