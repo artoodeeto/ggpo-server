@@ -37,7 +37,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/controllers/*.ts'], // overriding rule because I didn't use "this" in controller
+      files: ['src/controllers/*.ts', 'db/migrations/*.ts'], // overriding rule because I didn't use "this" in controller
       excludedFiles: [],
       rules: {
         'class-methods-use-this': 0
