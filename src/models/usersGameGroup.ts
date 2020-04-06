@@ -8,23 +8,12 @@ import {
 } from 'typeorm';
 import { User } from './user';
 import { GameGroup } from './gameGroup';
+import { BaseModel } from './base_model';
 
 @Entity({ name: 'users_game_groups' })
-export class UsersGameGroup {
+export class UsersGameGroup extends BaseModel {
   @PrimaryGeneratedColumn()
   id!: number;
-
-  @ManyToOne(
-    (type) => User,
-    (user) => user.gameGroups
-  )
-  user!: User;
-
-  @ManyToOne(
-    (type) => GameGroup,
-    (gameGroup) => gameGroup.users
-  )
-  gameGroup!: GameGroup;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
@@ -34,4 +23,18 @@ export class UsersGameGroup {
 
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt!: Date;
+
+  @ManyToOne(
+    (type) => User,
+    (user) => user.gameGroups,
+    { onDelete: 'CASCADE' }
+  )
+  user!: User;
+
+  @ManyToOne(
+    (type) => GameGroup,
+    (gameGroup) => gameGroup.users,
+    { onDelete: 'CASCADE' }
+  )
+  gameGroup!: GameGroup;
 }

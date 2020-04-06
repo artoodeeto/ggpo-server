@@ -19,12 +19,6 @@ export class GameGroup extends BaseModel {
   @Column()
   title!: string;
 
-  @OneToMany(
-    (type) => UsersGameGroup,
-    (userGameGroup) => userGameGroup.user
-  )
-  users!: User[];
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
@@ -33,4 +27,11 @@ export class GameGroup extends BaseModel {
 
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt!: Date;
+
+  @OneToMany(
+    (type) => UsersGameGroup,
+    (userGameGroup) => userGameGroup.user,
+    { cascade: true }
+  )
+  users!: User[];
 }

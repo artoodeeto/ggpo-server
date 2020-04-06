@@ -52,7 +52,8 @@ export class User extends BaseModel {
 
   @OneToMany(
     (type) => UsersGameGroup,
-    (userGameGroup) => userGameGroup.gameGroup
+    (userGameGroup) => userGameGroup.gameGroup,
+    { cascade: true }
   )
   gameGroups!: GameGroup[];
 
