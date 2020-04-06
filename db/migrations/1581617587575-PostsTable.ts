@@ -71,7 +71,8 @@ export class PostsTable1581617587575 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['userId'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'users'
+        referencedTableName: 'users',
+        onDelete: 'CASCADE'
       })
     );
   }
