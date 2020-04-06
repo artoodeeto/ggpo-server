@@ -49,7 +49,8 @@ export class UsersGameGroupsTable1585881327751 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['userId'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'users'
+        referencedTableName: 'users',
+        onDelete: 'CASCADE'
       })
     );
 
@@ -58,7 +59,8 @@ export class UsersGameGroupsTable1585881327751 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['gameGroupId'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'game_groups'
+        referencedTableName: 'game_groups',
+        onDelete: 'CASCADE'
       })
     );
   }
