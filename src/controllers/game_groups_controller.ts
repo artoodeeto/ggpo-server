@@ -127,13 +127,46 @@ export class GameGroupsController extends BaseController {
     try {
       const user = User.findOneOrFail(userId);
       const gameGroup = GameGroup.findOneOrFail(gameGroupId);
-      const [theUser, gg] = await Promise.all([user, gameGroup]);
-      const uGG = UsersGameGroup.create({ user: theUser, gameGroup: gg });
-      await uGG.save();
+      const followedGameGroup = UsersGameGroup.findOne({
+        where: [{ user: userId, gameGroup: gameGroupId }]
+      });
+      const [theUser, gg, fGG] = await Promise.all([user, gameGroup, followedGameGroup]);
+      /**
+       * @description This will check if the user is already following this gamegroup
+       * if not allow to follow
+       * Refactor this sloppy ass code,
+       * Although when a user checks a gamegroup it should show unfollow instead of follow, hmmm
+       */
+      if (!fGG) {
+        const uGG = UsersGameGroup.create({ user: theUser, gameGroup: gg });
+        await uGG.save();
+      }
 
-      // select a usersGameGroup where userId = id and gg = id
-      // if return true then update,
-      // if return false then create a new ugg and save
+      res.json({
+        meta: {},
+        payload: {
+          gameGroup: 'success'
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      res.status(400).json({
+        error
+      });
+    }
+  }
+
+  @Delete('unfollow/:gameGroupId/')
+  @Middleware(JwtManager.middleware)
+  private async unFollowGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('following a GameGroup ID:', { ...req.params });
+    const { gameGroupId } = req.params;
+    const userId = req.payload.id;
+    try {
+      const followedGameGroup = await UsersGameGroup.findOneOrFail({
+        where: [{ user: userId, gameGroup: gameGroupId }]
+      });
+      await followedGameGroup.remove();
 
       res.json({
         meta: {},
