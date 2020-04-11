@@ -37,19 +37,27 @@ export class GameGroupsController extends BaseController {
   @Middleware(JwtManager.middleware)
   private async readGameGroup(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('readGameGroup params ID:', { ...req.params });
-    const { id } = req.params;
+    const gameGroupID = req.params.id;
     try {
-      const gg = await GameGroup.findOneOrFail(id);
-      const { title, createdAt, updatedAt } = gg;
+      /**
+       * This game group findOneOrFail is just a checking if a gamegroup exists
+       * because without this and you just use query builder and theres no
+       * gamegroup it will return an nested empty object and does not throw,
+       * so this find will be guard for this
+       */
+      await GameGroup.findOneOrFail(gameGroupID);
+      const gameGroup = await GameGroup.createQueryBuilder()
+        .select(['gg.title', 'gg.id', 'gg.createdAt', 'ugg.id', 'u.id', 'u.username', 'u.email'])
+        .from(GameGroup, 'gg')
+        .innerJoin('gg.usersGameGroups', 'ugg')
+        .innerJoin('ugg.user', 'u')
+        .where('gg.id = :id', { id: gameGroupID })
+        .getOne();
+
       res.json({
-        meta: {
-          createdAt,
-          updatedAt
-        },
+        meta: {},
         payload: {
-          gameGroup: {
-            title
-          }
+          gameGroup
         }
       });
     } catch (error) {
@@ -114,7 +122,7 @@ export class GameGroupsController extends BaseController {
     }
   }
 
-  @Get('query/some/users')
+  @Get('query/some/game_groups')
   @Middleware(JwtManager.middleware)
   private async getSomeGameGroup(req: ISecureRequest, res: Response): Promise<void> {}
 
@@ -135,7 +143,7 @@ export class GameGroupsController extends BaseController {
        * @description This will check if the user is already following this gamegroup
        * if not allow to follow
        * Refactor this sloppy ass code,
-       * Although when a user checks a gamegroup it should show unfollow instead of follow, hmmm
+       * Although when a user checks a gamegroup in the frontend it should show unfollow instead of follow, hmmm
        */
       if (!fGG) {
         const uGG = UsersGameGroup.create({ user: theUser, gameGroup: gg });
