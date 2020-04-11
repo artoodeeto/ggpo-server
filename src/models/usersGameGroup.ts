@@ -4,7 +4,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  Column
 } from 'typeorm';
 import { User } from './user';
 import { GameGroup } from './gameGroup';
@@ -14,6 +15,12 @@ import { BaseModel } from './base_model';
 export class UsersGameGroup extends BaseModel {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column({ type: 'int' })
+  userId!: number;
+
+  @Column({ type: 'int' })
+  gameGroupId!: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
@@ -26,14 +33,14 @@ export class UsersGameGroup extends BaseModel {
 
   @ManyToOne(
     (type) => User,
-    (user) => user.gameGroups,
+    (user) => user.usersGameGroups,
     { onDelete: 'CASCADE' }
   )
   user!: User;
 
   @ManyToOne(
     (type) => GameGroup,
-    (gameGroup) => gameGroup.users,
+    (gameGroup) => gameGroup.usersGameGroups,
     { onDelete: 'CASCADE' }
   )
   gameGroup!: GameGroup;
