@@ -52,10 +52,10 @@ export class User extends BaseModel {
 
   @OneToMany(
     (type) => UsersGameGroup,
-    (userGameGroup) => userGameGroup.gameGroup,
+    (userGameGroup) => userGameGroup.user,
     { cascade: true }
   )
-  gameGroups!: GameGroup[];
+  usersGameGroups!: UsersGameGroup[];
 
   @BeforeInsert()
   private async beforeInsertHashPassword(): Promise<void> {

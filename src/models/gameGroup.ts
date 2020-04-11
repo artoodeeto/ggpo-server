@@ -7,7 +7,6 @@ import {
   DeleteDateColumn,
   OneToMany
 } from 'typeorm';
-import { User } from './user';
 import { BaseModel } from './base_model';
 import { UsersGameGroup } from './usersGameGroup';
 
@@ -30,8 +29,8 @@ export class GameGroup extends BaseModel {
 
   @OneToMany(
     (type) => UsersGameGroup,
-    (userGameGroup) => userGameGroup.user,
+    (userGameGroup) => userGameGroup.gameGroup,
     { cascade: true }
   )
-  users!: User[];
+  usersGameGroups!: UsersGameGroup[];
 }
