@@ -12,7 +12,6 @@ import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 import { Post } from './post';
-import { GameGroup } from './gameGroup';
 import { UsersGameGroup } from './usersGameGroup';
 
 @Entity({ name: 'users' })
@@ -83,5 +82,13 @@ export class User extends BaseModel {
    */
   public async hashPasswordOnUpdate(requestBody: { password?: string }): Promise<void> {
     if ('password' in requestBody) await this.hashPassword();
+  }
+
+  static async isUserFollowingGameGroup(userId: number | string, gameGroupId: number | string): Promise<boolean> {
+    const isFollower = await UsersGameGroup.findOne({
+      where: [{ userId, gameGroupId }]
+    });
+
+    return !!isFollower;
   }
 }
