@@ -37,7 +37,8 @@ export class GameGroupsController extends BaseController {
   @Middleware(JwtManager.middleware)
   private async readGameGroup(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('readGameGroup params ID:', { ...req.params });
-    const gameGroupID = req.params.id;
+    const gameGroupId = req.params.id;
+    const userId = req.payload.id;
     try {
       /**
        * This game group findOneOrFail is just a checking if a gamegroup exists
@@ -45,18 +46,23 @@ export class GameGroupsController extends BaseController {
        * gamegroup it will return an nested empty object and does not throw,
        * so this find will be guard for this
        */
-      await GameGroup.findOneOrFail(gameGroupID);
-      const gameGroup = await GameGroup.createQueryBuilder()
+      await GameGroup.findOneOrFail(gameGroupId);
+
+      const gg = GameGroup.createQueryBuilder()
         .select(['gg.title', 'gg.id', 'gg.createdAt', 'ugg.id', 'u.id', 'u.username', 'u.email'])
         .from(GameGroup, 'gg')
         .innerJoin('gg.usersGameGroups', 'ugg')
         .innerJoin('ugg.user', 'u')
-        .where('gg.id = :id', { id: gameGroupID })
+        .where('gg.id = :id', { id: gameGroupId })
         .getOne();
+
+      const follower = User.isUserFollowingGameGroup(userId, gameGroupId);
+      const [gameGroup, isFollower] = await Promise.all([gg, follower]);
 
       res.json({
         meta: {},
         payload: {
+          isFollower,
           gameGroup
         }
       });
@@ -135,9 +141,7 @@ export class GameGroupsController extends BaseController {
     try {
       const user = User.findOneOrFail(userId);
       const gameGroup = GameGroup.findOneOrFail(gameGroupId);
-      const followedGameGroup = UsersGameGroup.findOne({
-        where: [{ user: userId, gameGroup: gameGroupId }]
-      });
+      const followedGameGroup = User.isUserFollowingGameGroup(userId, gameGroupId);
       const [theUser, gg, fGG] = await Promise.all([user, gameGroup, followedGameGroup]);
       /**
        * @description This will check if the user is already following this gamegroup
@@ -190,7 +194,7 @@ export class GameGroupsController extends BaseController {
     }
   }
 
-  @Get('protected/route')
+  @Get('isFollowing/route')
   @Middleware(JwtManager.middleware)
   private async protected(req: ISecureRequest, res: Response): Promise<void> {
     res.json({
