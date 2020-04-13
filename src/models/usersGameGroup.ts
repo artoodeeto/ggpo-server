@@ -13,7 +13,7 @@ import { BaseModel } from './base_model';
 
 @Entity({ name: 'users_game_groups' })
 export class UsersGameGroup extends BaseModel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
   @Column({ type: 'int' })
@@ -22,13 +22,13 @@ export class UsersGameGroup extends BaseModel {
   @Column({ type: 'int' })
   gameGroupId!: number;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
   updatedAt!: Date;
 
-  @DeleteDateColumn({ type: 'timestamp' })
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
   @ManyToOne(

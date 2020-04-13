@@ -12,7 +12,7 @@ import { BaseModel } from './base_model';
 
 @Entity({ name: 'posts' })
 export class Post extends BaseModel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })
@@ -21,13 +21,13 @@ export class Post extends BaseModel {
   @Column({ type: 'text', width: 65000 })
   body!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
   updatedAt!: Date;
 
-  @DeleteDateColumn({ type: 'timestamp' })
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
   @ManyToOne(
