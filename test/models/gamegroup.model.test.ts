@@ -1,10 +1,9 @@
 import { Connection, createConnection } from 'typeorm';
-import { ValidationError, validate, validateOrReject } from 'class-validator';
-import { Post } from '../../src/models/post';
+import { GameGroup } from '../../src/models/gameGroup';
 import { testSetup } from '../../config/test_setup';
 import { descriptionModel } from '../../helpers/model_tester';
 
-describe('Post model test', () => {
+describe('GameGroup model test', () => {
   let connection: Connection;
   let modelDescription: () => Promise<any>;
 
@@ -12,8 +11,8 @@ describe('Post model test', () => {
     connection = await createConnection(testSetup);
 
     modelDescription = async (): Promise<any> => {
-      const columnInformation: Array<any> = await Post.query(`
-      DESCRIBE posts
+      const columnInformation: Array<any> = await GameGroup.query(`
+      DESCRIBE game_groups
     `);
       return descriptionModel(columnInformation);
     };
@@ -23,50 +22,23 @@ describe('Post model test', () => {
     connection.close();
   });
 
-  it('should create a post', async () => {
-    await Post.create({
-      title: 'foo',
-      body: 'foo@gmail12as.com'
-    }).save();
-
-    const postCount = await Post.findAndCount();
-    expect(postCount[1]).toEqual(1);
-  });
-
-  it('should create a post', async () => {
-    await Post.create({
-      title: '',
-      body: ''
-    }).save();
-
-    const postCount = await Post.findAndCount();
-    expect(postCount[1]).toEqual(1);
-  });
-
-  it('should throw if given invalid or null values', () => {
-    expect(Post.create({}).save()).toReject();
-  });
-
   describe('Test model constraints', () => {
-    it('Post constraints', async () => {
-      const { id, title, body, createdAt, updatedAt } = await modelDescription();
-
+    it('GameGroup constraints', async () => {
+      const { id, title, createdAt, updatedAt } = await modelDescription();
       expect(id.type).toMatch(/int/);
       expect(id.null).toMatch('NO');
       expect(id.key).toMatch('PRI');
+      expect(id.default).toBeNull();
       expect(id.extra).toMatch('auto_increment');
 
       expect(title.type).toMatch(/varchar/);
       expect(title.null).toMatch('NO');
       expect(title.default).toBeNull();
 
-      expect(body.type).toMatch('mediumtext');
-      expect(body.null).toMatch('NO');
-      expect(body.default).toBeNull();
-
       expect(createdAt.type).toMatch('timestamp');
       expect(createdAt.null).toMatch('YES');
       expect(createdAt.default).toMatch('CURRENT_TIMESTAMP');
+      expect(updatedAt.extra).toMatch('DEFAULT_GENERATED');
 
       expect(updatedAt.type).toMatch('timestamp');
       expect(updatedAt.null).toMatch('YES');
