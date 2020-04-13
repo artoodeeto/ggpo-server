@@ -16,7 +16,7 @@ import { UsersGameGroup } from './usersGameGroup';
 
 @Entity({ name: 'users' })
 export class User extends BaseModel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
   @Column({ type: 'varchar', length: 50 })
@@ -33,13 +33,13 @@ export class User extends BaseModel {
   @MinLength(6)
   password!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
   updatedAt!: Date;
 
-  @DeleteDateColumn({ type: 'timestamp' })
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
   @OneToMany(

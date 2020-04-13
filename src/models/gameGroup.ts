@@ -12,19 +12,19 @@ import { UsersGameGroup } from './usersGameGroup';
 
 @Entity({ name: 'game_groups' })
 export class GameGroup extends BaseModel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   title!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
   updatedAt!: Date;
 
-  @DeleteDateColumn({ type: 'timestamp' })
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
   @OneToMany(
