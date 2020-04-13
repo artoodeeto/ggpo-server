@@ -57,6 +57,19 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  "include": ["*.ts", "config/*.ts", "src/**/*.ts", "lib/*.ts", "node_modules/jest-extended/types/**/*d.ts", ".env"],
+  "include": [
+    "*.ts",
+    "config/*.ts",
+    "db/*.ts",
+    "db/migrations/*.ts",
+    "helpers/*.ts",
+    "src/**/*.ts",
+    // if you remove this the jest-extended will not recognize its methods
+    "test/**/*.ts",
+    "interfaces/*.ts",
+    "lib/*.ts",
+    "node_modules/jest-extended/types/**/*d.ts",
+    ".env"
+  ],
   "exclude": []
 }
