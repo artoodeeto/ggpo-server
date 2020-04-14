@@ -15,13 +15,16 @@ export class GameGroupsController extends BaseController {
     logger.info('Creating GameGroup...');
 
     try {
-      const gg = GameGroup.create(req.body as GameGroup);
-      await gg.save();
+      const gameGroup = GameGroup.create(req.body as GameGroup);
+      const { id, title, createdAt } = await gameGroup.save();
       res.json({
-        meta: {},
+        meta: {
+          createdAt
+        },
         payload: {
           gameGroup: {
-            msg: 'success'
+            id,
+            title
           }
         }
       });
@@ -68,7 +71,7 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
+      res.status(404).json({
         error
       });
     }
@@ -92,13 +95,14 @@ export class GameGroupsController extends BaseController {
         },
         payload: {
           gameGroup: {
+            id,
             title
           }
         }
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
+      res.status(404).json({
         error
       });
     }
@@ -122,7 +126,7 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
+      res.status(404).json({
         error
       });
     }
@@ -157,7 +161,9 @@ export class GameGroupsController extends BaseController {
       res.json({
         meta: {},
         payload: {
-          gameGroup: 'success'
+          gameGroup: {
+            message: 'success'
+          }
         }
       });
     } catch (error) {
@@ -176,19 +182,21 @@ export class GameGroupsController extends BaseController {
     const userId = req.payload.id;
     try {
       const followedGameGroup = await UsersGameGroup.findOneOrFail({
-        where: [{ user: userId, gameGroup: gameGroupId }]
+        where: [{ userId, gameGroupId }]
       });
       await followedGameGroup.remove();
 
       res.json({
         meta: {},
         payload: {
-          gameGroup: 'success'
+          gameGroup: {
+            message: 'success'
+          }
         }
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
+      res.status(404).json({
         error
       });
     }
