@@ -60,7 +60,7 @@ describe('Post model test', () => {
       expect(title.null).toMatch('NO');
       expect(title.default).toBeNull();
 
-      expect(body.type).toMatch('mediumtext');
+      expect(body.type).toMatch('varchar');
       expect(body.null).toMatch('NO');
       expect(body.default).toBeNull();
 
