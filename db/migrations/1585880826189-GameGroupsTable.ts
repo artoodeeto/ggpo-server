@@ -20,6 +20,12 @@ export class GameGroupsTable1585880826189 implements MigrationInterface {
             isNullable: false
           },
           {
+            name: 'description',
+            type: 'varchar',
+            length: '500',
+            isNullable: false
+          },
+          {
             name: 'createdAt',
             type: 'TIMESTAMP',
             isNullable: true,
