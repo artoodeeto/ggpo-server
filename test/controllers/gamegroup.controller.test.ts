@@ -9,7 +9,7 @@ const server = new AppServer();
 const { appInstance } = server;
 const rekwest = request(appInstance);
 
-describe.only('User controllers', () => {
+describe('GameGroup controllers', () => {
   let connection: Connection;
   let ACTIVE_JWT: string;
   let createGG: Function;
@@ -28,7 +28,7 @@ describe.only('User controllers', () => {
     createGG = (): Promise<any> => {
       return rekwest
         .post('/api/v1/game_groups')
-        .send({ title: 'game1' })
+        .send({ title: 'game1', description: 'dearest father, closest friend, most beautiful' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
     };
   });
@@ -41,7 +41,7 @@ describe.only('User controllers', () => {
     test('should success response on creating a GameGroup', async () => {
       const res = await rekwest
         .post('/api/v1/game_groups')
-        .send({ title: 'game1' })
+        .send({ title: 'game1', description: 'the description of the game' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
     });
@@ -57,10 +57,10 @@ describe.only('User controllers', () => {
     test('should have keys', async () => {
       const res = await rekwest
         .post('/api/v1/game_groups')
-        .send({ title: 'aswd' })
+        .send({ title: 'aswd', description: 'waasdfasdfasdfasfs' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.body.meta).toContainKeys(['createdAt']);
-      expect(res.body.payload.gameGroup).toContainKeys(['id', 'title']);
+      expect(res.body.meta).toContainAllKeys(['createdAt']);
+      expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'description']);
     });
   });
 
@@ -100,9 +100,13 @@ describe.only('User controllers', () => {
         .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(false);
+      expect(res.body.payload).toContainAllKeys(['isFollower', 'gameGroup']);
+      expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'createdAt', 'usersGameGroups']);
+      expect(res.body.payload.gameGroup.usersGameGroups).toBeArray();
+      expect(res.body.payload.gameGroup.usersGameGroups).toBeArrayOfSize(0);
     });
 
-    test('should return these json keys', async () => {
+    test('should return these json keys if user is following', async () => {
       const gg = await createGG();
       await rekwest
         .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
@@ -112,9 +116,10 @@ describe.only('User controllers', () => {
         .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(true);
-      expect(res.body.payload).toContainKeys(['isFollower', 'gameGroup']);
-      expect(res.body.payload.gameGroup).toContainKeys(['id', 'title', 'createdAt', 'usersGameGroups']);
+      expect(res.body.payload).toContainAllKeys(['isFollower', 'gameGroup']);
+      expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'createdAt', 'usersGameGroups']);
       expect(res.body.payload.gameGroup.usersGameGroups).toBeArray();
+      expect(res.body.payload.gameGroup.usersGameGroups[0].user).toContainAllKeys(['id', 'username', 'email']);
     });
   });
 
@@ -140,6 +145,7 @@ describe.only('User controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
       expect(res.body.payload.gameGroup.title).toBe('updateddddd');
+      expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'description']);
     });
   });
 
