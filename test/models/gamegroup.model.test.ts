@@ -24,7 +24,7 @@ describe('GameGroup model test', () => {
 
   describe('Test model constraints', () => {
     it('GameGroup constraints', async () => {
-      const { id, title, createdAt, updatedAt } = await modelDescription();
+      const { id, title, description, createdAt, updatedAt } = await modelDescription();
       expect(id.type).toMatch(/int/);
       expect(id.null).toMatch('NO');
       expect(id.key).toMatch('PRI');
@@ -34,6 +34,10 @@ describe('GameGroup model test', () => {
       expect(title.type).toMatch(/varchar/);
       expect(title.null).toMatch('NO');
       expect(title.default).toBeNull();
+
+      expect(description.type).toMatch(/varchar/);
+      expect(description.null).toMatch('NO');
+      expect(description.default).toBeNull();
 
       expect(createdAt.type).toMatch('timestamp');
       expect(createdAt.null).toMatch('YES');
