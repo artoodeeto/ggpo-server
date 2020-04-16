@@ -36,8 +36,8 @@ export class PostsTable1581617587575 implements MigrationInterface {
           },
           {
             name: 'body',
-            type: 'text',
-            length: '65000',
+            type: 'varchar',
+            length: '10000',
             isNullable: false
           },
           {

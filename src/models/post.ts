@@ -18,7 +18,7 @@ export class Post extends BaseModel {
   @Column({ type: 'varchar', length: 255 })
   title!: string;
 
-  @Column({ type: 'text', width: 65000 })
+  @Column({ type: 'varchar', length: 10000 })
   body!: string;
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
