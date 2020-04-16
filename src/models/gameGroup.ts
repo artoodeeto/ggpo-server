@@ -18,6 +18,9 @@ export class GameGroup extends BaseModel {
   @Column({ type: 'varchar', length: 255 })
   title!: string;
 
+  @Column({ type: 'varchar', length: 500 })
+  description!: string;
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;
 
