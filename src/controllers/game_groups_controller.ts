@@ -16,7 +16,7 @@ export class GameGroupsController extends BaseController {
 
     try {
       const gameGroup = GameGroup.create(req.body as GameGroup);
-      const { id, title, createdAt } = await gameGroup.save();
+      const { id, title, description, createdAt } = await gameGroup.save();
       res.json({
         meta: {
           createdAt
@@ -24,7 +24,8 @@ export class GameGroupsController extends BaseController {
         payload: {
           gameGroup: {
             id,
-            title
+            title,
+            description
           }
         }
       });
@@ -54,8 +55,8 @@ export class GameGroupsController extends BaseController {
       const gg = GameGroup.createQueryBuilder()
         .select(['gg.title', 'gg.id', 'gg.createdAt', 'ugg.id', 'u.id', 'u.username', 'u.email'])
         .from(GameGroup, 'gg')
-        .innerJoin('gg.usersGameGroups', 'ugg')
-        .innerJoin('ugg.user', 'u')
+        .leftJoin('gg.usersGameGroups', 'ugg')
+        .leftJoin('ugg.user', 'u')
         .where('gg.id = :id', { id: gameGroupId })
         .getOne();
 
@@ -87,7 +88,7 @@ export class GameGroupsController extends BaseController {
       const gg = await GameGroup.findOneOrFail(id);
       Object.assign(gg, { ...req.body });
       await gg.save();
-      const { title, createdAt, updatedAt } = gg;
+      const { title, description, createdAt, updatedAt } = gg;
       res.json({
         meta: {
           createdAt,
@@ -96,7 +97,8 @@ export class GameGroupsController extends BaseController {
         payload: {
           gameGroup: {
             id,
-            title
+            title,
+            description
           }
         }
       });
