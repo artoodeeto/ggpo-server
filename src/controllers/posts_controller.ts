@@ -112,14 +112,22 @@ export class PostsController extends BaseController {
     const offset = req.query?.offset ?? 0;
     const limit = req.query?.limit ?? 10;
     try {
-      const posts: PostModel[] = await PostModel.find({
+      const p = PostModel.find({
         select: ['id', 'title', 'body', 'createdAt'],
         skip: offset,
         take: limit,
         order: { createdAt: 'DESC' }
       });
+
+      /** explanation on why theres a separate query for count is on getSomeGameGroup */
+      const c = PostModel.count();
+
+      const [count, posts] = await Promise.all([c, p]);
+
       res.status(200).json({
-        meta: {},
+        meta: {
+          count
+        },
         payload: {
           posts
         }

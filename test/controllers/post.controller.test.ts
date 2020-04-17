@@ -154,6 +154,7 @@ describe('Post controllers', () => {
       const res = await rekwest
         .get('/api/v1/posts/query/some/posts?limit=5')
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      expect(res.body.meta.count).toBe(7);
       expect(res.body.payload.posts).toHaveLength(5);
     });
 
