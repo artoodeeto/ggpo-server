@@ -53,7 +53,7 @@ export class GameGroupsController extends BaseController {
       await GameGroup.findOneOrFail(gameGroupId);
 
       const gg = GameGroup.createQueryBuilder()
-        .select(['gg.title', 'gg.id', 'gg.createdAt', 'ugg.id', 'u.id', 'u.username', 'u.email'])
+        .select(['gg.description', 'gg.title', 'gg.id', 'gg.createdAt', 'ugg.id', 'u.id', 'u.username', 'u.email'])
         .from(GameGroup, 'gg')
         .leftJoin('gg.usersGameGroups', 'ugg')
         .leftJoin('ugg.user', 'u')
@@ -136,7 +136,49 @@ export class GameGroupsController extends BaseController {
 
   @Get('query/some/game_groups')
   @Middleware(JwtManager.middleware)
-  private async getSomeGameGroup(req: ISecureRequest, res: Response): Promise<void> {}
+  private async getSomeGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomeGameGroup params GAMEGROUP_QUERY:', { ...req.query });
+    const offset = req.query?.offset ?? 0;
+    const limit = req.query?.limit ?? 10;
+
+    try {
+      const gg = GameGroup.find({
+        select: ['id', 'description', 'createdAt', 'updatedAt'],
+        skip: offset,
+        take: limit,
+        order: { createdAt: 'DESC' }
+      });
+
+      const c = GameGroup.count();
+
+      const [count, gameGroups] = await Promise.all([c, gg]);
+
+      /**
+       * Theres a bug on this when you add any attributes doesnt return anything
+       */
+      // const ww = await GameGroup.createQueryBuilder()
+      //   .select()
+      //   .addSelect('id')
+      //   .skip(offset)
+      //   .take(limit)
+      //   .orderBy({ createdAt: 'DESC' })
+      //   .getManyAndCount();
+
+      res.status(200).json({
+        meta: {
+          count
+        },
+        payload: {
+          gameGroups
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      res.status(400).json({
+        error
+      });
+    }
+  }
 
   @Put('follow/:gameGroupId/')
   @Middleware(JwtManager.middleware)

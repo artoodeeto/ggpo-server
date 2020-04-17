@@ -101,7 +101,13 @@ describe('GameGroup controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(false);
       expect(res.body.payload).toContainAllKeys(['isFollower', 'gameGroup']);
-      expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'createdAt', 'usersGameGroups']);
+      expect(res.body.payload.gameGroup).toContainAllKeys([
+        'id',
+        'title',
+        'description',
+        'createdAt',
+        'usersGameGroups'
+      ]);
       expect(res.body.payload.gameGroup.usersGameGroups).toBeArray();
       expect(res.body.payload.gameGroup.usersGameGroups).toBeArrayOfSize(0);
     });
@@ -117,7 +123,13 @@ describe('GameGroup controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(true);
       expect(res.body.payload).toContainAllKeys(['isFollower', 'gameGroup']);
-      expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'createdAt', 'usersGameGroups']);
+      expect(res.body.payload.gameGroup).toContainAllKeys([
+        'id',
+        'title',
+        'description',
+        'createdAt',
+        'usersGameGroups'
+      ]);
       expect(res.body.payload.gameGroup.usersGameGroups).toBeArray();
       expect(res.body.payload.gameGroup.usersGameGroups[0].user).toContainAllKeys(['id', 'username', 'email']);
     });
@@ -202,6 +214,32 @@ describe('GameGroup controllers', () => {
       expect(res.status).toBe(200);
       expect(uggCount).toBe(0);
       expect(res.body.payload.gameGroup.message).toBe('success');
+    });
+
+    test('should return status 401 if unauthorized', async () => {
+      const gg = await createGG();
+      const res = await rekwest
+        .delete(`/api/v1/game_groups/unfollow/${gg.body.payload.gameGroup.id}`)
+        .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      expect(res.status).toBe(401);
+    });
+  });
+
+  describe('GET: getSomeGameGroup, query/some/game_groups route', () => {
+    test('should return a offset, limit, and count', async () => {
+      await createGG();
+      await createGG();
+      await createGG();
+      await createGG();
+      await createGG();
+      const res = await rekwest
+        .get(`/api/v1/game_groups/query/some/game_groups?offset=2&limit=5`)
+        .set('Authorization', `Bearer ${ACTIVE_JWT}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.meta.count).toBe(5);
+      // created 5 GG and offset by 2 should return 3
+      expect(res.body.payload.gameGroups).toBeArrayOfSize(3);
     });
 
     test('should return status 401 if unauthorized', async () => {
