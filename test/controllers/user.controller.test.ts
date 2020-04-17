@@ -141,12 +141,18 @@ describe('User controllers', () => {
 
     test('should return an Array of users, with valid keys', async () => {
       await User.create({ ...userInfo }).save();
+      await User.create({
+        username: 'test2',
+        email: 'foobar2@gmail.com',
+        password: 'password'
+      }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
       const res = await rekwest.get('/api/v1/users/query/some/users?offset=2').set('Authorization', `Bearer ${token}`);
       expect(res.body.payload.users).toBeArray();
       expect(res.body).toContainKeys(['meta', 'payload']);
       expect(res.body.payload).toContainKey('users');
+      expect(res.body.meta.count).toBe(2);
     });
 
     test('should return a content type of application/json', async (done) => {

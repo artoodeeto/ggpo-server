@@ -93,16 +93,25 @@ export class UsersController extends BaseController {
   private async getSomeUsers(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('getSomeUsers params USER_ID:', { ...req.query });
     const offset = req.query?.offset ?? 0;
+
+    const u = User.find({
+      select: ['id', 'email', 'username'],
+      skip: offset,
+      take: 10,
+      order: { id: 'ASC' }
+    });
+    /** explanation on why theres a separate query for count is on getSomeGameGroup */
+    const c = User.count();
+
+    const [count, users] = await Promise.all([c, u]);
+
     try {
       res.json({
-        meta: {},
+        meta: {
+          count
+        },
         payload: {
-          users: await User.find({
-            select: ['id', 'email', 'username'],
-            skip: offset,
-            take: 10,
-            order: { id: 'ASC' }
-          })
+          users
         }
       });
     } catch (error) {
