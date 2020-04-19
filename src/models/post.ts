@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user';
 import { BaseModel } from './base_model';
+import { IsNotEmpty } from 'class-validator';
 
 @Entity({ name: 'posts' })
 export class Post extends BaseModel {
@@ -16,9 +17,11 @@ export class Post extends BaseModel {
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })
+  @IsNotEmpty()
   title!: string;
 
   @Column({ type: 'varchar', length: 10000 })
+  @IsNotEmpty()
   body!: string;
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
