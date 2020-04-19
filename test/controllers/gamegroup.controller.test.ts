@@ -16,7 +16,7 @@ describe('GameGroup controllers', () => {
   const userInfo = {
     username: 'test',
     email: 'foobar@gmail.com',
-    password: 'password'
+    password: 'Password123!'
   };
   const EXPIRED_HEADER =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJub2NhcEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im5vY2FwIiwiaWF0IjoxNTgwODc0OTMxLCJleHAiOjE1ODA4ODU3MzF9.-f9zq8LdOwdCuwZkS_T1oyFOoxIVJ5lSv5zWHClOiUs';

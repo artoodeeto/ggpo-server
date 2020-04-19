@@ -13,7 +13,6 @@ export class ValidateUserMiddleware {
       logger.info('Creating User');
       const user: User = User.create(req.body as User);
       logger.info('User created');
-      await user.validateModel();
       logger.info('User validated');
       res.locals = {
         user: await user.save()

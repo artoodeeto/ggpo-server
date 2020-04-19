@@ -20,23 +20,8 @@ export class PostsController extends BaseController {
     const post: PostModel = PostModel.create(req.body as PostModel);
 
     try {
-      /**
-       * ! When I use promise.all to run validation and user search
-       * ! and run the test. this will give me an error:
-       * ! AlreadyHasActiveConnectionError: Cannot create a new connection named "default", because connection with such name already exist and it now has an active connection session.
-        test('should fail if given empty values', async () => {
-          const res = await rekwest
-          .post('/api/v1/posts')
-          .send({ title: '', body: '' })
-          .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-          expect(res.status).toBe(400);
-        });
-       * const [user, p] = await Promise.all([u, post.validateModel()]);
-       */
-
-      const u: Promise<User> = User.findOneOrFail(id);
-      const [user, p] = await Promise.all([u, post.validateModel()]);
-      post.user = user as User;
+      const user: User = await User.findOneOrFail(id);
+      post.user = user;
       const { id: postID, title, body } = await post.save();
 
       res.status(200).json({
@@ -84,7 +69,6 @@ export class PostsController extends BaseController {
     try {
       const post = await PostModel.findOneOrFail(id);
       Object.assign(post, { ...req.body });
-      await post.validateModel();
       await post.save();
 
       res.status(200).json({

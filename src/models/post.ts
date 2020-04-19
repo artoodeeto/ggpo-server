@@ -5,7 +5,9 @@ import {
   UpdateDateColumn,
   ManyToOne,
   DeleteDateColumn,
-  CreateDateColumn
+  CreateDateColumn,
+  BeforeUpdate,
+  BeforeInsert
 } from 'typeorm';
 import { User } from './user';
 import { BaseModel } from './base_model';
@@ -39,4 +41,10 @@ export class Post extends BaseModel {
     { onDelete: 'CASCADE' }
   )
   user!: User;
+
+  @BeforeUpdate()
+  @BeforeInsert()
+  private async modelValidation(): Promise<void> {
+    await this.validateModel();
+  }
 }

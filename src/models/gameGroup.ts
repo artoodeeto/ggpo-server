@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany
+  OneToMany,
+  BeforeInsert,
+  BeforeUpdate
 } from 'typeorm';
 import { BaseModel } from './base_model';
 import { UsersGameGroup } from './usersGameGroup';
@@ -39,4 +41,10 @@ export class GameGroup extends BaseModel {
     { cascade: true }
   )
   usersGameGroups!: UsersGameGroup[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  private async modelValidation(): Promise<void> {
+    await this.validateModel();
+  }
 }
