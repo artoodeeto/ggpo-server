@@ -6,9 +6,10 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   BeforeInsert,
-  CreateDateColumn
+  CreateDateColumn,
+  BeforeUpdate
 } from 'typeorm';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, Matches } from 'class-validator';
 import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 import { Post } from './post';
@@ -30,7 +31,10 @@ export class User extends BaseModel {
 
   @Column({ type: 'varchar', length: 255 })
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(8)
+  @Matches(/[0-9]/)
+  @Matches(/[!@#$%^&]/)
+  @Matches(/[A-Z]/)
   password!: string;
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
@@ -57,8 +61,13 @@ export class User extends BaseModel {
   usersGameGroups!: UsersGameGroup[];
 
   @BeforeInsert()
-  private async beforeInsertHashPassword(): Promise<void> {
-    await this.hashPassword();
+  private async beforeInsertAsyncMethods(): Promise<void> {
+    await Promise.all([this.hashPassword(), this.validateModel()]);
+  }
+
+  @BeforeUpdate()
+  private async modelValidation(): Promise<void> {
+    await this.validateModel();
   }
 
   private async hashPassword(): Promise<void> {

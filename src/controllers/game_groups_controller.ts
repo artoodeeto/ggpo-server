@@ -16,7 +16,6 @@ export class GameGroupsController extends BaseController {
 
     try {
       const gameGroup = GameGroup.create(req.body as GameGroup);
-      await gameGroup.validateModel();
       const { id, title, description, createdAt } = await gameGroup.save();
       res.json({
         meta: {
@@ -88,7 +87,6 @@ export class GameGroupsController extends BaseController {
     try {
       const gg = await GameGroup.findOneOrFail(id);
       Object.assign(gg, { ...req.body });
-      await gg.validateModel();
       await gg.save();
       const { title, description, createdAt, updatedAt } = gg;
       res.json({

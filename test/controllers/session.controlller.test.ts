@@ -13,7 +13,7 @@ describe('User controllers', () => {
   const userInfo = {
     username: 'test',
     email: 'foobar@gmail.com',
-    password: 'password'
+    password: 'Password123!'
   };
 
   beforeEach(async () => {
@@ -25,55 +25,125 @@ describe('User controllers', () => {
   });
 
   describe('POST: /signup route', () => {
-    test('signup should be successful', async () => {
-      const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
-      expect(res.status).toBe(200);
-      expect(res.body).toContainKeys(['meta', 'payload']);
-      expect(res.body.meta).toContainKeys(['issueDate', 'expToken']);
-      expect(res.body.payload).toContainKeys(['token', 'user']);
-      expect(res.body.payload.user).toContainKeys(['id', 'email', 'username']);
+    describe('ON SIGNUP', () => {
+      test('signup should be successful', async () => {
+        const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
+        expect(res.status).toBe(200);
+        expect(res.body).toContainKeys(['meta', 'payload']);
+        expect(res.body.meta).toContainKeys(['issueDate', 'expToken']);
+        expect(res.body.payload).toContainKeys(['token', 'user']);
+        expect(res.body.payload.user).toContainKeys(['id', 'email', 'username']);
+      });
+
+      test('duplicate email on signup should fail', async () => {
+        await User.create({ ...userInfo }).save();
+        const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
+        expect(res.status).toBe(400);
+      });
+
+      test('signup should have expiry of 3h max', async () => {
+        const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
+        const exp = Number(res.body.meta.expToken);
+        expect(exp / 1000 / 60 / 60).toEqual(3);
+      });
     });
 
-    test('duplicate email on signup should fail', async () => {
-      await User.create({ ...userInfo }).save();
-      const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
-      expect(res.status).toBe(400);
+    describe('USERNAME', () => {
+      test('empty username on signup should fail', async () => {
+        const u = {
+          username: '',
+          email: 'foobar@gmail.com',
+          password: 'Password123!'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+      });
     });
 
-    test('empty email on signup should fail', async () => {
-      const u = {
-        username: 'test',
-        email: '',
-        password: 'password'
-      };
-      const res = await rekwest.post('/api/v1/signup').send({ ...u });
-      expect(res.status).toBe(400);
+    describe('EMAIL', () => {
+      test('empty email on signup should fail if empty', async () => {
+        const u = {
+          username: 'test',
+          email: '',
+          password: 'Password123!'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+      });
+
+      test('on signup should fail if incorrect format', async () => {
+        const u = {
+          username: 'test',
+          email: 'email',
+          password: 'Password123!'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+      });
     });
 
-    test('empty username on signup should fail', async () => {
-      const u = {
-        username: '',
-        email: 'foobar@gmail.com',
-        password: 'password'
-      };
-      const res = await rekwest.post('/api/v1/signup').send({ ...u });
-      expect(res.status).toBe(400);
-    });
+    describe('PASSWORD', () => {
+      test('empty password on signup should fail', async () => {
+        const u = {
+          username: 'test',
+          email: 'foobar@gmail.com',
+          password: ''
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+        expect(res.body.error[0].constraints).toContainKey('isNotEmpty');
+        expect(res.body.error[0].constraints.isNotEmpty).toMatch('password should not be empty');
+      });
 
-    test('empty password on signup should fail', async () => {
-      const u = {
-        username: 'test',
-        email: 'foobar@gmail.com',
-        password: ''
-      };
-      const res = await rekwest.post('/api/v1/signup').send({ ...u });
-      expect(res.status).toBe(400);
-    });
+      test('password with less than 8 should fail', async () => {
+        const u = {
+          username: 'test',
+          email: 'foobar@gmail.com',
+          password: 'Pass'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+        expect(res.body.error[0].constraints).toContainKey('minLength');
+        expect(res.body.error[0].constraints.minLength).toMatch(
+          'password must be longer than or equal to 8 characters'
+        );
+      });
 
-    test('login should have expiry of 3h max', async () => {
-      const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
-      const exp = Number(res.body.meta.expToken);
-      expect(exp / 1000 / 60 / 60).toEqual(3);
+      test('password should have at least one !@#$%^&', async () => {
+        const u = {
+          username: 'test',
+          email: 'foobar@gmail.com',
+          password: 'Password123'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+        expect(res.body.error[0].constraints).toContainKey('matches');
+        expect(res.body.error[0].constraints.matches).toMatch('password must match /[!@#$%^&]/ regular expression');
+      });
+
+      test('password should have at least one A-Z', async () => {
+        const u = {
+          username: 'test',
+          email: 'foobar@gmail.com',
+          password: 'password!1'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+        expect(res.body.error[0].constraints).toContainKey('matches');
+        expect(res.body.error[0].constraints.matches).toMatch('password must match /[A-Z]/ regular expression');
+      });
+
+      test('password should have at least one 0-9', async () => {
+        const u = {
+          username: 'test',
+          email: 'foobar@gmail.com',
+          password: 'Password!'
+        };
+        const res = await rekwest.post('/api/v1/signup').send({ ...u });
+        expect(res.status).toBe(400);
+        expect(res.body.error[0].constraints).toContainKey('matches');
+        expect(res.body.error[0].constraints.matches).toMatch('password must match /[0-9]/ regular expression');
+      });
     });
   });
 
@@ -97,7 +167,7 @@ describe('User controllers', () => {
       const login = {
         username: 'test',
         email: 'foobarbaz@gmail.com',
-        password: 'password'
+        password: 'Password123!'
       };
       const res = await rekwest.post('/api/v1/login').send({ ...login });
       expect(res.status).toBe(404);
@@ -109,7 +179,7 @@ describe('User controllers', () => {
       const login = {
         username: 'test',
         email: 'foobarbaz@gmail.com',
-        password: 'password'
+        password: 'Password123!'
       };
       await User.create({ ...login }).save();
       const res = await rekwest.post('/api/v1/login').send({ ...login, password: 'wawa' });

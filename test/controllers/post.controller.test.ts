@@ -15,7 +15,7 @@ describe('Post controllers', () => {
   const userInfo = {
     username: 'nocap',
     email: 'nocap@gmail.com',
-    password: 'password'
+    password: 'Password123!'
   };
   const samplePost = {
     title: 'shit',
@@ -45,14 +45,14 @@ describe('Post controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
     });
-    // ! If you uncomment this it will fail on test. check createPost method controller
-    // test('should fail if given empty values', async () => {
-    //   const res = await rekwest
-    //     .post('/api/v1/posts')
-    //     .send({ title: '', body: '' })
-    //     .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-    //   expect(res.status).toBe(400);
-    // });
+
+    test('should fail if given empty values', async () => {
+      const res = await rekwest
+        .post('/api/v1/posts')
+        .send({ title: '', body: '' })
+        .set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      expect(res.status).toBe(400);
+    });
   });
 
   describe('GET: /posts/:id route', () => {
