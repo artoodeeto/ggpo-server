@@ -40,6 +40,7 @@ export class UsersController extends BaseController {
     try {
       const user: User = await User.findOneOrFail(id);
       Object.assign(user, { ...req.body });
+      //! IF Promise.all is used all user controller test will fail
       await user.validateModel();
       await user.hashPasswordOnUpdate(req.body);
       const { password, updatedAt, createdAt, deletedAt, ...restOfUserObject } = await user.save();
