@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { BaseModel } from './base_model';
 import { UsersGameGroup } from './usersGameGroup';
+import { IsNotEmpty } from 'class-validator';
 
 @Entity({ name: 'game_groups' })
 export class GameGroup extends BaseModel {
@@ -16,9 +17,11 @@ export class GameGroup extends BaseModel {
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })
+  @IsNotEmpty()
   title!: string;
 
   @Column({ type: 'varchar', length: 500 })
+  @IsNotEmpty()
   description!: string;
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
