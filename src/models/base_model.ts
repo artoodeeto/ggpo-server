@@ -1,14 +1,9 @@
-/* eslint-disable no-useless-catch */
 import { BaseEntity } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
 export class BaseModel extends BaseEntity {
   async validateModel(): Promise<BaseModel> {
-    try {
-      await validateOrReject(this, { validationError: { target: false } });
-      return this;
-    } catch (error) {
-      throw error;
-    }
+    await validateOrReject(this, { validationError: { target: false } });
+    return this;
   }
 }
