@@ -54,6 +54,16 @@ describe('GameGroup controllers', () => {
       expect(res.status).toBe(401);
     });
 
+    test('should fail if given empty data', async () => {
+      const res = await rekwest
+        .post('/api/v1/game_groups')
+        .send({ title: '', description: '' })
+        .set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBeArray();
+      expect(res.body.error[0].constraints.isNotEmpty).toBe('title should not be empty');
+    });
+
     test('should have keys', async () => {
       const res = await rekwest
         .post('/api/v1/game_groups')
@@ -158,6 +168,15 @@ describe('GameGroup controllers', () => {
       expect(res.status).toBe(200);
       expect(res.body.payload.gameGroup.title).toBe('updateddddd');
       expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'description']);
+    });
+
+    test('should fail if properties is/are empty', async () => {
+      const gg = await createGG();
+      const res = await rekwest
+        .put(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .send({ title: '' })
+        .set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      expect(res.status).toBe(404);
     });
   });
 
