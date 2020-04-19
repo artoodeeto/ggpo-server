@@ -33,14 +33,13 @@ describe('Post model test', () => {
     expect(postCount[1]).toEqual(1);
   });
 
-  it('should create a post', async () => {
-    await Post.create({
+  it('should reject if given an empty property', async () => {
+    const p = Post.create({
       title: '',
       body: ''
-    }).save();
+    });
 
-    const postCount = await Post.findAndCount();
-    expect(postCount[1]).toEqual(1);
+    await expect(p.validateModel()).toReject();
   });
 
   it('should throw if given invalid or null values', () => {
