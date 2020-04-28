@@ -11,6 +11,7 @@ import * as controllers from '../src/controllers/controller_imports';
 
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
+import cors from 'cors';
 
 import * as swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from './swagger';
@@ -19,6 +20,7 @@ export class AppServer extends Server {
   constructor() {
     super(process.env.NODE_ENV === 'development');
     this.app.use(helmet());
+    this.app.use(cors());
     this.app.use(pinoExpress({ logger }));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
