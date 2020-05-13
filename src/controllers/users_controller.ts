@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
+import { UsersGameGroup } from '../models/usersGameGroup';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -14,12 +15,25 @@ export class UsersController extends BaseController {
     const { id } = req.params;
     try {
       const { username, email } = await User.findOneOrFail(id);
+
+      // const u = await User.createQueryBuilder()
+      //   .select(['user.id', 'user.username', 'user.email', 'p.title', 'gg.id', 'ugg.id'])
+      //   .from(User, 'user')
+      //   .leftJoin('user.posts', 'p')
+      //   .leftJoin('user.usersGameGroups', 'ugg')
+      //   .leftJoin('ugg.gameGroup', 'gg')
+      //   .limit(10)
+      //   .where('user.id = :id', { id })
+      //   .getOne();
+
       res.json({
         meta: {},
         payload: {
-          id,
-          username,
-          email
+          user: {
+            id,
+            username,
+            email
+          }
         }
       });
     } catch (error) {
