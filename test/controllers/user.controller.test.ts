@@ -34,7 +34,7 @@ describe('User controllers', () => {
       const res = await rekwest.get('/api/v1/users/1').set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(200);
       expect(res.body).toContainKeys(['meta', 'payload']);
-      expect(res.body.payload).toContainKeys(['username', 'email']);
+      expect(res.body.payload.user).toContainKeys(['id', 'username', 'email']);
     });
 
     test('should return status code 400 with error information', async () => {
