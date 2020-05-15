@@ -4,7 +4,7 @@ title: Stack 📚
 sidebar_label: Stack 📚
 ---
 
-## Backend Main Stack
+## Backend Stack
 
 - **[Overnightjs/core](https://github.com/seanpmaxwell/overnight/tree/master/src/core#overnight-core)** as express typescript
 - **[Overnightjs/jwt](https://github.com/seanpmaxwell/overnight/tree/master/src/core#overnight-jwt)** as jasonWebToken
@@ -17,12 +17,21 @@ sidebar_label: Stack 📚
 - **[Mysql2](https://www.npmjs.com/package/mysql2)** as database
 - **[Typeorm](https://typeorm.io/#/)** as ORM (used as active record)
 - **[Typescript](https://www.typescriptlang.org/)** backend language
-- **[Docker](https://www.docker.com/)**
-- **[Node](https://nodejs.org/en/)**
 - **[Jest](https://jestjs.io/)** as backend test framework
 - **[Supertest](https://www.npmjs.com/package/supertest)** as HTTP testing
 - **[Husky](https://github.com/typicode/husky)** as Git Hooks
+- **[Node](https://nodejs.org/en/)**
+- **[Docker](https://www.docker.com/)**
+- **[Cors](https://www.npmjs.com/package/cors)**
 
-## Frontend Main Stack
+## Frontend Stack
 
-- **[React](https://reactjs.org/)**
+- **[React](https://reactjs.org/)** as Front-end Framework
+- **[React-Router-Dom](https://reacttraining.com)** as Router
+- **[React-Redux](https://react-redux.js.org)** as State Management
+- **[Redux-Thunk](https://github.com/reduxjs/redux-thunk)** as Redux Middleware (used for side effects)
+- **[Redux-Persist](https://www.npmjs.com/package/redux-persist)** as Persist/rehydrate redux store
+- **[Axios](https://github.com/axios/axios)** as HTTP Client
+- **[Husky](https://github.com/typicode/husky)** as Git Hooks
+- **[Sass](https://sass-lang.com/)** as Styling
+- **[JS-Cookie](https://www.npmjs.com/package/js-cookie)** as Cookie manager
