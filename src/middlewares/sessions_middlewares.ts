@@ -3,8 +3,9 @@ import { JwtManager } from '@overnightjs/jwt';
 import bcrypt from 'bcrypt';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
+import { errorControllerHandler } from '../../helpers/contoller_error';
 
-export class ValidateUserMiddleware {
+export class SessionsMiddleware {
   static async validateUserOnSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       /**
@@ -20,8 +21,10 @@ export class ValidateUserMiddleware {
       next();
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
-        error
+      const { statusCode, errorMessage, errorType } = errorControllerHandler(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -75,8 +78,10 @@ export class ValidateUserMiddleware {
       next();
     } else {
       logger.error('Token Generation Failed');
-      res.status(500).json({
-        error: 'Can not generate token'
+      const { statusCode, errorMessage, errorType } = errorControllerHandler('SERVER', 'Can not Generate Token');
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
