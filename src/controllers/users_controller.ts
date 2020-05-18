@@ -26,7 +26,7 @@ export class UsersController extends BaseController {
       //   .where('user.id = :id', { id })
       //   .getOne();
 
-      res.json({
+      res.status(200).json({
         meta: {},
         payload: {
           user: {
@@ -38,8 +38,10 @@ export class UsersController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -56,7 +58,7 @@ export class UsersController extends BaseController {
       Object.assign(user, { ...req.body });
       await user.hashPasswordOnUpdate(req.body);
       const { password, updatedAt, createdAt, deletedAt, ...restOfUserObject } = await user.save();
-      res.json({
+      res.status(201).json({
         meta: {
           updatedAt,
           createdAt,
@@ -68,8 +70,10 @@ export class UsersController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -87,16 +91,13 @@ export class UsersController extends BaseController {
       const user: User = await User.findOneOrFail(id);
       await user.remove();
 
-      res.status(200).json({
-        meta: {
-          deleteAt: 'some date'
-        },
-        payload: {}
-      });
+      res.status(204).json();
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -119,7 +120,7 @@ export class UsersController extends BaseController {
     const [count, users] = await Promise.all([c, u]);
 
     try {
-      res.json({
+      res.status(200).json({
         meta: {
           count
         },
@@ -129,8 +130,10 @@ export class UsersController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }

@@ -17,7 +17,7 @@ export class GameGroupsController extends BaseController {
     try {
       const gameGroup = GameGroup.create(req.body as GameGroup);
       const { id, title, description, createdAt } = await gameGroup.save();
-      res.json({
+      res.status(201).json({
         meta: {
           createdAt
         },
@@ -31,8 +31,10 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -63,7 +65,7 @@ export class GameGroupsController extends BaseController {
       const follower = User.isUserFollowingGameGroup(userId, gameGroupId);
       const [gameGroup, isFollower] = await Promise.all([gg, follower]);
 
-      res.json({
+      res.status(200).json({
         meta: {},
         payload: {
           isFollower,
@@ -72,8 +74,10 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -89,7 +93,7 @@ export class GameGroupsController extends BaseController {
       Object.assign(gg, { ...req.body });
       await gg.save();
       const { title, description, createdAt, updatedAt } = gg;
-      res.json({
+      res.status(201).json({
         meta: {
           createdAt,
           updatedAt
@@ -104,8 +108,10 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -118,18 +124,13 @@ export class GameGroupsController extends BaseController {
     try {
       const gg = await GameGroup.findOneOrFail(id);
       await gg.remove();
-      res.json({
-        meta: {},
-        payload: {
-          gameGroup: {
-            msg: 'success'
-          }
-        }
-      });
+      res.status(204).json();
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -174,8 +175,10 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -202,7 +205,7 @@ export class GameGroupsController extends BaseController {
         await uGG.save();
       }
 
-      res.json({
+      res.status(201).json({
         meta: {},
         payload: {
           gameGroup: {
@@ -212,8 +215,10 @@ export class GameGroupsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -230,18 +235,13 @@ export class GameGroupsController extends BaseController {
       });
       await followedGameGroup.remove();
 
-      res.json({
-        meta: {},
-        payload: {
-          gameGroup: {
-            message: 'success'
-          }
-        }
-      });
+      res.status(204).json();
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
