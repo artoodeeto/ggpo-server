@@ -24,7 +24,7 @@ export class PostsController extends BaseController {
       post.user = user;
       const { id: postID, title, body } = await post.save();
 
-      res.status(200).json({
+      res.status(201).json({
         meta: {},
         payload: {
           post: {
@@ -36,7 +36,11 @@ export class PostsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(400).json({ error });
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
     }
   }
 
@@ -54,7 +58,11 @@ export class PostsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({ error });
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
     }
   }
 
@@ -71,7 +79,7 @@ export class PostsController extends BaseController {
       Object.assign(post, { ...req.body });
       await post.save();
 
-      res.status(200).json({
+      res.status(201).json({
         meta: {},
         payload: {
           post: {
@@ -83,7 +91,11 @@ export class PostsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({ error });
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
     }
   }
 
@@ -95,15 +107,14 @@ export class PostsController extends BaseController {
     try {
       const post = await PostModel.findOneOrFail(id);
       await post.remove();
-      res.status(200).json({
-        meta: {},
-        payload: {
-          message: 'success'
-        }
-      });
+      res.status(204).json();
     } catch (error) {
       logger.error(error);
-      res.status(404).json({ error });
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
     }
   }
 
@@ -136,7 +147,11 @@ export class PostsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      res.status(404).json({ error });
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
     }
   }
 }

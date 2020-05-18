@@ -40,22 +40,26 @@ export class SessionsMiddleware {
       });
       logger.info('Email unique, Testing for password...');
       const isPasswordCorrect: boolean = await bcrypt.compare(password, user.password);
-      logger.info('User has correct password');
       if (isPasswordCorrect) {
+        logger.info('User has correct password');
         res.locals = {
           user
         };
         next();
       } else {
         logger.info('Incorrect Password!');
+        const { errorMessage, errorType } = errorControllerHandler('CLIENT', 'Password does not match the email');
         res.status(400).json({
-          error: 'incorrect credentials'
+          errorType,
+          errorMessage
         });
       }
     } catch (error) {
       logger.error(error);
-      res.status(404).json({
-        error: `no user with ${email}`
+      const { statusCode, errorMessage, errorType } = errorControllerHandler(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
       });
     }
   }
@@ -78,8 +82,8 @@ export class SessionsMiddleware {
       next();
     } else {
       logger.error('Token Generation Failed');
-      const { statusCode, errorMessage, errorType } = errorControllerHandler('SERVER', 'Can not Generate Token');
-      res.status(statusCode).json({
+      const { errorMessage, errorType } = errorControllerHandler('SERVER', 'Can not Generate Token');
+      res.status(500).json({
         errorType,
         errorMessage
       });
