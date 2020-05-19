@@ -43,8 +43,8 @@ describe('User controllers', () => {
       const { token } = loginResponse.body.payload;
       const res = await rekwest.get('/api/v1/users/100').set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(404);
-      expect(res.body).toContainKey('error');
-      expect(res.body.error).toContainKeys(['name', 'message']);
+      expect(res.body).toContainKey('errorMessage');
+      expect(res.body.errorMessage).toBe('Could not found any Entity');
     });
 
     test('should fail if no headers', async () => {
@@ -64,7 +64,7 @@ describe('User controllers', () => {
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token, user } = loginResponse.body.payload;
       const res = await rekwest.put(`/api/v1/users/${user.id}`).set('Authorization', `Bearer ${token}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
     });
 
     test('should return status code 404 if user Id is incorrect', async () => {
@@ -94,7 +94,7 @@ describe('User controllers', () => {
         .put(`/api/v1/users/${user.id}`)
         .send({ email: 'kwala' })
         .set('Authorization', `Bearer ${token}`);
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(400);
     });
   });
 
@@ -104,7 +104,7 @@ describe('User controllers', () => {
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token, user } = loginResponse.body.payload;
       const res = await rekwest.delete(`/api/v1/users/${user.id}`).set('Authorization', `Bearer ${token}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
       const userCount: number = await User.count();
       expect(userCount).toBe(0);
     });
