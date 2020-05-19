@@ -1,8 +1,8 @@
 import { errorControllerHandler } from '../../helpers/contoller_error';
-import { ErrorResponse } from '../../interfaces/error_response';
+import { ErrorResponseType } from '../../interfaces/error_response';
 
 export class BaseController {
-  controllerErrors(error: any): ErrorResponse {
+  controllerErrors(error: any): ErrorResponseType {
     return errorControllerHandler(error);
   }
 }
