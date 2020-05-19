@@ -43,7 +43,7 @@ describe('GameGroup controllers', () => {
         .post('/api/v1/game_groups')
         .send({ title: 'game1', description: 'the description of the game' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
     });
 
     test('should fail if unauthorized', async () => {
@@ -60,8 +60,8 @@ describe('GameGroup controllers', () => {
         .send({ title: '', description: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(400);
-      expect(res.body.error).toBeArray();
-      expect(res.body.error[0].constraints.isNotEmpty).toBe('title should not be empty');
+      expect(res.body).toContainKey('errorMessage');
+      expect(res.body.errorMessage.isNotEmpty).toBe('description should not be empty');
     });
 
     test('should have keys', async () => {
@@ -165,7 +165,7 @@ describe('GameGroup controllers', () => {
         .put(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
         .send({ title: 'updateddddd' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       expect(res.body.payload.gameGroup.title).toBe('updateddddd');
       expect(res.body.payload.gameGroup).toContainAllKeys(['id', 'title', 'description']);
     });
@@ -176,7 +176,7 @@ describe('GameGroup controllers', () => {
         .put(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
         .send({ title: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(400);
     });
   });
 
@@ -188,7 +188,7 @@ describe('GameGroup controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       const ggCount = await GameGroup.count();
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
       expect(ggCount).toBe(0);
     });
 
@@ -205,7 +205,7 @@ describe('GameGroup controllers', () => {
         .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       expect(res.body.payload.gameGroup.message).toBe('success');
     });
 
@@ -230,9 +230,8 @@ describe('GameGroup controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       const uggCount = await UsersGameGroup.count();
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
       expect(uggCount).toBe(0);
-      expect(res.body.payload.gameGroup.message).toBe('success');
     });
 
     test('should return status 401 if unauthorized', async () => {

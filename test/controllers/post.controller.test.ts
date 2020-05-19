@@ -43,7 +43,7 @@ describe('Post controllers', () => {
         .post('/api/v1/posts')
         .send({ ...samplePost })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
     });
 
     test('should fail if given empty values', async () => {
@@ -82,7 +82,7 @@ describe('Post controllers', () => {
         .put(`/api/v1/posts/${id}`)
         .send({ title: 'the', body: 'new' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       const { title, body } = res.body.payload.post;
       expect(title).toBe('the');
       expect(body).toBe('new');
@@ -95,8 +95,8 @@ describe('Post controllers', () => {
         .put(`/api/v1/posts/${id}`)
         .send({ title: '', body: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(404);
-      expect(res.body.error).toBeArray();
+      expect(res.status).toBe(400);
+      expect(res.body).toContainKey('errorMessage');
     });
 
     test('should fail if no ID is given', async () => {
@@ -124,7 +124,7 @@ describe('Post controllers', () => {
         .delete(`/api/v1/posts/${id}`)
         .send({ title: 'the', body: 'new' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
 
     test('should fail if no ID is given', async () => {
