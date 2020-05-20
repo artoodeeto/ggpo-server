@@ -9,16 +9,20 @@ const reduceValidationError = (acc: any, nxt: any): any => {
 
 function getError(error: any | QueryFailedError | ValidationError[] | ValidationError): ErrorType {
   let type = '';
-  let msg: any = null;
+  let msg: object = {};
   if ((Array.isArray(error) && error.constructor.name === 'Array') || error.constructor.name === 'ValidationError') {
     type = error[0].constructor.name;
     msg = error.reduce(reduceValidationError, {});
   } else if (error.constructor.name === 'QueryFailedError') {
     type = error.constructor.name;
-    msg = error.message;
+    msg = {
+      queryFailedErr: error.message
+    };
   } else if (error.constructor.name === 'EntityNotFound' || error.constructor.name === 'EntityNotFoundError') {
     type = error.constructor.name;
-    msg = 'Could not found any Entity';
+    msg = {
+      noEntity: 'Could not found any Entity'
+    };
   }
 
   return {
@@ -40,7 +44,7 @@ function getError(error: any | QueryFailedError | ValidationError[] | Validation
  * @param {string} [customErrMsg] used this for custom error like 500 errors, supply error message
  * @returns {ErrorResponseType}
  */
-export function errorControllerHandler(error: any, customErrMsg?: string): ErrorResponseType {
+export function errorControllerHandler(error: any, customErrMsg?: object): ErrorResponseType {
   const { errorType, errMsg: errorMessage } = getError(error);
   switch (errorType) {
     case ErrorTypeEnums.QueryFailedError: {

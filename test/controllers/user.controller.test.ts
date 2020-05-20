@@ -44,7 +44,7 @@ describe('User controllers', () => {
       const res = await rekwest.get('/api/v1/users/100').set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(404);
       expect(res.body).toContainKey('errorMessage');
-      expect(res.body.errorMessage).toBe('Could not found any Entity');
+      expect(res.body.errorMessage.noEntity).toBe('Could not found any Entity');
     });
 
     test('should fail if no headers', async () => {

@@ -1,12 +1,12 @@
 export interface ErrorResponseType {
   errorType: string;
   statusCode: number;
-  errorMessage: string | undefined;
+  errorMessage: object | undefined;
 }
 
 export interface ErrorType {
   errorType: string;
-  errMsg: string | any;
+  errMsg: object;
 }
 
 export enum ErrorTypeEnums {

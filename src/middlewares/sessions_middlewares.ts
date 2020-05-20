@@ -48,7 +48,9 @@ export class SessionsMiddleware {
         next();
       } else {
         logger.info('Incorrect Password!');
-        const { errorMessage, errorType } = errorControllerHandler('CLIENT', 'Password does not match the email');
+        const { errorMessage, errorType } = errorControllerHandler('CLIENT', {
+          misMatchPassword: 'Password does not match the email'
+        });
         res.status(400).json({
           errorType,
           errorMessage
@@ -82,7 +84,7 @@ export class SessionsMiddleware {
       next();
     } else {
       logger.error('Token Generation Failed');
-      const { errorMessage, errorType } = errorControllerHandler('SERVER', 'Can not Generate Token');
+      const { errorMessage, errorType } = errorControllerHandler('SERVER', { serverErr: 'Can not Generate Token' });
       res.status(500).json({
         errorType,
         errorMessage
