@@ -189,7 +189,7 @@ describe('Sessions controllers', () => {
       const res = await rekwest.post('/api/v1/login').send({ ...login });
       expect(res.status).toBe(404);
       expect(res.body).toContainKeys(['errorMessage', 'errorType']);
-      expect(res.body.errorMessage).toMatch('Could not found any Entity');
+      expect(res.body.errorMessage.noEntity).toMatch('Could not found any Entity');
     });
 
     test('unsuccessful login: Incorrect password', async () => {
@@ -202,7 +202,7 @@ describe('Sessions controllers', () => {
       const res = await rekwest.post('/api/v1/login').send({ ...login, password: 'wawa' });
       expect(res.status).toBe(400);
       expect(res.body).toContainKeys(['errorMessage', 'errorType']);
-      expect(res.body.errorMessage).toMatch('Password does not match the email');
+      expect(res.body.errorMessage.misMatchPassword).toMatch('Password does not match the email');
     });
 
     test('login should have expiry of 3h max', async () => {
