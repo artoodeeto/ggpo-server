@@ -189,7 +189,7 @@ describe('Sessions controllers', () => {
       const res = await rekwest.post('/api/v1/login').send({ ...login });
       expect(res.status).toBe(404);
       expect(res.body).toContainKeys(['errorMessage', 'errorType']);
-      expect(res.body.errorMessage.noEntity).toMatch('Could not found any Entity');
+      expect(res.body.errorMessage.noEmail).toMatch('Incorrect Email');
     });
 
     test('unsuccessful login: Incorrect password', async () => {
