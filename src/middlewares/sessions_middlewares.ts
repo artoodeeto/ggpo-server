@@ -13,11 +13,11 @@ export class SessionsMiddleware {
        */
       logger.info('Creating User');
       const user: User = User.create(req.body as User);
-      logger.info('User created');
-      logger.info('User validated');
       res.locals = {
         user: await user.save()
       };
+      logger.info('User created');
+      logger.info('User validated');
       next();
     } catch (error) {
       logger.error(error);
@@ -58,8 +58,10 @@ export class SessionsMiddleware {
       }
     } catch (error) {
       logger.error(error);
-      const { statusCode, errorMessage, errorType } = errorControllerHandler(error);
-      res.status(statusCode).json({
+      const { errorMessage, errorType } = errorControllerHandler('CLIENT', {
+        noEmail: 'Incorrect Email'
+      });
+      res.status(404).json({
         errorType,
         errorMessage
       });
