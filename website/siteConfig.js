@@ -16,8 +16,8 @@ const users = [
     // if it is not '/', like: '/test-site/img/image.jpg'.
     image: '/img/undraw_open_source.svg',
     infoLink: 'https://www.facebook.com',
-    pinned: true,
-  },
+    pinned: true
+  }
 ];
 
 const siteConfig = {
@@ -39,9 +39,9 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'stack', label: 'Docs' },
-    { doc: 'doc4', label: 'API' },
+    { doc: 'api', label: 'API' },
     { page: 'help', label: 'Help' },
-    { blog: false, label: 'Blog' },
+    { blog: false, label: 'Blog' }
   ],
 
   // If you have users set above, you add it here:
@@ -55,7 +55,7 @@ const siteConfig = {
   /* Colors for website */
   colors: {
     primaryColor: '#0D1321',
-    secondaryColor: '#41D3BD',
+    secondaryColor: '#41D3BD'
   },
 
   /* Custom fonts for website */
@@ -77,7 +77,7 @@ const siteConfig = {
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
-    theme: 'default',
+    theme: 'default'
   },
 
   // Add custom scripts here that would be placed in <script> tags.
@@ -90,7 +90,7 @@ const siteConfig = {
 
   // Open Graph and Twitter card images.
   ogImage: 'img/undraw_online.svg',
-  twitterImage: 'img/undraw_tweetstorm.svg',
+  twitterImage: 'img/undraw_tweetstorm.svg'
 
   // For sites with a sizable amount of content, set collapsible to true.
   // Expand/collapse the links and subcategories under categories.

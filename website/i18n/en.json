@@ -5,6 +5,10 @@
     "previous": "Previous",
     "tagline": "Good Game Peace Out",
     "docs": {
+      "api": {
+        "title": "API Documentation",
+        "sidebar_label": "API 📜"
+      },
       "architecture": {
         "title": "Architecture 🏗",
         "sidebar_label": "Architecture 🏗"
@@ -49,11 +53,12 @@
         "title": "Documentation 📖",
         "sidebar_label": "Documentation 📖"
       },
-      "doc4": {
-        "title": "Other Document"
-      },
       "doc5": {
         "title": "Fifth Document"
+      },
+      "folder_structure": {
+        "title": "Folder 🗂",
+        "sidebar_label": "Folder 🗂"
       },
       "migrations": {
         "title": "Migrations",
@@ -91,7 +96,7 @@
       "Testing/QA Guide": "Testing/QA Guide",
       "Contributing to the Docs": "Contributing to the Docs",
       "Headaches 🐞🤯🦟": "Headaches 🐞🤯🦟",
-      "First Category": "First Category"
+      "API": "API"
     }
   },
   "pages-strings": {

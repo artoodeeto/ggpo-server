@@ -39,9 +39,7 @@ _If you don't want to use NVM_
 **Using docker to run the application**
 
 1. Inside the root folder run command `docker-compose up`. My advice don't run it on detached mode so you can see the query logs
-2. Then comment `TYPEORM_HOST=db` and uncomment `TYPEORM_HOST=localhost`.
-3. Run `npm run migration:run`
-4. And uncomment `TYPEORM_HOST=db` and comment `TYPEORM_HOST=localhost`. (This error is explained on the Bugs part of the documentation)
+2. After the server is running and ready to take connections, run command `npm run migration:run`
 
 _To kill docker run `docker-compose down`_
 

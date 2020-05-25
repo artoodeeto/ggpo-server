@@ -38,7 +38,7 @@ You can also checkout the API documentation by running the application and going
 1. On the root folder change the file name `the_env_file.txt` to `.env` file uncomment `host:"localhost"` then comment `host: 'db'`. This error is explained in the docs.
 2. run `npm install`.
 3. Run the app using `npm run dev`.
-4. Then run the migration `npm run migration:run`
+4. Then run the migration `npm run typeorm migration:run`
 
 **_Note:_** Make sure you have mysql running. In macOS using brew `brew services start mysql`. For now I don't know how to run it mysql on other OS. You don't have to run it on the background process though, as long as your mysql is running. Also if you're using DBMS, use your mysql credentials
 
@@ -47,9 +47,8 @@ You can also checkout the API documentation by running the application and going
 ##### With Docker
 
 1. Inside the root folder run command `docker-compose up`. To kill docker run `docker-compose down`. My advice don't run it on detached mode so you can see the query logs
-2. Then comment `TYPEORM_HOST=db` and uncomment `TYPEORM_HOST=localhost`.
-3. Run `npm run migration:run`
-4. And uncomment `TYPEORM_HOST=db` and comment `TYPEORM_HOST=localhost`.
+2. Then uncomment `TYPEORM_HOST=db` and comment `TYPEORM_HOST=localhost`.
+3. If the server is accepting connections then you can run `npm run typeorm migration:run`
 
 **_Note:_** If you're using DBMS use the host `host:0.0.0.0` then your credentials.
 
