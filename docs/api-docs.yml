@@ -48,28 +48,26 @@ paths:
               schema:
                 $ref: "#/components/responses/loginAndSignupResponse"
         "400":
-          description: payload is incorrect (email is not in correct format)
+          description: validation payload failed
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
-                    type: array
-                    items:
-                      properties:
-                        value:
-                          type: string
-                        property:
-                          type: string
-                        children:
-                          type: array
-                          items:
-                            type: string
-                        constraints:
-                          type: object
-                          example:
-                            "isEmail": "email must be an email"
+                  errorType:
+                    type: string
+                    example: "ValidationError"
+                  errorMessage:
+                    properties:
+                      isEmail:
+                        type: string
+                        example: "email must be an email"
+                      matches:
+                        type: string
+                        example: "password must match /[0-9]/ regular expression"
+                      minLength:
+                        type: string
+                        example: "password must be longer than or equal to 8 characters"
 
   /login:
     post:
@@ -102,11 +100,18 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    oneOf:
-                      - example: incorrect credentials
-                      - example: no user with EMAIL
+                    example: "CLIENT"
+                  errorMessage:
+                    properties:
+                      misMatchPassword:
+                        type: string
+                        example: "Password does not match the email"
+                      noEmail:
+                        type: string
+                        example: "Incorrect Email"
+
   /users/{id}:
     get:
       tags:
@@ -162,11 +167,39 @@ paths:
         - $ref: "#/components/parameters/idPath"
       responses:
         "200":
-          description: NOT YET DONE BISSH
+          description: User update
           content:
             application/json:
               schema:
                 type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      updatedAt:
+                        type: string
+                        example: "2020-05-24T22:45:16.000Z"
+                      createdAt:
+                        type: string
+                        example: "2020-05-24T22:45:16.000Z"
+                      deteledAt:
+                        type: string
+                        example: "2020-05-24T22:45:16.000Z"
+                  payload:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                            example: 1
+                          username:
+                            type: string
+                            example: "username"
+                          email:
+                            type: string
+                            example: "username@gmail.com"
         "404":
           $ref: "#/components/responses/couldNotFindUser"
     delete:

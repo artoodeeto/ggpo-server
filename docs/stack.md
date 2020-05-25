@@ -23,6 +23,7 @@ sidebar_label: Stack 📚
 - **[Node](https://nodejs.org/en/)**
 - **[Docker](https://www.docker.com/)**
 - **[Cors](https://www.npmjs.com/package/cors)**
+- **[swagger](https://swagger.io/)** as API documentation
 
 ## Frontend Stack
 
