@@ -3,6 +3,7 @@ import { Connection, createConnection } from 'typeorm';
 import { AppServer } from '../../config/server';
 import { testSetup } from '../../config/test_setup';
 import { Post } from '../../src/models/post';
+import { User } from '../../src/models/user';
 
 const server = new AppServer();
 const { appInstance } = server;
@@ -28,8 +29,11 @@ describe('Post controllers', () => {
     connection = await createConnection(testSetup);
     const res = await rekwest.post('/api/v1/signup').send({ ...userInfo });
     ACTIVE_JWT = res.body.payload.token;
-    createPost = (): Promise<any> => {
-      return Post.create(samplePost).save();
+    createPost = async (): Promise<any> => {
+      // FIXME:  Temp fix. You need to associate a user to posts so it can return a post with user because of inner join
+      const post = Post.create(samplePost);
+      post.user = await User.findOneOrFail(1);
+      return post.save();
     };
   });
 
@@ -163,6 +167,9 @@ describe('Post controllers', () => {
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.meta.count).toBe(7);
       expect(res.body.payload.posts).toHaveLength(5);
+      expect(res.body.payload.posts).toBeArray();
+      expect(res.body.payload.posts[0]).toContainKey('user');
+      expect(res.body.payload.posts[0].user).toContainKeys(['id', 'username', 'email']);
     });
 
     test('should fail if token is invalid', async () => {
