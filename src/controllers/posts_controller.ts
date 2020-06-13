@@ -125,12 +125,36 @@ export class PostsController extends BaseController {
     const offset = req.query?.offset ?? 0;
     const limit = req.query?.limit ?? 10;
     try {
-      const p = PostModel.find({
-        select: ['id', 'title', 'body', 'createdAt'],
-        skip: offset,
-        take: limit,
-        order: { createdAt: 'DESC' }
-      });
+      // comments are my attempts not to use query builder! ggrr!
+
+      // const p = PostModel.find({
+      //   select: ['id', 'title', 'body', 'createdAt'],
+      //   skip: offset,
+      //   take: limit,
+      //   order: { createdAt: 'DESC' }
+      // });
+
+      // const p = PostModel.find({
+      //   join: {
+      //     alias: 'post',
+      //     innerJoinAndSelect: {
+      //       user: 'post.user'
+      //     }
+      //   },
+      //   select: ['id', 'title', 'body', 'createdAt'],
+      //   skip: offset,
+      //   take: limit
+      // });
+
+      const p = PostModel.createQueryBuilder()
+        .select(['post.id', 'post.title', 'post.body', 'post.createdAt'])
+        .from(PostModel, 'post')
+        .innerJoin('post.user', 'user')
+        .addSelect(['user.id', 'user.username', 'user.email'])
+        .skip(offset)
+        .take(limit)
+        .orderBy('post.createdAt', 'DESC')
+        .getMany();
 
       /** explanation on why theres a separate query for count is on getSomeGameGroup */
       const c = PostModel.count();
