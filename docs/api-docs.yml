@@ -371,10 +371,18 @@ paths:
                             title: "title"
                             body: "body"
                             createdAt: "2020-02-27T04:16:50.000Z"
+                            user:
+                              id: number
+                              username: string
+                              email: string
                           - id: 2
                             title: "title"
                             body: "body"
                             createdAt: "2020-02-27T04:16:50.000Z"
+                            user:
+                              id: number
+                              username: string
+                              email: string
         "401":
           $ref: "#/components/responses/unauthorized"
         "404":
