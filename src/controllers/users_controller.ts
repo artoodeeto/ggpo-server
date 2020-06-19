@@ -5,7 +5,11 @@ import { BaseController } from './base_controller';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
 import { UsersGameGroup } from '../models/usersGameGroup';
+import { ResourceValidation } from '../middlewares/resource_validation_middleware';
 
+const resV = new ResourceValidation(User);
+
+console.log(resV, 'ffffffffffffffffffff');
 @Controller('users')
 export class UsersController extends BaseController {
   @Get(':id')
@@ -47,7 +51,7 @@ export class UsersController extends BaseController {
   }
 
   @Put(':id')
-  @Middleware(JwtManager.middleware)
+  @Middleware([JwtManager.middleware])
   private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('updateUser params USER_ID:', { ...req.params });
     logger.info('updateUser params USER_BODY:', { ...req.body });
