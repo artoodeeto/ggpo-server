@@ -70,6 +70,10 @@ export class User extends BaseModel {
     await this.validateModel();
   }
 
+  static foo(): void {
+    console.log('USER FOO');
+  }
+
   private async hashPassword(): Promise<void> {
     try {
       this.password = await bcrypt.hash(this.password, Number(process.env.SALT_ROUNDS));
