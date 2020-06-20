@@ -10,9 +10,15 @@ export class ResourceValidation {
     this.modelContext = model;
   }
 
-  checkIfCurrentUserIsOwnerOfResource(): void {
-    console.log('adsfadsfasdfasdasdfasdfasdfasdfasdff');
+  checkIfCurrentUserIsOwnerOfResource(model: any): any {
+    console.log(model.foo());
+    console.log(this, 'adsfadsfasdfasdasdfasdfasdfasdfasdff');
     // this.modelContext.foo();
+    // next();
+    return function(req: any, res: any, next: any): void {
+      // console.log(res);
+      // next();
+    };
   }
 
   // setModelContext(model: any): void {
