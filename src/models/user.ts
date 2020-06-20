@@ -70,8 +70,8 @@ export class User extends BaseModel {
     await this.validateModel();
   }
 
-  static foo(): void {
-    console.log('USER FOO');
+  foo(): void {
+    console.log('USER FOO', this);
   }
 
   private async hashPassword(): Promise<void> {
