@@ -51,7 +51,7 @@ export class UsersController extends BaseController {
   }
 
   @Put(':id')
-  @Middleware([resV.checkIfCurrentUserIsOwnerOfResource(new User()), JwtManager.middleware])
+  @Middleware([JwtManager.middleware])
   private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('updateUser params USER_ID:', { ...req.params });
     logger.info('updateUser params USER_BODY:', { ...req.body });
