@@ -7,9 +7,6 @@ import { logger } from '../../config/logger';
 import { UsersGameGroup } from '../models/usersGameGroup';
 import { ResourceValidation } from '../middlewares/resource_validation_middleware';
 
-const resV = new ResourceValidation(new User());
-
-// console.log(resV.checkIfCurrentUserIsOwnerOfResource(1, 2, 3), 'ffffffffffffffffffff');
 @Controller('users')
 export class UsersController extends BaseController {
   @Get(':id')
@@ -51,7 +48,7 @@ export class UsersController extends BaseController {
   }
 
   @Put(':id')
-  @Middleware([JwtManager.middleware])
+  @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
   private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('updateUser params USER_ID:', { ...req.params });
     logger.info('updateUser params USER_BODY:', { ...req.body });
@@ -83,7 +80,7 @@ export class UsersController extends BaseController {
   }
 
   @Delete(':id')
-  @Middleware(JwtManager.middleware)
+  @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
   private async deleteUser(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('deleteUser params USER_ID:', { ...req.params });
     const { id } = req.params;
