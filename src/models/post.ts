@@ -12,9 +12,10 @@ import {
 import { User } from './user';
 import { BaseModel } from './base_model';
 import { IsNotEmpty } from 'class-validator';
+import { ResourceChecker } from '../../interfaces/resource_owner_checker';
 
 @Entity({ name: 'posts' })
-export class Post extends BaseModel {
+export class Post extends BaseModel implements ResourceChecker {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
@@ -46,5 +47,18 @@ export class Post extends BaseModel {
   @BeforeInsert()
   private async modelValidation(): Promise<void> {
     await this.validateModel();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async isOwnerOfResource(currentUserId: number, requestParamsId: number): Promise<boolean> {
+    try {
+      await Post.findOneOrFail({
+        where: [{ user: currentUserId, id: requestParamsId }]
+      });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

@@ -5,6 +5,7 @@ import { Post as PostModel } from '../models/post';
 import { ISecureRequest, JwtManager } from '@overnightjs/jwt';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
+import { ResourceValidation } from '../middlewares/resource_validation_middleware';
 
 @Controller('posts')
 export class PostsController extends BaseController {
@@ -67,7 +68,7 @@ export class PostsController extends BaseController {
   }
 
   @Put(':id')
-  @Middleware(JwtManager.middleware)
+  @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new PostModel())])
   private async updatePost(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('updatePost params POST_ID:', { ...req.params });
     logger.info('updatePost params POST_BODY:', { ...req.body });
@@ -100,7 +101,7 @@ export class PostsController extends BaseController {
   }
 
   @Delete(':id')
-  @Middleware(JwtManager.middleware)
+  @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new PostModel())])
   private async deletePost(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('deletePost params POST_ID:', { ...req.params });
     const { id } = req.params;

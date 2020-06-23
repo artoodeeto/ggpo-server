@@ -14,9 +14,10 @@ import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 import { Post } from './post';
 import { UsersGameGroup } from './usersGameGroup';
+import { ResourceChecker } from '../../interfaces/resource_owner_checker';
 
 @Entity({ name: 'users' })
-export class User extends BaseModel {
+export class User extends BaseModel implements ResourceChecker {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
@@ -70,8 +71,9 @@ export class User extends BaseModel {
     await this.validateModel();
   }
 
-  foo(): void {
-    console.log('USER FOO', this);
+  // eslint-disable-next-line class-methods-use-this
+  isOwnerOfResource(currentUserId: number, requestParamsId: number): boolean {
+    return currentUserId === requestParamsId;
   }
 
   private async hashPassword(): Promise<void> {
