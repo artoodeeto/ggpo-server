@@ -1,27 +1,24 @@
-// implement state design pattern
-
 import { User } from '../models/user';
+import { ISecureRequest } from '@overnightjs/jwt';
+import { Response, NextFunction } from 'express';
+import { Post } from '../models/post';
 
 export class ResourceValidation {
-  modelContext: any;
-
-  constructor(model: any) {
-    console.log(model);
-    this.modelContext = model;
-  }
-
-  checkIfCurrentUserIsOwnerOfResource(model: any): any {
-    console.log(model.foo());
-    console.log(this, 'adsfadsfasdfasdasdfasdfasdfasdfasdff');
-    // this.modelContext.foo();
-    // next();
-    return function(req: any, res: any, next: any): void {
-      // console.log(res);
-      // next();
+  static checkIfCurrentUserIsOwnerOfResource(model: User | Post): any {
+    const currentModel = model;
+    return async function callBackResourceValidator(
+      req: ISecureRequest,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> {
+      const requestId = req.params.id;
+      const { id } = req.payload;
+      const isOwner = await currentModel.isOwnerOfResource(id, Number(requestId));
+      if (isOwner) {
+        next();
+      } else {
+        res.status(401).json({ msg: 'Unauthorized user' });
+      }
     };
   }
-
-  // setModelContext(model: any): void {
-  //   this.modelContext = model;
-  // }
 }
