@@ -116,7 +116,22 @@ describe('Post controllers', () => {
         .put('/api/v1/posts/123123123123')
         .send({ ...samplePost })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(401);
+    });
+
+    test('should return status code 401 if user tries to update other users posts', async () => {
+      const newPost = await createPost();
+      // await User.create({ ...userInfo }).save();
+      await User.create({ username: 'user2', email: 'user2@gmail.com', password: 'Password123!' }).save();
+      const loginResponse = await rekwest
+        .post('/api/v1/login')
+        .send({ username: 'user2', email: 'user2@gmail.com', password: 'Password123!' });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest
+        .put(`/api/v1/posts/${newPost.id}`)
+        .send({ ...samplePost })
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(401);
     });
   });
 
@@ -144,7 +159,21 @@ describe('Post controllers', () => {
         .delete('/api/v1/posts/123123123123')
         .send({ ...samplePost })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(401);
+    });
+
+    test('should return status code 401 if user tries to delete other users posts', async () => {
+      const newPost = await createPost();
+      await User.create({ username: 'user2', email: 'user2@gmail.com', password: 'Password123!' }).save();
+      const loginResponse = await rekwest
+        .post('/api/v1/login')
+        .send({ username: 'user2', email: 'user2@gmail.com', password: 'Password123!' });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest
+        .delete(`/api/v1/posts/${newPost.id}`)
+        .send({ ...samplePost })
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(401);
     });
   });
 

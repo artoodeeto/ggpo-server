@@ -67,12 +67,21 @@ describe('User controllers', () => {
       expect(res.status).toBe(201);
     });
 
-    test('should return status code 404 if user Id is incorrect', async () => {
+    test('should return status code 401 if user Id is incorrect', async () => {
       await User.create({ ...userInfo }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
       const res = await rekwest.put('/api/v1/users/123').set('Authorization', `Bearer ${token}`);
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(401);
+    });
+
+    test('should return status code 401 if user tries to update other user info', async () => {
+      await User.create({ ...userInfo }).save();
+      const u2 = await User.create({ username: 'user2', email: 'user2@gmail.com', password: 'Password123!' }).save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest.put(`/api/v1/users/${u2.id}`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(401);
     });
 
     test('should update a user', async () => {
@@ -114,9 +123,18 @@ describe('User controllers', () => {
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
       const res = await rekwest.delete('/api/v1/users/123').set('Authorization', `Bearer ${token}`);
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(401);
       const userCount: number = await User.count();
       expect(userCount).toBe(1);
+    });
+
+    test('should return status code 401 if user tries to delete other user', async () => {
+      await User.create({ ...userInfo }).save();
+      const u2 = await User.create({ username: 'user2', email: 'user2@gmail.com', password: 'Password123!' }).save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest.delete(`/api/v1/users/${u2.id}`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(401);
     });
 
     test('should throw error if no header or expired', async () => {
