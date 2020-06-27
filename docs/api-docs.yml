@@ -200,8 +200,10 @@ paths:
                           email:
                             type: string
                             example: "username@gmail.com"
-        "404":
-          $ref: "#/components/responses/couldNotFindUser"
+        # "404":
+        #   $ref: "#/components/responses/couldNotFindUser"
+        "401":
+          $ref: "#/components/responses/unauthorized"
     delete:
       tags:
         - Users
@@ -227,8 +229,10 @@ paths:
                   payload:
                     type: object
 
-        "404":
-          $ref: "#/components/responses/couldNotFindUser"
+        # "404":
+        #   $ref: "#/components/responses/couldNotFindUser"
+        "401":
+          $ref: "#/components/responses/unauthorized"
   /users/query/some/users:
     get:
       tags:
@@ -313,8 +317,8 @@ paths:
           $ref: "#/components/responses/postResponse"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        # "404":
+        #   $ref: "#/components/responses/404ErrorResponse"
     delete:
       tags:
         - Posts
@@ -340,8 +344,8 @@ paths:
                         example: "success"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        # "404":
+        #   $ref: "#/components/responses/404ErrorResponse"
   /posts/query/some/posts:
     get:
       tags:
@@ -795,7 +799,7 @@ components:
                     type: string
                     example: "success"
     unauthorized:
-      description: User has no token or not login
+      description: User unauthorized (no token, tampered token, accessing resource thats not owned by current user)
     404ErrorResponse:
       description: Error
     400ErrorResponse:
