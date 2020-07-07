@@ -6,6 +6,7 @@ import { User } from '../models/user';
 import { logger } from '../../config/logger';
 import { UsersGameGroup } from '../models/usersGameGroup';
 import { ResourceValidation } from '../middlewares/resource_validation_middleware';
+import { Post as PostModel } from '../models/post';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -127,6 +128,42 @@ export class UsersController extends BaseController {
         },
         payload: {
           users
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
+    }
+  }
+
+  @Get('posts/:id')
+  @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
+  private async getCurrentUserPosts(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomeUsers params USER_ID:', { ...req.query });
+    const { id } = req.params;
+    const offset = req.query?.offset ?? 0;
+    const limit = req.query?.limit ?? 10;
+
+    const [posts, count] = await PostModel.findAndCount({
+      where: { user: id },
+      take: limit,
+      skip: offset,
+      order: {
+        createdAt: 'DESC'
+      }
+    });
+
+    try {
+      res.status(200).json({
+        meta: {
+          count
+        },
+        payload: {
+          posts
         }
       });
     } catch (error) {
