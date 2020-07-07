@@ -3,6 +3,7 @@ import { Connection, createConnection } from 'typeorm';
 import { AppServer } from '../../config/server';
 import { User } from '../../src/models/user';
 import { testSetup } from '../../config/test_setup';
+import { Post } from '../../src/models/post';
 
 const server = new AppServer();
 const { appInstance } = server;
@@ -192,6 +193,48 @@ describe('User controllers', () => {
     test('should fail if header is expired', async () => {
       const res = await rekwest
         .get('/api/v1/users/query/some/users?offset=2')
+        .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      expect(res.status).toBe(401);
+    });
+  });
+
+  describe('GET: /users/posts/:id?offset={number}&limit={number}', () => {
+    test('should return status code 401 if current user wants to access a none owned resource (POST)', async () => {
+      const u = await User.create({ ...userInfo }).save();
+      const post = Post.create({
+        title: 'shit',
+        body: 'bull'
+      });
+      post.user = u;
+      await post.save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest
+        .get(`/api/v1/users/posts/${u.id}?offset=0&limit=2`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      expect(res.body.meta).toContainKey('count');
+      expect(res.body.payload).toContainKey('posts');
+      expect(res.body.payload.posts).toBeArray();
+      expect(res.body.payload.posts[0]).toBeObject();
+    });
+
+    test('should return status code 401 if current user wants to access a none owned resource (POST)', async () => {
+      await User.create({ ...userInfo }).save();
+      const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
+      const { token } = loginResponse.body.payload;
+      const res = await rekwest.get('/api/v1/users/posts/12?offset=2&limit=2').set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(401);
+    });
+
+    test('should fail if no headers', async () => {
+      const res = await rekwest.get('/api/v1/users/posts/1?offset=2&limit=2');
+      expect(res.status).toBe(401);
+    });
+
+    test('should fail if header is expired', async () => {
+      const res = await rekwest
+        .get('/api/v1/users/posts/1?offset=2&limit=2')
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
