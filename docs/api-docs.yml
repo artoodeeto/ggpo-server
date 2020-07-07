@@ -265,6 +265,50 @@ paths:
                             email: "username2@gmail.com"
         "404":
           $ref: "#/components/responses/400ErrorResponse"
+  /users/posts/{id}:
+    get:
+      tags:
+        - Users
+      summary: users posts
+      operationId: getCurrentUserPosts
+      parameters:
+        - $ref: "#/components/parameters/offsetQuery"
+        - $ref: "#/components/parameters/limitQuery"
+        - $ref: "#/components/parameters/idPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        example: 2
+                  payload:
+                    type: object
+                    properties:
+                      posts:
+                        type: array
+                        example:
+                          - id: 1
+                            title: "title1"
+                            body: "body1"
+                            createAt: "2020-07-05T03:17:02.000Z"
+                            updatedAt: "2020-07-05T03:17:02.000Z"
+                            deletedAt: null
+                          - id: 2
+                            title: "title2"
+                            body: "body2"
+                            createAt: "2020-07-05T03:17:02.000Z"
+                            updatedAt: "2020-07-05T03:17:02.000Z"
+                            deletedAt: null
+        "401":
+          $ref: "#/components/responses/unauthorized"
 
   # ! ++====================================== USERS PATH END ==================================== ++
   #
