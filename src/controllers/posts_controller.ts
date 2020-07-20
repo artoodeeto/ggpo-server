@@ -83,11 +83,7 @@ export class PostsController extends BaseController {
       res.status(201).json({
         meta: {},
         payload: {
-          post: {
-            id,
-            title,
-            body
-          }
+          post
         }
       });
     } catch (error) {

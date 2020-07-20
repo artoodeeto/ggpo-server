@@ -90,6 +90,7 @@ describe('Post controllers', () => {
       const { title, body } = res.body.payload.post;
       expect(title).toBe('the');
       expect(body).toBe('new');
+      expect(res.body.payload.post).toContainKeys(['id', 'title', 'body', 'createdAt', 'updatedAt', 'deletedAt']);
     });
 
     test('should fail if given empty strings', async () => {
