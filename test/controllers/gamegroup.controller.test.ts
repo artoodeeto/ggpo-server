@@ -258,6 +258,7 @@ describe('GameGroup controllers', () => {
       expect(res.body.meta.count).toBe(5);
       // created 5 GG and offset by 2 should return 3
       expect(res.body.payload.gameGroups).toBeArrayOfSize(3);
+      expect(res.body.payload.gameGroups[0]).toContainAllKeys(['id', 'title', 'description', 'createdAt', 'updatedAt']);
     });
 
     test('should return status 401 if unauthorized', async () => {

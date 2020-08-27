@@ -144,7 +144,7 @@ export class GameGroupsController extends BaseController {
 
     try {
       const gg = GameGroup.find({
-        select: ['id', 'description', 'createdAt', 'updatedAt'],
+        select: ['id', 'title', 'description', 'createdAt', 'updatedAt'],
         skip: offset,
         take: limit,
         order: { createdAt: 'DESC' }
