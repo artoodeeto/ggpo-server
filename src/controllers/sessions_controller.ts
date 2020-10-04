@@ -15,7 +15,7 @@ export class SessionsController extends BaseController {
     res.status(201).json({
       meta: {
         issueDate: Date.now(),
-        expToken: process.env.TOKEN_EXP
+        expToken: Number(process.env.TOKEN_EXP)
       },
       payload: {
         user: {
@@ -37,13 +37,13 @@ export class SessionsController extends BaseController {
     res.status(201).json({
       meta: {
         issueDate: Date.now(),
-        expToken: process.env.TOKEN_EXP
+        expToken: Number(process.env.TOKEN_EXP)
       },
       payload: {
         user: {
           id,
-          email,
-          username
+          username,
+          email
         },
         token
       }

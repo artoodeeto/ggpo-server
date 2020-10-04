@@ -205,14 +205,7 @@ export class GameGroupsController extends BaseController {
         await uGG.save();
       }
 
-      res.status(201).json({
-        meta: {},
-        payload: {
-          gameGroup: {
-            message: 'success'
-          }
-        }
-      });
+      res.status(204).json();
     } catch (error) {
       logger.error(error);
       const { statusCode, errorMessage, errorType } = super.controllerErrors(error);

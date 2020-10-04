@@ -4,7 +4,6 @@ import { Response } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
-import { UsersGameGroup } from '../models/usersGameGroup';
 import { ResourceValidation } from '../middlewares/resource_validation_middleware';
 import { Post as PostModel } from '../models/post';
 
@@ -149,6 +148,7 @@ export class UsersController extends BaseController {
     const limit = req.query?.limit ?? 10;
 
     const [posts, count] = await PostModel.findAndCount({
+      select: ['id', 'title', 'body', 'updatedAt', 'createdAt'],
       where: { user: id },
       take: limit,
       skip: offset,

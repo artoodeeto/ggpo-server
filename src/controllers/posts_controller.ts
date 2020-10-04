@@ -23,7 +23,7 @@ export class PostsController extends BaseController {
     try {
       const user: User = await User.findOneOrFail(id);
       post.user = user;
-      const { id: postID, title, body } = await post.save();
+      const { id: postID, title, body, updatedAt, createdAt } = await post.save();
 
       res.status(201).json({
         meta: {},
@@ -31,7 +31,9 @@ export class PostsController extends BaseController {
           post: {
             id: postID,
             title,
-            body
+            body,
+            createdAt,
+            updatedAt
           }
         }
       });
@@ -51,10 +53,18 @@ export class PostsController extends BaseController {
     logger.info('readPost params POST_ID:', { ...req.params });
     const { id } = req.params;
     try {
+      const { title, body, createdAt, updatedAt } = await PostModel.findOneOrFail(id);
+
       res.status(200).json({
         meta: {},
         payload: {
-          post: await PostModel.findOneOrFail(id)
+          post: {
+            id,
+            title,
+            body,
+            createdAt,
+            updatedAt
+          }
         }
       });
     } catch (error) {
@@ -76,14 +86,20 @@ export class PostsController extends BaseController {
     const { title, body } = req.body;
 
     try {
-      const post = await PostModel.findOneOrFail(id);
+      const post: PostModel = await PostModel.findOneOrFail(id);
       Object.assign(post, { ...req.body });
       await post.save();
-
+      const { createdAt, updatedAt } = post;
       res.status(201).json({
         meta: {},
         payload: {
-          post
+          post: {
+            id,
+            title,
+            body,
+            createdAt,
+            updatedAt
+          }
         }
       });
     } catch (error) {

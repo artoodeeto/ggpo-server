@@ -205,8 +205,7 @@ describe('GameGroup controllers', () => {
         .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
-      expect(res.status).toBe(201);
-      expect(res.body.payload.gameGroup.message).toBe('success');
+      expect(res.status).toBe(204);
     });
 
     test('should return status 404 if no ID is found', async () => {

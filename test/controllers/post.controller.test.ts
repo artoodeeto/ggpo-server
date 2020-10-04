@@ -64,7 +64,7 @@ describe('Post controllers', () => {
       const newPost = await createPost();
       const res = await rekwest.get(`/api/v1/posts/${newPost.id}`).set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
-      expect(res.body.payload.post).toContainKeys(['id', 'body', 'title']);
+      expect(res.body.payload.post).toContainKeys(['id', 'body', 'title', 'createdAt', 'updatedAt']);
     });
 
     test('should fail if no ID is given', async () => {
@@ -90,7 +90,7 @@ describe('Post controllers', () => {
       const { title, body } = res.body.payload.post;
       expect(title).toBe('the');
       expect(body).toBe('new');
-      expect(res.body.payload.post).toContainKeys(['id', 'title', 'body', 'createdAt', 'updatedAt', 'deletedAt']);
+      expect(res.body.payload.post).toContainKeys(['id', 'title', 'body', 'createdAt', 'updatedAt']);
     });
 
     test('should fail if given empty strings', async () => {
