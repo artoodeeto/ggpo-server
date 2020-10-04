@@ -7,8 +7,56 @@ import { GameGroup } from '../models/gameGroup';
 import { logger } from '../../config/logger';
 import { UsersGameGroup } from '../models/usersGameGroup';
 
-@Controller('game_groups')
+@Controller('game-groups')
 export class GameGroupsController extends BaseController {
+  @Get('')
+  @Middleware(JwtManager.middleware)
+  private async getSomeGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomeGameGroup params GAMEGROUP_QUERY:', { ...req.query });
+    const offset = req.query?.offset ?? 0;
+    const limit = req.query?.limit ?? 10;
+
+    try {
+      const gg = GameGroup.find({
+        select: ['id', 'title', 'description', 'createdAt', 'updatedAt'],
+        skip: offset,
+        take: limit,
+        order: { createdAt: 'DESC' }
+      });
+
+      const c = GameGroup.count();
+
+      const [count, gameGroups] = await Promise.all([c, gg]);
+
+      /**
+       * Theres a bug on this when you add any attributes doesnt return anything
+       */
+      // const ww = await GameGroup.createQueryBuilder()
+      //   .select()
+      //   .addSelect('id')
+      //   .skip(offset)
+      //   .take(limit)
+      //   .orderBy({ createdAt: 'DESC' })
+      //   .getManyAndCount();
+
+      res.status(200).json({
+        meta: {
+          count
+        },
+        payload: {
+          gameGroups
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
+    }
+  }
+
   @Post('')
   @Middleware(JwtManager.middleware)
   private async createGameGroup(req: ISecureRequest, res: Response): Promise<void> {
@@ -135,55 +183,7 @@ export class GameGroupsController extends BaseController {
     }
   }
 
-  @Get('query/some/game_groups')
-  @Middleware(JwtManager.middleware)
-  private async getSomeGameGroup(req: ISecureRequest, res: Response): Promise<void> {
-    logger.info('getSomeGameGroup params GAMEGROUP_QUERY:', { ...req.query });
-    const offset = req.query?.offset ?? 0;
-    const limit = req.query?.limit ?? 10;
-
-    try {
-      const gg = GameGroup.find({
-        select: ['id', 'title', 'description', 'createdAt', 'updatedAt'],
-        skip: offset,
-        take: limit,
-        order: { createdAt: 'DESC' }
-      });
-
-      const c = GameGroup.count();
-
-      const [count, gameGroups] = await Promise.all([c, gg]);
-
-      /**
-       * Theres a bug on this when you add any attributes doesnt return anything
-       */
-      // const ww = await GameGroup.createQueryBuilder()
-      //   .select()
-      //   .addSelect('id')
-      //   .skip(offset)
-      //   .take(limit)
-      //   .orderBy({ createdAt: 'DESC' })
-      //   .getManyAndCount();
-
-      res.status(200).json({
-        meta: {
-          count
-        },
-        payload: {
-          gameGroups
-        }
-      });
-    } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
-    }
-  }
-
-  @Put('follow/:gameGroupId/')
+  @Put(':gameGroupId/follow')
   @Middleware(JwtManager.middleware)
   private async followGameGroup(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('following a GameGroup ID:', { ...req.params });
@@ -216,7 +216,7 @@ export class GameGroupsController extends BaseController {
     }
   }
 
-  @Delete('unfollow/:gameGroupId/')
+  @Delete(':gameGroupId/unfollow')
   @Middleware(JwtManager.middleware)
   private async unFollowGameGroup(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('following a GameGroup ID:', { ...req.params });

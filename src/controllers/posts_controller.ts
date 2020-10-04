@@ -9,6 +9,67 @@ import { ResourceValidation } from '../middlewares/resource_validation_middlewar
 
 @Controller('posts')
 export class PostsController extends BaseController {
+  @Get('')
+  @Middleware(JwtManager.middleware)
+  private async getSomePost(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomePost params POST_QUERY:', { ...req.query });
+    const offset = req.query?.offset ?? 0;
+    const limit = req.query?.limit ?? 10;
+    try {
+      // comments are my attempts not to use query builder! ggrr!
+
+      // const p = PostModel.find({
+      //   select: ['id', 'title', 'body', 'createdAt'],
+      //   skip: offset,
+      //   take: limit,
+      //   order: { createdAt: 'DESC' }
+      // });
+
+      // const p = PostModel.find({
+      //   join: {
+      //     alias: 'post',
+      //     innerJoinAndSelect: {
+      //       user: 'post.user'
+      //     }
+      //   },
+      //   select: ['id', 'title', 'body', 'createdAt'],
+      //   skip: offset,
+      //   take: limit
+      // });
+
+      const p = PostModel.createQueryBuilder()
+        .select(['post.id', 'post.title', 'post.body', 'post.createdAt'])
+        .from(PostModel, 'post')
+        .innerJoin('post.user', 'user')
+        .addSelect(['user.id', 'user.username', 'user.email'])
+        .skip(offset)
+        .take(limit)
+        .orderBy('post.createdAt', 'DESC')
+        .getMany();
+
+      /** explanation on why theres a separate query for count is on getSomeGameGroup */
+      const c = PostModel.count();
+
+      const [count, posts] = await Promise.all([c, p]);
+
+      res.status(200).json({
+        meta: {
+          count
+        },
+        payload: {
+          posts
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
+    }
+  }
+
   @Post('')
   @Middleware(JwtManager.middleware)
   private async createPost(req: ISecureRequest, res: Response): Promise<void> {
@@ -121,67 +182,6 @@ export class PostsController extends BaseController {
       const post = await PostModel.findOneOrFail(id);
       await post.remove();
       res.status(204).json();
-    } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
-    }
-  }
-
-  @Get('query/some/posts')
-  @Middleware(JwtManager.middleware)
-  private async getSomePost(req: ISecureRequest, res: Response): Promise<void> {
-    logger.info('getSomePost params POST_QUERY:', { ...req.query });
-    const offset = req.query?.offset ?? 0;
-    const limit = req.query?.limit ?? 10;
-    try {
-      // comments are my attempts not to use query builder! ggrr!
-
-      // const p = PostModel.find({
-      //   select: ['id', 'title', 'body', 'createdAt'],
-      //   skip: offset,
-      //   take: limit,
-      //   order: { createdAt: 'DESC' }
-      // });
-
-      // const p = PostModel.find({
-      //   join: {
-      //     alias: 'post',
-      //     innerJoinAndSelect: {
-      //       user: 'post.user'
-      //     }
-      //   },
-      //   select: ['id', 'title', 'body', 'createdAt'],
-      //   skip: offset,
-      //   take: limit
-      // });
-
-      const p = PostModel.createQueryBuilder()
-        .select(['post.id', 'post.title', 'post.body', 'post.createdAt'])
-        .from(PostModel, 'post')
-        .innerJoin('post.user', 'user')
-        .addSelect(['user.id', 'user.username', 'user.email'])
-        .skip(offset)
-        .take(limit)
-        .orderBy('post.createdAt', 'DESC')
-        .getMany();
-
-      /** explanation on why theres a separate query for count is on getSomeGameGroup */
-      const c = PostModel.count();
-
-      const [count, posts] = await Promise.all([c, p]);
-
-      res.status(200).json({
-        meta: {
-          count
-        },
-        payload: {
-          posts
-        }
-      });
     } catch (error) {
       logger.error(error);
       const { statusCode, errorMessage, errorType } = super.controllerErrors(error);

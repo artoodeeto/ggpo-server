@@ -67,11 +67,6 @@ describe('Post controllers', () => {
       expect(res.body.payload.post).toContainKeys(['id', 'body', 'title', 'createdAt', 'updatedAt']);
     });
 
-    test('should fail if no ID is given', async () => {
-      const res = await rekwest.get('/api/v1/posts/').set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(404);
-    });
-
     test('should fail if ID is in correct', async () => {
       const res = await rekwest.get('/api/v1/posts/123123123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(404);
@@ -178,9 +173,9 @@ describe('Post controllers', () => {
     });
   });
 
-  describe('GET: /query/some/posts?offset={offset}&limit={limit} ', () => {
+  describe('GET: /posts?offset={offset}&limit={limit} ', () => {
     test('should get success response', async () => {
-      const res = await rekwest.get('/api/v1/posts/query/some/posts').set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      const res = await rekwest.get('/api/v1/posts').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
     });
 
@@ -192,9 +187,7 @@ describe('Post controllers', () => {
       await createPost();
       await createPost();
       await createPost();
-      const res = await rekwest
-        .get('/api/v1/posts/query/some/posts?limit=5')
-        .set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      const res = await rekwest.get('/api/v1/posts?limit=5').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.meta.count).toBe(7);
       expect(res.body.payload.posts).toHaveLength(5);
       expect(res.body.payload.posts).toBeArray();
@@ -203,7 +196,7 @@ describe('Post controllers', () => {
     });
 
     test('should fail if token is invalid', async () => {
-      const res = await rekwest.get('/api/v1/posts/query/some/posts').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      const res = await rekwest.get('/api/v1/posts').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
   });

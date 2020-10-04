@@ -27,7 +27,7 @@ describe('GameGroup controllers', () => {
     ACTIVE_JWT = res.body.payload.token;
     createGG = (): Promise<any> => {
       return rekwest
-        .post('/api/v1/game_groups')
+        .post('/api/v1/game-groups')
         .send({ title: 'game1', description: 'dearest father, closest friend, most beautiful' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
     };
@@ -37,10 +37,10 @@ describe('GameGroup controllers', () => {
     connection.close();
   });
 
-  describe('POST: createGameGroup, /game_groups route', () => {
+  describe('POST: createGameGroup, /game-groups route', () => {
     test('should success response on creating a GameGroup', async () => {
       const res = await rekwest
-        .post('/api/v1/game_groups')
+        .post('/api/v1/game-groups')
         .send({ title: 'game1', description: 'the description of the game' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(201);
@@ -48,7 +48,7 @@ describe('GameGroup controllers', () => {
 
     test('should fail if unauthorized', async () => {
       const res = await rekwest
-        .post('/api/v1/game_groups')
+        .post('/api/v1/game-groups')
         .send({ title: 'aswd' })
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
@@ -56,7 +56,7 @@ describe('GameGroup controllers', () => {
 
     test('should fail if given empty data', async () => {
       const res = await rekwest
-        .post('/api/v1/game_groups')
+        .post('/api/v1/game-groups')
         .send({ title: '', description: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(400);
@@ -66,7 +66,7 @@ describe('GameGroup controllers', () => {
 
     test('should have keys', async () => {
       const res = await rekwest
-        .post('/api/v1/game_groups')
+        .post('/api/v1/game-groups')
         .send({ title: 'aswd', description: 'waasdfasdfasdfasfs' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.meta).toContainAllKeys(['createdAt']);
@@ -74,11 +74,11 @@ describe('GameGroup controllers', () => {
     });
   });
 
-  describe('GET: readGameGroup, /game_groups route/:id', () => {
+  describe('GET: readGameGroup, /game-groups route/:id', () => {
     test('should success getting a GameGroup', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .get(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(200);
     });
@@ -86,20 +86,20 @@ describe('GameGroup controllers', () => {
     test('should fail if unauthorized', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .get(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
 
     test('should return 404 if no GameGroup found', async () => {
-      const res = await rekwest.get('/api/v1/game_groups/123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      const res = await rekwest.get('/api/v1/game-groups/123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(404);
     });
 
     test('should get false since user is not following this GameGroup', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .get(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(false);
     });
@@ -107,7 +107,7 @@ describe('GameGroup controllers', () => {
     test('should get false since user is not following this GameGroup', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .get(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(false);
       expect(res.body.payload).toContainAllKeys(['isFollower', 'gameGroup']);
@@ -125,11 +125,11 @@ describe('GameGroup controllers', () => {
     test('should return these json keys if user is following', async () => {
       const gg = await createGG();
       await rekwest
-        .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/follow`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       const res = await rekwest
-        .get(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .get(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.body.payload.isFollower).toBe(true);
       expect(res.body.payload).toContainAllKeys(['isFollower', 'gameGroup']);
@@ -145,24 +145,24 @@ describe('GameGroup controllers', () => {
     });
   });
 
-  describe('PUT: updateGameGroup, /game_groups/:id route', () => {
+  describe('PUT: updateGameGroup, /game-groups/:id route', () => {
     test('should fail if unauthorized', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .put(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
 
     test('should return status 404 if no ID is found', async () => {
-      const res = await rekwest.put('/api/v1/game_groups/123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      const res = await rekwest.put('/api/v1/game-groups/123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(404);
     });
 
     test('should update a GameGroup', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .put(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .send({ title: 'updateddddd' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(201);
@@ -173,18 +173,18 @@ describe('GameGroup controllers', () => {
     test('should fail if properties is/are empty', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .put(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .send({ title: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(400);
     });
   });
 
-  describe('DELETE: deleteGameGroup, /game_groups/:id route', () => {
+  describe('DELETE: deleteGameGroup, /game-groups/:id route', () => {
     test('should reduced count of GameGroup', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .delete(`/api/v1/game_groups/${gg.body.payload.gameGroup.id}`)
+        .delete(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       const ggCount = await GameGroup.count();
@@ -193,16 +193,16 @@ describe('GameGroup controllers', () => {
     });
 
     test('should return status 404 if no ID is found', async () => {
-      const res = await rekwest.delete('/api/v1/game_groups/123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
+      const res = await rekwest.delete('/api/v1/game-groups/123123').set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(404);
     });
   });
 
-  describe('PUT: followGameGroup, /game_groups/follow/:id route', () => {
+  describe('PUT: followGameGroup, /game-groups/:id/follow route', () => {
     test('should follow a GameGroup', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/follow`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       expect(res.status).toBe(204);
@@ -211,21 +211,21 @@ describe('GameGroup controllers', () => {
     test('should return status 404 if no ID is found', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/follow`)
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
   });
 
-  describe('DELETE: unFollowGameGroup, /game_groups/unfollow/:id route', () => {
+  describe('DELETE: unFollowGameGroup, /game-groups/:id/unfollow route', () => {
     test('should unfollow a GameGroup', async () => {
       const gg = await createGG();
       await rekwest
-        .put(`/api/v1/game_groups/follow/${gg.body.payload.gameGroup.id}`)
+        .put(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/follow`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       const res = await rekwest
-        .delete(`/api/v1/game_groups/unfollow/${gg.body.payload.gameGroup.id}`)
+        .delete(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/unfollow`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       const uggCount = await UsersGameGroup.count();
@@ -236,13 +236,13 @@ describe('GameGroup controllers', () => {
     test('should return status 401 if unauthorized', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .delete(`/api/v1/game_groups/unfollow/${gg.body.payload.gameGroup.id}`)
+        .delete(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/unfollow`)
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
   });
 
-  describe('GET: getSomeGameGroup, query/some/game_groups route', () => {
+  describe('GET: getSomeGameGroup, game-groups route', () => {
     test('should return a offset, limit, and count', async () => {
       await createGG();
       await createGG();
@@ -250,7 +250,7 @@ describe('GameGroup controllers', () => {
       await createGG();
       await createGG();
       const res = await rekwest
-        .get(`/api/v1/game_groups/query/some/game_groups?offset=2&limit=5`)
+        .get(`/api/v1/game-groups?offset=2&limit=5`)
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
 
       expect(res.status).toBe(200);
@@ -263,7 +263,7 @@ describe('GameGroup controllers', () => {
     test('should return status 401 if unauthorized', async () => {
       const gg = await createGG();
       const res = await rekwest
-        .delete(`/api/v1/game_groups/unfollow/${gg.body.payload.gameGroup.id}`)
+        .delete(`/api/v1/game-groups/${gg.body.payload.gameGroup.id}/unfollow`)
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
