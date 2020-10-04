@@ -1,26 +1,26 @@
 openapi: 3.0.2
 info:
-  version: "1.0.0"
-  title: "GOOD GAME PEACE OUT!"
-  description: "FOR GAMERS BY GAMERS"
+  version: '1.0.0'
+  title: 'GOOD GAME PEACE OUT!'
+  description: 'FOR GAMERS BY GAMERS'
 
 servers:
   - description: Development Server
-    url: "http://localhost:8000/api/v1"
+    url: 'http://localhost:8000/api/v1'
 
 tags:
   - name: Users
     description: Users Routes
   - name: Posts
     description: Posts Routes
-  - name: GameGroup
+  - name: GameGroups
     description: GameGroup Routes
 
 security:
   - bearerAuth: [bearer <TOKEN>]
 
 paths:
-  # ! ++====================================== USERS PATH START ==================================== ++
+  # ! ++====================================== SESSION PATH START ==================================== ++
   /signup:
     post:
       security:
@@ -41,13 +41,13 @@ paths:
                 password:
                   type: string
       responses:
-        "200":
+        '200':
           description: success signing up
           content:
             application/json:
               schema:
-                $ref: "#/components/responses/loginAndSignupResponse"
-        "400":
+                $ref: '#/components/responses/loginAndSignupResponse'
+        '400':
           description: validation payload failed
           content:
             application/json:
@@ -56,18 +56,18 @@ paths:
                 properties:
                   errorType:
                     type: string
-                    example: "ValidationError"
+                    example: 'ValidationError'
                   errorMessage:
                     properties:
                       isEmail:
                         type: string
-                        example: "email must be an email"
+                        example: 'email must be an email'
                       matches:
                         type: string
-                        example: "password must match /[0-9]/ regular expression"
+                        example: 'password must match /[0-9]/ regular expression'
                       minLength:
                         type: string
-                        example: "password must be longer than or equal to 8 characters"
+                        example: 'password must be longer than or equal to 8 characters'
 
   /login:
     post:
@@ -87,13 +87,13 @@ paths:
                 password:
                   type: string
       responses:
-        "200":
+        '200':
           description: success login
           content:
             application/json:
               schema:
-                $ref: "#/components/responses/loginAndSignupResponse"
-        "400":
+                $ref: '#/components/responses/loginAndSignupResponse'
+        '400':
           description: failed login
           content:
             application/json:
@@ -102,15 +102,50 @@ paths:
                 properties:
                   errorType:
                     type: string
-                    example: "CLIENT"
+                    example: 'CLIENT'
                   errorMessage:
                     properties:
                       misMatchPassword:
                         type: string
-                        example: "Password does not match the email"
+                        example: 'Password does not match the email'
                       noEmail:
                         type: string
-                        example: "Incorrect Email"
+                        example: 'Incorrect Email'
+              # ! ++====================================== SESSION PATH END ==================================== ++
+              # ! ++====================================== USER PATH START ==================================== ++
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: query some users
+      operationId: getSomeUsers
+      parameters:
+        - $ref: '#/components/parameters/offsetQuery'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                  payload:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        example:
+                          - id: 1
+                            username: 'username1'
+                            email: 'username1@gmail.com'
+                          - id: 2
+                            username: 'username2'
+                            email: 'username2@gmail.com'
+        '404':
+          $ref: '#/components/responses/400ErrorResponse'
 
   /users/{id}:
     get:
@@ -119,9 +154,9 @@ paths:
       summary: Get a user
       operationId: readUser
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -138,11 +173,11 @@ paths:
                         example: 1
                       username:
                         type: string
-                        example: "username"
+                        example: 'username'
                       email:
                         type: string
-                        example: "username@gmail.com"
-        "404":
+                        example: 'username@gmail.com'
+        '404':
           description: bad request
           content:
             application/json:
@@ -154,19 +189,19 @@ paths:
                     properties:
                       name:
                         type: string
-                        example: "EntityNotFound"
+                        example: 'EntityNotFound'
                       message:
                         type: string
-                        example: "Could not find any entity of type User matching: 2"
+                        example: 'Could not find any entity of type User matching: 2'
     put:
       tags:
         - Users
       summary: Get a user
       operationId: updateUser
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       responses:
-        "200":
+        '200':
           description: User update
           content:
             application/json:
@@ -178,13 +213,13 @@ paths:
                     properties:
                       updatedAt:
                         type: string
-                        example: "2020-05-24T22:45:16.000Z"
+                        example: '2020-05-24T22:45:16.000Z'
                       createdAt:
                         type: string
-                        example: "2020-05-24T22:45:16.000Z"
+                        example: '2020-05-24T22:45:16.000Z'
                       deteledAt:
                         type: string
-                        example: "2020-05-24T22:45:16.000Z"
+                        example: '2020-05-24T22:45:16.000Z'
                   payload:
                     type: object
                     properties:
@@ -196,23 +231,23 @@ paths:
                             example: 1
                           username:
                             type: string
-                            example: "username"
+                            example: 'username'
                           email:
                             type: string
-                            example: "username@gmail.com"
+                            example: 'username@gmail.com'
         # "404":
         #   $ref: "#/components/responses/couldNotFindUser"
-        "401":
-          $ref: "#/components/responses/unauthorized"
+        '401':
+          $ref: '#/components/responses/unauthorized'
     delete:
       tags:
         - Users
       summary: Delete a user
       operationId: deleteUser
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -231,52 +266,20 @@ paths:
 
         # "404":
         #   $ref: "#/components/responses/couldNotFindUser"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-  /users/query/some/users:
-    get:
-      tags:
-        - Users
-      summary: query some users
-      operationId: getSomeUsers
-      parameters:
-        - $ref: "#/components/parameters/offsetQuery"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  meta:
-                    type: object
-                  payload:
-                    type: object
-                    properties:
-                      users:
-                        type: array
-                        example:
-                          - id: 1
-                            username: "username1"
-                            email: "username1@gmail.com"
-                          - id: 2
-                            username: "username2"
-                            email: "username2@gmail.com"
-        "404":
-          $ref: "#/components/responses/400ErrorResponse"
-  /users/posts/{id}:
+        '401':
+          $ref: '#/components/responses/unauthorized'
+  /users/{id}/posts:
     get:
       tags:
         - Users
       summary: users posts
       operationId: getCurrentUserPosts
       parameters:
-        - $ref: "#/components/parameters/offsetQuery"
-        - $ref: "#/components/parameters/limitQuery"
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/limitQuery'
+        - $ref: '#/components/parameters/idPath'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -296,19 +299,19 @@ paths:
                         type: array
                         example:
                           - id: 1
-                            title: "title1"
-                            body: "body1"
-                            createAt: "2020-07-05T03:17:02.000Z"
-                            updatedAt: "2020-07-05T03:17:02.000Z"
+                            title: 'title1'
+                            body: 'body1'
+                            createAt: '2020-07-05T03:17:02.000Z'
+                            updatedAt: '2020-07-05T03:17:02.000Z'
                             deletedAt: null
                           - id: 2
-                            title: "title2"
-                            body: "body2"
-                            createAt: "2020-07-05T03:17:02.000Z"
-                            updatedAt: "2020-07-05T03:17:02.000Z"
+                            title: 'title2'
+                            body: 'body2'
+                            createAt: '2020-07-05T03:17:02.000Z'
+                            updatedAt: '2020-07-05T03:17:02.000Z'
                             deletedAt: null
-        "401":
-          $ref: "#/components/responses/unauthorized"
+        '401':
+          $ref: '#/components/responses/unauthorized'
 
   # ! ++====================================== USERS PATH END ==================================== ++
   #
@@ -322,85 +325,24 @@ paths:
       summary: Creating new posts
       operationId: createPost
       requestBody:
-        $ref: "#/components/requestBodies/createUpdatePost"
+        $ref: '#/components/requestBodies/createUpdatePost'
       responses:
-        "200":
-          $ref: "#/components/responses/postResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-  /posts/{id}:
-    get:
-      tags:
-        - Posts
-      summary: get a posts
-      operationId: readPost
-      parameters:
-        - $ref: "#/components/parameters/idPath"
-      requestBody:
-        $ref: "#"
-      responses:
-        "200":
-          $ref: "#/components/responses/postResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-    put:
-      tags:
-        - Posts
-      summary: edit a posts
-      operationId: updatePost
-      parameters:
-        - $ref: "#/components/parameters/idPath"
-      requestBody:
-        $ref: "#/components/requestBodies/createUpdatePost"
-      responses:
-        "200":
-          $ref: "#/components/responses/postResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        # "404":
-        #   $ref: "#/components/responses/404ErrorResponse"
-    delete:
-      tags:
-        - Posts
-      summary: delete a posts
-      operationId: deletePost
-      parameters:
-        - $ref: "#/components/parameters/idPath"
-      responses:
-        "200":
-          description: success response for creating a post
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  meta:
-                    type: object
-                  payload:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "success"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        # "404":
-        #   $ref: "#/components/responses/404ErrorResponse"
-  /posts/query/some/posts:
+        '200':
+          $ref: '#/components/responses/postResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
     get:
       tags:
         - Posts
       summary: get some posts with limit and offset
       operationId: getSomePost
       parameters:
-        - $ref: "#/components/parameters/offsetQuery"
-        - $ref: "#/components/parameters/limitQuery"
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/limitQuery'
       responses:
-        "200":
+        '200':
           description: posts
           content:
             application/json:
@@ -416,57 +358,158 @@ paths:
                         type: array
                         example:
                           - id: 1
-                            title: "title"
-                            body: "body"
-                            createdAt: "2020-02-27T04:16:50.000Z"
+                            title: 'title'
+                            body: 'body'
+                            createdAt: '2020-02-27T04:16:50.000Z'
                             user:
                               id: number
                               username: string
                               email: string
                           - id: 2
-                            title: "title"
-                            body: "body"
-                            createdAt: "2020-02-27T04:16:50.000Z"
+                            title: 'title'
+                            body: 'body'
+                            createdAt: '2020-02-27T04:16:50.000Z'
                             user:
                               id: number
                               username: string
                               email: string
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
+  /posts/{id}:
+    get:
+      tags:
+        - Posts
+      summary: get a posts
+      operationId: readPost
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      requestBody:
+        $ref: '#'
+      responses:
+        '200':
+          $ref: '#/components/responses/postResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
+    put:
+      tags:
+        - Posts
+      summary: edit a posts
+      operationId: updatePost
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      requestBody:
+        $ref: '#/components/requestBodies/createUpdatePost'
+      responses:
+        '200':
+          $ref: '#/components/responses/postResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        # "404":
+        #   $ref: "#/components/responses/404ErrorResponse"
+    delete:
+      tags:
+        - Posts
+      summary: delete a posts
+      operationId: deletePost
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: success response for creating a post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                  payload:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: 'success'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        # "404":
+        #   $ref: "#/components/responses/404ErrorResponse"
   # ! ++====================================== POST PATH END ==================================== ++
   #
   #
   #
   #
   # ! ++====================================== GAMEGROUP PATH START ==================================== ++
-  /game_groups:
+  /game-groups:
+    get:
+      tags:
+        - GameGroups
+      summary: query some game groups
+      operationId: getSomeGameGroups
+      parameters:
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/limitQuery'
+      responses:
+        '200':
+          description: query game groups response with limit and offset
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: number
+                    properties:
+                      count:
+                        type: number
+                        example: 123
+                  payload:
+                    type: object
+                    properties:
+                      gameGroups:
+                        type: array
+                        example:
+                          - id: 1
+                            title: 'dota'
+                            description: 'for noobs'
+                            createdAt: '2020-02-27T04:16:50.000Z'
+                            updatedAt: '2020-02-27T04:16:50.000Z'
+                          - id: 2
+                            title: 'lols'
+                            description: 'for weaklings'
+                            createdAt: '2020-02-27T04:16:50.000Z'
+                            updatedAt: '2020-02-27T04:16:50.000Z'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
     post:
       tags:
-        - GameGroup
+        - GameGroups
       summary: Creating new posts
       operationId: createGameGroup
       requestBody:
-        $ref: "#/components/requestBodies/createAndUpdateGameGroup"
+        $ref: '#/components/requestBodies/createAndUpdateGameGroup'
       responses:
-        "200":
-          $ref: "#/components/responses/createGGResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-  /game_groups/{id}:
+        '200':
+          $ref: '#/components/responses/createGGResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
+  /game-groups/{id}:
     get:
       tags:
-        - GameGroup
+        - GameGroups
       summary: Read a game group with user from TOKEN
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       operationId: readGameGroup
       responses:
-        "200":
+        '200':
           description: response reading a gamegroup with users
           content:
             application/json:
@@ -490,90 +533,90 @@ paths:
                             example: 1
                           title:
                             type: string
-                            example: "DOTA2"
+                            example: 'DOTA2'
                           description:
                             type: string
-                            example: "a short description of the game"
+                            example: 'a short description of the game'
                           createdAt:
                             type: string
-                            example: "2020-04-14T03:42:16.000Z"
+                            example: '2020-04-14T03:42:16.000Z'
                           usersGameGroup:
                             type: array
                             example:
                               - id: 1 # dont mind the ID here this from the join table
                                 user:
                                   id: 1
-                                  username: "username1"
-                                  email: "username1@gmail.com"
+                                  username: 'username1'
+                                  email: 'username1@gmail.com'
                               - id: 2 # dont mind the ID here this from the join table
                                 user:
                                   id: 2
-                                  username: "username2"
-                                  email: "username2@gmail.com"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+                                  username: 'username2'
+                                  email: 'username2@gmail.com'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
     put:
       tags:
-        - GameGroup
+        - GameGroups
       summary: Update a gameGroup
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       operationId: updateGameGroup
       requestBody:
-        $ref: "#/components/requestBodies/createAndUpdateGameGroup"
+        $ref: '#/components/requestBodies/createAndUpdateGameGroup'
       responses:
-        "200":
-          $ref: "#/components/responses/createGGResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        '200':
+          $ref: '#/components/responses/createGGResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
     delete:
       tags:
-        - GameGroup
+        - GameGroups
       summary: Delete a gameGroup
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       operationId: deleteGameGroup
       responses:
-        "200":
-          $ref: "#/components/responses/createGGResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-  /game_groups/follow/{id}:
+        '200':
+          $ref: '#/components/responses/createGGResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
+  /game-groups/{id}/follow:
     put:
       tags:
-        - GameGroup
+        - GameGroups
       summary: current user follows a gamegroup
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       operationId: followGameGroup
       responses:
-        "200":
-          $ref: "#/components/responses/followUnfllowResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
-  /game_groups/unfollow/{id}:
+        '200':
+          $ref: '#/components/responses/followUnfllowResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
+  /game-groups/{id}/unfollow:
     delete:
       tags:
-        - GameGroup
+        - GameGroups
       summary: current user unfollows a gamegroup
       parameters:
-        - $ref: "#/components/parameters/idPath"
+        - $ref: '#/components/parameters/idPath'
       operationId: unfollowGameGroup
       responses:
-        "200":
-          $ref: "#/components/responses/followUnfllowResponse"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/404ErrorResponse"
+        '200':
+          $ref: '#/components/responses/followUnfllowResponse'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/404ErrorResponse'
 
   # ! ++====================================== GAMEGROUP PATH END ==================================== ++
 
@@ -622,7 +665,7 @@ components:
         body:
           type: string
         user:
-          $ref: "#/components/schemas/User"
+          $ref: '#/components/schemas/User'
         createdAt:
           type: string
           format: date-time
@@ -699,10 +742,10 @@ components:
             properties:
               title:
                 type: string
-                example: "the title"
+                example: 'the title'
               body:
                 type: string
-                example: "the body"
+                example: 'the body'
 
     # ! =============================== USER END ===============================
     # ! =============================== POST START ===============================
@@ -715,10 +758,10 @@ components:
             properties:
               title:
                 type: string
-                example: "DOTA2"
+                example: 'DOTA2'
               description:
                 type: string
-                example: "a short description of the game"
+                example: 'a short description of the game'
 
     # ! =============================== USER END ===============================
   # ! =============================== REQUEST BODY END ===============================
@@ -735,8 +778,8 @@ components:
             expToken:
               type: string
           example:
-            issueDate: "1581049918568"
-            expToken: "10800000"
+            issueDate: '1581049918568'
+            expToken: '10800000'
         payload:
           type: object
           properties:
@@ -768,10 +811,10 @@ components:
                 properties:
                   name:
                     type: string
-                    example: "EntityNotFound"
+                    example: 'EntityNotFound'
                   message:
                     type: string
-                    example: "Could not find any entity of type User matching: 2"
+                    example: 'Could not find any entity of type User matching: 2'
     postResponse:
       description: success response for creating a post
       content:
@@ -792,10 +835,10 @@ components:
                         example: 1
                       title:
                         type: string
-                        example: "the title"
+                        example: 'the title'
                       body:
                         type: string
-                        example: "the body"
+                        example: 'the body'
     createGGResponse:
       description: success response for creating a new game group
       content:
@@ -808,10 +851,10 @@ components:
                 properties:
                   createdAt:
                     type: string
-                    example: "2020-04-14T03:50:47.000Z"
+                    example: '2020-04-14T03:50:47.000Z'
                   updatedAt:
                     type: string
-                    example: "2020-04-14T03:50:47.000Z"
+                    example: '2020-04-14T03:50:47.000Z'
               payload:
                 type: object
                 properties:
@@ -823,10 +866,10 @@ components:
                         example: 1
                       title:
                         type: string
-                        example: "DOTA2"
+                        example: 'DOTA2'
                       description:
                         type: string
-                        example: "a short description of the game"
+                        example: 'a short description of the game'
     followUnfllowResponse:
       description: success response for following and unfollow a new game group
       content:
@@ -841,7 +884,7 @@ components:
                 properties:
                   gamegroup:
                     type: string
-                    example: "success"
+                    example: 'success'
     unauthorized:
       description: User unauthorized (no token, tampered token, accessing resource thats not owned by current user)
     404ErrorResponse:
