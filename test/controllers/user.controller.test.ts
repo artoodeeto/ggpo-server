@@ -149,12 +149,12 @@ describe('User controllers', () => {
     });
   });
 
-  describe('GET: /query/some/users?offset={number} route', () => {
+  describe('GET: users?offset={number} route', () => {
     test('should return status code 200', async () => {
       await User.create({ ...userInfo }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
-      const res = await rekwest.get('/api/v1/users/query/some/users?offset=2').set('Authorization', `Bearer ${token}`);
+      const res = await rekwest.get('/api/v1/users?offset=2').set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(200);
     });
 
@@ -167,7 +167,7 @@ describe('User controllers', () => {
       }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
-      const res = await rekwest.get('/api/v1/users/query/some/users?offset=2').set('Authorization', `Bearer ${token}`);
+      const res = await rekwest.get('/api/v1/users?offset=2').set('Authorization', `Bearer ${token}`);
       expect(res.body.payload.users).toBeArray();
       expect(res.body).toContainKeys(['meta', 'payload']);
       expect(res.body.payload).toContainKey('users');
@@ -179,26 +179,24 @@ describe('User controllers', () => {
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
       rekwest
-        .get('/api/v1/users/query/some/users')
+        .get('/api/v1/users')
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .end(done);
     });
 
     test('should fail if no headers', async () => {
-      const res = await rekwest.get('/api/v1/users/query/some/users?offset=2');
+      const res = await rekwest.get('/api/v1/users?offset=2');
       expect(res.status).toBe(401);
     });
 
     test('should fail if header is expired', async () => {
-      const res = await rekwest
-        .get('/api/v1/users/query/some/users?offset=2')
-        .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
+      const res = await rekwest.get('/api/v1/users?offset=2').set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });
   });
 
-  describe('GET: /users/posts/:id?offset={number}&limit={number}', () => {
+  describe('GET: /users/:id/posts?offset={number}&limit={number}', () => {
     test('should return status code 401 if current user wants to access a none owned resource (POST)', async () => {
       const u = await User.create({ ...userInfo }).save();
       const post = Post.create({
@@ -210,7 +208,7 @@ describe('User controllers', () => {
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
       const res = await rekwest
-        .get(`/api/v1/users/posts/${u.id}?offset=0&limit=2`)
+        .get(`/api/v1/users/${u.id}/posts?offset=0&limit=2`)
         .set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(200);
       expect(res.body.meta).toContainKey('count');
@@ -223,18 +221,18 @@ describe('User controllers', () => {
       await User.create({ ...userInfo }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
-      const res = await rekwest.get('/api/v1/users/posts/12?offset=2&limit=2').set('Authorization', `Bearer ${token}`);
+      const res = await rekwest.get('/api/v1/users/12/posts?offset=2&limit=2').set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(401);
     });
 
     test('should fail if no headers', async () => {
-      const res = await rekwest.get('/api/v1/users/posts/1?offset=2&limit=2');
+      const res = await rekwest.get('/api/v1/users/1/posts?offset=2&limit=2');
       expect(res.status).toBe(401);
     });
 
     test('should fail if header is expired', async () => {
       const res = await rekwest
-        .get('/api/v1/users/posts/1?offset=2&limit=2')
+        .get('/api/v1/users/1/posts?offset=2&limit=2')
         .set('Authorization', `Bearer ${EXPIRED_HEADER}`);
       expect(res.status).toBe(401);
     });

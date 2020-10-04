@@ -9,6 +9,43 @@ import { Post as PostModel } from '../models/post';
 
 @Controller('users')
 export class UsersController extends BaseController {
+  @Get('')
+  @Middleware(JwtManager.middleware)
+  private async getSomeUsers(req: ISecureRequest, res: Response): Promise<void> {
+    logger.info('getSomeUsers params USER_ID:', { ...req.query });
+    const offset = req.query?.offset ?? 0;
+    const limit = req.query?.limit ?? 10;
+
+    const u = User.find({
+      select: ['id', 'email', 'username'],
+      skip: offset,
+      take: limit,
+      order: { id: 'ASC' }
+    });
+    /** explanation on why theres a separate query for count is on getSomeGameGroup */
+    const c = User.count();
+
+    const [count, users] = await Promise.all([c, u]);
+
+    try {
+      res.status(200).json({
+        meta: {
+          count
+        },
+        payload: {
+          users
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
+      res.status(statusCode).json({
+        errorType,
+        errorMessage
+      });
+    }
+  }
+
   @Get(':id')
   @Middleware(JwtManager.middleware)
   private async readUser(req: ISecureRequest, res: Response): Promise<void> {
@@ -103,43 +140,7 @@ export class UsersController extends BaseController {
     }
   }
 
-  @Get('query/some/users')
-  @Middleware(JwtManager.middleware)
-  private async getSomeUsers(req: ISecureRequest, res: Response): Promise<void> {
-    logger.info('getSomeUsers params USER_ID:', { ...req.query });
-    const offset = req.query?.offset ?? 0;
-
-    const u = User.find({
-      select: ['id', 'email', 'username'],
-      skip: offset,
-      take: 10,
-      order: { id: 'ASC' }
-    });
-    /** explanation on why theres a separate query for count is on getSomeGameGroup */
-    const c = User.count();
-
-    const [count, users] = await Promise.all([c, u]);
-
-    try {
-      res.status(200).json({
-        meta: {
-          count
-        },
-        payload: {
-          users
-        }
-      });
-    } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
-    }
-  }
-
-  @Get('posts/:id')
+  @Get(':id/posts')
   @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
   private async getCurrentUserPosts(req: ISecureRequest, res: Response): Promise<void> {
     logger.info('getSomeUsers params USER_ID:', { ...req.query });
