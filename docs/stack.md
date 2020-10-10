@@ -16,14 +16,20 @@ sidebar_label: Stack 📚
 - **[Helmet](https://helmetjs.github.io/)** as securing express framework (recommended by express)
 - **[Mysql2](https://www.npmjs.com/package/mysql2)** as database
 - **[Typeorm](https://typeorm.io/#/)** as ORM (used as active record)
-- **[Typescript](https://www.typescriptlang.org/)** backend language
-- **[Jest](https://jestjs.io/)** as backend test framework
+- **[Typescript](https://www.typescriptlang.org/)** Backend Language
+- **[Jest](https://jestjs.io/)** as Test Framework
+- **[Jest-Extended](https://github.com/jest-community/jest-extended)** Jest extended assertions
 - **[Supertest](https://www.npmjs.com/package/supertest)** as HTTP testing
 - **[Husky](https://github.com/typicode/husky)** as Git Hooks
+- **[Swagger](https://swagger.io/)** as API documentation
+- **[Swagger-UI-Express](https://github.com/scottie1984/swagger-ui-express)** as Express Open API for documentation
+- **[Body-Parser](https://github.com/expressjs/body-parser#readme)** as Body parser middleware
+- **[Cookie-Parser](https://www.npmjs.com/package/cookie-parser)** as Cookie parser middleware
+- **[Dotenv](https://www.npmjs.com/package/cookie-parser)** as Environment variables manager
+- **[JS-Yaml](https://www.npmjs.com/package/js-yaml)** used for API yaml parser
 - **[Node](https://nodejs.org/en/)**
 - **[Docker](https://www.docker.com/)**
 - **[Cors](https://www.npmjs.com/package/cors)**
-- **[Swagger](https://swagger.io/)** as API documentation
 
 ## Frontend Stack
 
@@ -36,3 +42,9 @@ sidebar_label: Stack 📚
 - **[Husky](https://github.com/typicode/husky)** as Git Hooks
 - **[Sass](https://sass-lang.com/)** as Styling
 - **[JS-Cookie](https://www.npmjs.com/package/js-cookie)** as Cookie manager
+- **[Typescript](https://www.typescriptlang.org/)** Frontend Language
+- **[Jest](https://jestjs.io/)** as Test Framework
+- **[Jest-Extended](https://github.com/jest-community/jest-extended)** Jest extended assertions
+- **[Mock-date](https://github.com/boblauer/MockDate)** Test tool to mock JS dates
+- **[Redux-Devtools-Extension](https://github.com/zalmoxisus/redux-devtools-extension)**
+- **[Redux-Mock-Store](https://github.com/reduxjs/redux-mock-store)** Test tool for mocking store

@@ -1,4 +1,4 @@
-import { descriptionModel } from '../../helpers/model_tester';
+import { descriptionModel } from '../../src/helpers/model_tester';
 
 const returnTableDescription = [
   {

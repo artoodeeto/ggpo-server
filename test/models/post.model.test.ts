@@ -1,8 +1,7 @@
 import { Connection, createConnection } from 'typeorm';
-import { ValidationError, validate, validateOrReject } from 'class-validator';
 import { Post } from '../../src/models/post';
 import { testSetup } from '../../config/test_setup';
-import { descriptionModel } from '../../helpers/model_tester';
+import { descriptionModel } from '../../src/helpers/model_tester';
 
 describe('Post model test', () => {
   let connection: Connection;

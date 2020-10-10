@@ -1,4 +1,4 @@
-import { errorControllerHandler } from '../../helpers/contoller_error';
+import { errorControllerHandler } from '../../src/helpers/controller_error';
 import { QueryFailedError } from 'typeorm/error/QueryFailedError';
 
 const queryFailedError: unknown = {
