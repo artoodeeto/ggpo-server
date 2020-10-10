@@ -1,7 +1,7 @@
 import { Connection, createConnection } from 'typeorm';
 import { GameGroup } from '../../src/models/gameGroup';
 import { testSetup } from '../../config/test_setup';
-import { descriptionModel } from '../../helpers/model_tester';
+import { descriptionModel } from '../../src/helpers/model_tester';
 
 describe('GameGroup model test', () => {
   let connection: Connection;

@@ -3,7 +3,7 @@ import { JwtManager } from '@overnightjs/jwt';
 import bcrypt from 'bcrypt';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
-import { errorControllerHandler } from '../../helpers/contoller_error';
+import { errorControllerHandler } from '../helpers/controller_error';
 
 export class SessionsMiddleware {
   static async validateUserOnSignup(req: Request, res: Response, next: NextFunction): Promise<void> {

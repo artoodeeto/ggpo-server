@@ -12,7 +12,7 @@ import {
 import { User } from './user';
 import { BaseModel } from './base_model';
 import { IsNotEmpty } from 'class-validator';
-import { ResourceChecker } from '../../interfaces/resource_owner_checker';
+import { ResourceChecker } from '../interfaces/resource_owner_checker';
 
 @Entity({ name: 'posts' })
 export class Post extends BaseModel implements ResourceChecker {

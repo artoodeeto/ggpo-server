@@ -14,7 +14,7 @@ import bcrypt from 'bcrypt';
 import { BaseModel } from './base_model';
 import { Post } from './post';
 import { UsersGameGroup } from './usersGameGroup';
-import { ResourceChecker } from '../../interfaces/resource_owner_checker';
+import { ResourceChecker } from '../interfaces/resource_owner_checker';
 
 @Entity({ name: 'users' })
 export class User extends BaseModel implements ResourceChecker {
