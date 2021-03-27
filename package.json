@@ -21,7 +21,6 @@
     "@overnightjs/core": "1.7.5",
     "@overnightjs/jwt": "1.2.0",
     "bcrypt": "5.0.1",
-    "body-parser": "1.19.0",
     "class-validator": "0.13.1",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
