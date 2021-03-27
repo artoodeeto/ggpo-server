@@ -47,18 +47,10 @@ export class User extends BaseModel implements ResourceChecker {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
-  @OneToMany(
-    (type) => Post,
-    (post) => post.user,
-    { cascade: true }
-  )
+  @OneToMany((type) => Post, (post) => post.user, { cascade: true })
   posts!: Post[];
 
-  @OneToMany(
-    (type) => UsersGameGroup,
-    (userGameGroup) => userGameGroup.user,
-    { cascade: true }
-  )
+  @OneToMany((type) => UsersGameGroup, (userGameGroup) => userGameGroup.user, { cascade: true })
   usersGameGroups!: UsersGameGroup[];
 
   @BeforeInsert()

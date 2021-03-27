@@ -48,3 +48,4 @@ sidebar_label: Stack 📚
 - **[Mock-date](https://github.com/boblauer/MockDate)** Test tool to mock JS dates
 - **[Redux-Devtools-Extension](https://github.com/zalmoxisus/redux-devtools-extension)**
 - **[Redux-Mock-Store](https://github.com/reduxjs/redux-mock-store)** Test tool for mocking store
+- **[FontAwesome](https://fontawesome.com/how-to-use/on-the-web/using-with/react)** For svg icons
