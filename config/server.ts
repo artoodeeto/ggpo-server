@@ -10,11 +10,11 @@ import { createConnection } from 'typeorm';
 import * as controllers from '../src/controllers/controller_imports';
 
 import helmet from 'helmet';
-import * as bodyParser from 'body-parser';
 import cors from 'cors';
 
 import * as swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from './swagger';
+import express from 'express';
 
 export class AppServer extends Server {
   constructor() {
@@ -22,8 +22,8 @@ export class AppServer extends Server {
     this.app.use(helmet());
     this.app.use(cors());
     this.app.use(pinoExpress({ logger }));
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.setupControllers();
   }
