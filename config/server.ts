@@ -15,6 +15,7 @@ import cors from 'cors';
 import * as swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from './swagger';
 import express from 'express';
+import { errorHandler } from '../src/middlewares/errors';
 
 export class AppServer extends Server {
   constructor() {
@@ -26,6 +27,7 @@ export class AppServer extends Server {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.setupControllers();
+    this.app.use(errorHandler);
   }
 
   /**
@@ -38,7 +40,8 @@ export class AppServer extends Server {
   private setupControllers(): void {
     const controllerInstances = [];
 
-    // eslint-disable-next-line
+    // FIXME: Fix this ts error
+    // eslint-disable-next-line no-restricted-syntax
     for (const name of Object.keys(controllers)) {
       const Controller = (controllers as any)[name];
       if (typeof Controller === 'function') {

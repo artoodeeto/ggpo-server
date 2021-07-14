@@ -1,6 +1,6 @@
 import { Controller, Get, Middleware, Delete, Put, Post } from '@overnightjs/core';
 import { JwtManager, ISecureRequest } from '@overnightjs/jwt';
-import { Response } from 'express';
+import { Response, NextFunction } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
 import { GameGroup } from '../models/gameGroup';
@@ -11,33 +11,18 @@ import { UsersGameGroup } from '../models/usersGameGroup';
 export class GameGroupsController extends BaseController {
   @Get('')
   @Middleware(JwtManager.middleware)
-  private async getSomeGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+  private async getSomeGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('getSomeGameGroup params GAMEGROUP_QUERY:', { ...req.query });
-    const offset = req.query?.offset ?? 0;
-    const limit = req.query?.limit ?? 10;
+    const offset = Number(req.query?.offset ?? 0);
+    const limit = Number(req.query?.limit ?? 10);
 
     try {
-      const gg = GameGroup.find({
+      const [gameGroups, count] = await GameGroup.findAndCount({
         select: ['id', 'title', 'description', 'createdAt', 'updatedAt'],
         skip: offset,
         take: limit,
         order: { createdAt: 'DESC' }
       });
-
-      const c = GameGroup.count();
-
-      const [count, gameGroups] = await Promise.all([c, gg]);
-
-      /**
-       * Theres a bug on this when you add any attributes doesnt return anything
-       */
-      // const ww = await GameGroup.createQueryBuilder()
-      //   .select()
-      //   .addSelect('id')
-      //   .skip(offset)
-      //   .take(limit)
-      //   .orderBy({ createdAt: 'DESC' })
-      //   .getManyAndCount();
 
       res.status(200).json({
         meta: {
@@ -48,23 +33,17 @@ export class GameGroupsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Post('')
   @Middleware(JwtManager.middleware)
-  private async createGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+  private async createGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('Creating GameGroup...');
 
     try {
-      const gameGroup = GameGroup.create(req.body as GameGroup);
-      const { id, title, description, createdAt } = await gameGroup.save();
+      const { id, title, description, createdAt } = await GameGroup.create(req.body as GameGroup).save();
       res.status(201).json({
         meta: {
           createdAt
@@ -78,37 +57,51 @@ export class GameGroupsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Get(':id')
   @Middleware(JwtManager.middleware)
-  private async readGameGroup(req: ISecureRequest, res: Response): Promise<void> {
-    logger.info('readGameGroup params ID:', { ...req.params });
+  private async readGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
+    logger.info({ ...req.params }, 'readGameGroup params ID:');
+    logger.info({ ...req.query }, 'queries: ');
     const gameGroupId = req.params.id;
     const userId = req.payload.id;
+    const offset = Number(req.query?.offset ?? 0);
+    const limit = Number(req.query?.limit ?? 10);
     try {
-      /**
-       * This game group findOneOrFail is just a checking if a gamegroup exists
-       * because without this and you just use query builder and theres no
-       * gamegroup it will return an nested empty object and does not throw,
-       * so this find will be guard for this
-       */
-      await GameGroup.findOneOrFail(gameGroupId);
+      // const gg = GameGroup.findOneOrFail({
+      //   select: ['id', 'title', 'description', 'createdAt'],
+      //   join: {
+      //     alias: 'gg',
+      //     innerJoinAndSelect: {
+      //       usersGameGroups: 'gg.usersGameGroups',
+      //       users: 'usersGameGroups.user',
+      //       userId: 'users.id' // <--- wont return anything. just an error of Error: Relation with property path id in entity was not found.
+      //     }
+      //   },
+      //   where: { id: gameGroupId }
+      // });
 
-      const gg = GameGroup.createQueryBuilder()
-        .select(['gg.description', 'gg.title', 'gg.id', 'gg.createdAt', 'ugg.id', 'u.id', 'u.username', 'u.email'])
-        .from(GameGroup, 'gg')
-        .leftJoin('gg.usersGameGroups', 'ugg')
-        .leftJoin('ugg.user', 'u')
-        .where('gg.id = :id', { id: gameGroupId })
-        .getOne();
+      // FIXME: men you gotta find away to add offset and limit to this shit bro
+      // for ref: https://github.com/typeorm/typeorm/issues/3552
+      const gg = await GameGroup.createQueryBuilder('gg')
+        // .innerJoinAndSelect(UsersGameGroup, 'ugg', 'ugg.gameGroupId = gg.id')
+        // .innerJoinAndSelect(User, 'u', 'u.id = ugg.userId')
+        .leftJoinAndSelect('gg.usersGameGroups', 'ugg')
+        .leftJoinAndSelect('ugg.user', 'u')
+        .where({ id: gameGroupId })
+        .select(['gg.id', 'gg.title', 'gg.description', 'gg.createdAt', 'ugg.userId', 'u.email', 'u.username'])
+        .getOneOrFail();
+
+      // // FIXME: fix this. find a way to join gamegroup
+      // const gg = await UsersGameGroup.createQueryBuilder('ugg')
+      //   // .innerJoinAndSelect('gg.usersGameGroups', 'ugg')
+      //   .innerJoinAndSelect('ugg.user', 'u')
+      //   .where({ gameGroupId: gameGroupId })
+      //   .select(['ugg.userId', 'u.email', 'u.username'])
+      //   .getOneOrFail();
 
       const follower = User.isUserFollowingGameGroup(userId, gameGroupId);
       const [gameGroup, isFollower] = await Promise.all([gg, follower]);
@@ -121,18 +114,13 @@ export class GameGroupsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Put(':id')
   @Middleware(JwtManager.middleware)
-  private async updateGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+  private async updateGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('updateGameGroup params ID:', { ...req.params });
     logger.info('updateGameGroup body', { ...req.body });
     const { id } = req.params;
@@ -155,18 +143,13 @@ export class GameGroupsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Delete(':id')
   @Middleware(JwtManager.middleware)
-  private async deleteGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+  private async deleteGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('readGameGroup params ID:', { ...req.params });
     const { id } = req.params;
     try {
@@ -174,51 +157,33 @@ export class GameGroupsController extends BaseController {
       await gg.remove();
       res.status(204).json();
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Put(':gameGroupId/follow')
   @Middleware(JwtManager.middleware)
-  private async followGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+  private async followGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('following a GameGroup ID:', { ...req.params });
     const { gameGroupId } = req.params;
     const userId = req.payload.id;
     try {
-      const user = User.findOneOrFail(userId);
-      const gameGroup = GameGroup.findOneOrFail(gameGroupId);
-      const followedGameGroup = User.isUserFollowingGameGroup(userId, gameGroupId);
-      const [theUser, gg, fGG] = await Promise.all([user, gameGroup, followedGameGroup]);
-      /**
-       * @description This will check if the user is already following this gamegroup
-       * if not allow to follow
-       * Refactor this sloppy ass code,
-       * Although when a user checks a gamegroup in the frontend it should show unfollow instead of follow, hmmm
-       */
-      if (!fGG) {
-        const uGG = UsersGameGroup.create({ user: theUser, gameGroup: gg });
-        await uGG.save();
+      const followedGameGroup = await User.isUserFollowingGameGroup(userId, gameGroupId);
+
+      if (!followedGameGroup) {
+        const gameGroup = await GameGroup.findOneOrFail(gameGroupId);
+        await UsersGameGroup.create({ userId, gameGroup }).save();
       }
 
       res.status(204).json();
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Delete(':gameGroupId/unfollow')
   @Middleware(JwtManager.middleware)
-  private async unFollowGameGroup(req: ISecureRequest, res: Response): Promise<void> {
+  private async unFollowGameGroup(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('following a GameGroup ID:', { ...req.params });
     const { gameGroupId } = req.params;
     const userId = req.payload.id;
@@ -230,12 +195,7 @@ export class GameGroupsController extends BaseController {
 
       res.status(204).json();
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 

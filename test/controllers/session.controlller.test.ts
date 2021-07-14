@@ -83,7 +83,7 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage.isNotEmpty).toBe('username should not be empty');
+        expect(res.body.error.errors[0].isNotEmpty).toBe('username should not be empty');
       });
     });
 
@@ -96,8 +96,8 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage.isEmail).toBe('email must be an email');
-        expect(res.body.errorMessage.isNotEmpty).toBe('email should not be empty');
+        expect(res.body.error.errors[0].isEmail).toBe('email must be an email');
+        expect(res.body.error.errors[0].isNotEmpty).toBe('email should not be empty');
       });
     });
 
@@ -110,8 +110,8 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toContainKey('isNotEmpty');
-        expect(res.body.errorMessage.isNotEmpty).toBe('password should not be empty');
+        expect(res.body.error.errors[0]).toContainKey('isNotEmpty');
+        expect(res.body.error.errors[0].isNotEmpty).toBe('password should not be empty');
       });
 
       test('password with less than 8 should fail', async () => {
@@ -122,8 +122,8 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toContainKey('minLength');
-        expect(res.body.errorMessage.minLength).toMatch('password must be longer than or equal to 8 characters');
+        expect(res.body.error.errors[0]).toContainKey('minLength');
+        expect(res.body.error.errors[0].minLength).toMatch('password must be longer than or equal to 8 characters');
       });
 
       test('password should have at least one !@#$%^&', async () => {
@@ -134,8 +134,8 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toContainKey('matches');
-        expect(res.body.errorMessage.matches).toMatch('password must match /[!@#$%^&]/ regular expression');
+        expect(res.body.error.errors[0]).toContainKey('matches');
+        expect(res.body.error.errors[0].matches).toMatch('password must match /[!@#$%^&]/ regular expression');
       });
 
       test('password should have at least one A-Z', async () => {
@@ -146,8 +146,8 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toContainKey('matches');
-        expect(res.body.errorMessage.matches).toMatch('password must match /[A-Z]/ regular expression');
+        expect(res.body.error.errors[0]).toContainKey('matches');
+        expect(res.body.error.errors[0].matches).toMatch('password must match /[A-Z]/ regular expression');
       });
 
       test('password should have at least one 0-9', async () => {
@@ -158,8 +158,8 @@ describe('Sessions controllers', () => {
         };
         const res = await rekwest.post('/api/v1/signup').send({ ...u });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toContainKey('matches');
-        expect(res.body.errorMessage.matches).toMatch('password must match /[0-9]/ regular expression');
+        expect(res.body.error.errors[0]).toContainKey('matches');
+        expect(res.body.error.errors[0].matches).toMatch('password must match /[0-9]/ regular expression');
       });
     });
   });
@@ -188,8 +188,8 @@ describe('Sessions controllers', () => {
       };
       const res = await rekwest.post('/api/v1/login').send({ ...login });
       expect(res.status).toBe(404);
-      expect(res.body).toContainKeys(['errorMessage', 'errorType']);
-      expect(res.body.errorMessage.noEmail).toMatch('Incorrect Email');
+      expect(res.body).toContainKeys(['error', 'errorType']);
+      expect(res.body.error.msg).toMatch('Resource Not Found');
     });
 
     test('unsuccessful login: Incorrect password', async () => {
@@ -200,9 +200,9 @@ describe('Sessions controllers', () => {
       };
       await User.create({ ...login }).save();
       const res = await rekwest.post('/api/v1/login').send({ ...login, password: 'wawa' });
-      expect(res.status).toBe(400);
-      expect(res.body).toContainKeys(['errorMessage', 'errorType']);
-      expect(res.body.errorMessage.misMatchPassword).toMatch('Password does not match the email');
+      expect(res.status).toBe(404);
+      expect(res.body).toContainKeys(['error', 'errorType']);
+      expect(res.body.error.msg).toMatch('Incorrect credentials');
     });
 
     test('login should have expiry of 3h max', async () => {

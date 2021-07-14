@@ -44,8 +44,8 @@ describe('User controllers', () => {
       const { token } = loginResponse.body.payload;
       const res = await rekwest.get('/api/v1/users/100').set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(404);
-      expect(res.body).toContainKey('errorMessage');
-      expect(res.body.errorMessage.noEntity).toBe('Could not found any Entity');
+      expect(res.body).toContainKeys(['error', 'errorType']);
+      expect(res.body.error.msg).toBe('Resource Not Found');
     });
 
     test('should fail if no headers', async () => {
@@ -178,11 +178,7 @@ describe('User controllers', () => {
       await User.create({ ...userInfo }).save();
       const loginResponse = await rekwest.post('/api/v1/login').send({ ...userInfo });
       const { token } = loginResponse.body.payload;
-      rekwest
-        .get('/api/v1/users')
-        .set('Authorization', `Bearer ${token}`)
-        .expect('Content-Type', /json/)
-        .end(done);
+      rekwest.get('/api/v1/users').set('Authorization', `Bearer ${token}`).expect('Content-Type', /json/).end(done);
     });
 
     test('should fail if no headers', async () => {

@@ -31,17 +31,13 @@ export class UsersGameGroup extends BaseModel {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
-  @ManyToOne(
-    (type) => User,
-    (user) => user.usersGameGroups,
-    { onDelete: 'CASCADE' }
-  )
+  @ManyToOne((type) => User, (user) => user.usersGameGroups, { onDelete: 'CASCADE' })
   user!: User;
 
-  @ManyToOne(
-    (type) => GameGroup,
-    (gameGroup) => gameGroup.usersGameGroups,
-    { onDelete: 'CASCADE' }
-  )
+  @ManyToOne((type) => GameGroup, (gameGroup) => gameGroup.usersGameGroups, { onDelete: 'CASCADE' })
   gameGroup!: GameGroup;
+
+  isOwnerOfResource(currentUserId: number, requestParamsId: number): boolean | Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
 }

@@ -40,9 +40,10 @@ const validatationError = [
  */
 
 describe.skip('Controller Error Handler', () => {
-  it('QueryFailedError', () => {
-    const { statusCode, errorMessage, errorType } = errorControllerHandler(queryFailedError as QueryFailedError);
+  test.todo('should return an error object');
+  // it('QueryFailedError', () => {
+  //   const { statusCode, errorMessage, errorType } = errorControllerHandler(queryFailedError as QueryFailedError);
 
-    expect(statusCode).toBe(200);
-  });
+  //   expect(statusCode).toBe(200);
+  // });
 });

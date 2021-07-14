@@ -1,6 +1,12 @@
 import { AppServer } from './config/server';
 import { logger } from './config/logger';
 
+import { unhandledRejection } from './src/errors/unhandledRejection';
+import { uncaughtException } from './src/errors/uncaughtException';
+
+uncaughtException();
+unhandledRejection();
+
 const server = new AppServer();
 
 /**
@@ -17,8 +23,10 @@ async function runner(): Promise<void> {
         res(timer);
       }, 10000);
     });
+
     clearTimeout(promiseTimer);
     runner();
+    logger.error({ error }, 'SERVER ERROR:');
     logger.info('still awaiting for database...');
   }
 }

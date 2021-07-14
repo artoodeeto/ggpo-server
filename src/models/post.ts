@@ -36,11 +36,7 @@ export class Post extends BaseModel implements ResourceChecker {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
-  @ManyToOne(
-    (type) => User,
-    (user) => user.posts,
-    { onDelete: 'CASCADE' }
-  )
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user!: User;
 
   @BeforeUpdate()
@@ -49,16 +45,15 @@ export class Post extends BaseModel implements ResourceChecker {
     await this.validateModel();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async isOwnerOfResource(currentUserId: number, requestParamsId: number): Promise<boolean> {
     try {
-      await Post.findOneOrFail({
-        where: [{ user: currentUserId, id: requestParamsId }]
+      const post = await Post.findOneOrFail(requestParamsId, {
+        relations: ['user']
       });
-
-      return true;
+      const { id } = post.user;
+      return currentUserId === id ? true : false;
     } catch (error) {
-      return false;
+      throw error;
     }
   }
 }

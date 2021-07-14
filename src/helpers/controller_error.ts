@@ -1,12 +1,20 @@
 import { QueryFailedError } from 'typeorm/error/QueryFailedError';
-import { ValidationError } from 'class-validator/validation/ValidationError';
+import { ValidationError } from 'class-validator';
 import { ErrorResponseType, ErrorType, ErrorTypeEnums } from '../interfaces/error_response';
+import { logger } from '../../config/logger';
+import { EntityValidationError } from '../errors/entityValidationError';
+import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
+import { IncorrectCredentials } from '../errors/incorrectCredentials';
+import { DuplicateEntryError } from '../errors/duplicateEntryError';
+import { Unauthorized } from '../errors/unauthorized';
+import { User } from '../models/user';
 
 const reduceValidationError = (acc: any, nxt: any): any => {
   const newErr = { ...acc, ...nxt['constraints'] };
   return newErr;
 };
 
+// TODO: FIX THIS ERROR BS!
 function getError(error: any | QueryFailedError | ValidationError[] | ValidationError): ErrorType {
   let type = '';
   let msg: object = {};
@@ -44,36 +52,82 @@ function getError(error: any | QueryFailedError | ValidationError[] | Validation
  * @param {string} [customErrMsg] used this for custom error like 500 errors, supply error message
  * @returns {ErrorResponseType}
  */
-export function errorControllerHandler(error: any, customErrMsg?: object): ErrorResponseType {
-  const { errorType, errMsg: errorMessage } = getError(error);
-  switch (errorType) {
-    case ErrorTypeEnums.QueryFailedError: {
-      return {
-        errorType: ErrorTypeEnums.QueryFailedError,
-        statusCode: 400,
-        errorMessage
-      };
-    }
-    case ErrorTypeEnums.ValidationError: {
-      return {
-        errorType: ErrorTypeEnums.ValidationError,
-        statusCode: 400,
-        errorMessage
-      };
-    }
-    case ErrorTypeEnums.EntityNotFoundError: {
-      return {
-        errorType: ErrorTypeEnums.EntityNotFoundError,
-        statusCode: 404,
-        errorMessage
-      };
-    }
-    default: {
-      return {
-        errorType: error,
-        statusCode: 500,
-        errorMessage: customErrMsg
-      };
-    }
+export function errorControllerHandler(error: Error): ErrorResponseType {
+  logger.error({ error }, 'ERROR-------');
+
+  // if(error instanceof DuplicateEntryError(User);) {
+  // }
+  if (error instanceof QueryFailedError) {
+    return {
+      errorType: ErrorTypeEnums.QueryFailedError,
+      statusCode: 400,
+      error: {
+        msg: error.message
+      }
+    };
   }
+  if (error instanceof ValidationError) {
+    return {
+      errorType: ErrorTypeEnums.ValidationError,
+      statusCode: 400,
+      error: {
+        msg: error.message
+      }
+    };
+  }
+  if (error instanceof EntityNotFoundError) {
+    // const err = new IncorrectCredentials()
+    return {
+      errorType: ErrorTypeEnums.EntityNotFoundError,
+      statusCode: 404,
+      error: {
+        messageErr: error.message, // FIXME: Remove this error
+        msg: 'Resource Not Found'
+      }
+    };
+  }
+  if (error instanceof IncorrectCredentials) {
+    return {
+      errorType: ErrorTypeEnums.IncorrectCredentials,
+      statusCode: 404,
+      error: {
+        msg: error.message
+      }
+    };
+  }
+  if (error instanceof EntityValidationError) {
+    return {
+      errorType: ErrorTypeEnums.EntityValidationError,
+      statusCode: 400,
+      error: {
+        msg: error.message,
+        errors: error.constraints
+      }
+    };
+  }
+  if (error.constructor.name === 'UnauthorizedError') {
+    return {
+      errorType: ErrorTypeEnums.UnauthorizedError,
+      statusCode: 401,
+      error: {
+        msg: error.message
+      }
+    };
+  }
+  if (error instanceof Unauthorized) {
+    return {
+      errorType: ErrorTypeEnums.Unauthorized,
+      statusCode: 401,
+      error: {
+        msg: error.message
+      }
+    };
+  }
+  return {
+    errorType: error.name,
+    statusCode: 500,
+    error: {
+      msg: `server Error: ${error.message}`
+    }
+  };
 }

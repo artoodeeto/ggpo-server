@@ -12,7 +12,7 @@ describe('User model test', () => {
 
     modelDescription = async (): Promise<any> => {
       const columnInformation: Array<any> = await User.query(`
-      DESCRIBE users 
+      DESCRIBE users
     `);
       return descriptionModel(columnInformation);
     };
@@ -72,8 +72,8 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainKey('isNotEmpty');
-          expect(error[0].constraints.isNotEmpty).toMatch('email should not be empty');
+          expect(error.constraints[0]).toContainKey('isNotEmpty');
+          expect(error.constraints[0].isNotEmpty).toMatch('email should not be empty');
         }
 
         await expect(user.validateModel()).toReject();
@@ -89,8 +89,8 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainKey('isEmail');
-          expect(error[0].constraints.isEmail).toMatch('email must be an email');
+          expect(error.constraints[0]).toContainKey('isEmail');
+          expect(error.constraints[0].isEmail).toMatch('email must be an email');
         }
         await expect(user.validateModel()).toReject();
       });
@@ -107,8 +107,8 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainKey('isNotEmpty');
-          expect(error[0].constraints.isNotEmpty).toMatch('password should not be empty');
+          expect(error.constraints[0]).toContainKey('isNotEmpty');
+          expect(error.constraints[0].isNotEmpty).toMatch('password should not be empty');
         }
 
         await expect(user.validateModel()).toReject();
@@ -124,7 +124,7 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainAnyKeys(['minLength']);
+          expect(error.constraints[0]).toContainAnyKeys(['minLength']);
         }
         await expect(user.validateModel()).toReject();
       });
@@ -139,7 +139,7 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainAnyKeys(['matches']);
+          expect(error.constraints[0]).toContainAnyKeys(['matches']);
         }
         await expect(user.validateModel()).toReject();
       });
@@ -154,7 +154,7 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainAnyKeys(['matches']);
+          expect(error.constraints[0]).toContainAnyKeys(['matches']);
         }
         await expect(user.validateModel()).toReject();
       });
@@ -169,7 +169,7 @@ describe('User model test', () => {
         try {
           await user.validateModel();
         } catch (error) {
-          expect(error[0].constraints).toContainAnyKeys(['matches']);
+          expect(error.constraints[0]).toContainAnyKeys(['matches']);
         }
         await expect(user.validateModel()).toReject();
       });

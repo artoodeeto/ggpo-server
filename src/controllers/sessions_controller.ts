@@ -7,8 +7,8 @@ import { logger } from '../../config/logger';
 @Controller('')
 export class SessionsController extends BaseController {
   @Post('signup')
-  @Middleware([SessionsMiddleware.validateUserOnSignup, SessionsMiddleware.generateTokenUsingJWT])
-  private async userSignUp(req: Request, res: Response): Promise<void> {
+  @Middleware([SessionsMiddleware.validateUserOnSignup])
+  public async userSignUp(req: Request, res: Response): Promise<void> {
     const { user, token } = res.locals;
     const { id, username, email } = user;
     logger.info(`User: ${username} has signed up!`);
@@ -29,8 +29,8 @@ export class SessionsController extends BaseController {
   }
 
   @Post('login')
-  @Middleware([SessionsMiddleware.checkUserBeforeLogin, SessionsMiddleware.generateTokenUsingJWT])
-  private async userLogin(req: Request, res: Response): Promise<void> {
+  @Middleware([SessionsMiddleware.checkUserBeforeLogin])
+  public async userLogin(req: Request, res: Response): Promise<void> {
     const { user, token } = res.locals;
     const { id, email, username } = user;
     logger.info('User success login!');
