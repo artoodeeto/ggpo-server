@@ -1,6 +1,6 @@
 import { BaseController } from './base_controller';
 import { Controller, Post, Middleware, Get, Put, Delete } from '@overnightjs/core';
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { Post as PostModel } from '../models/post';
 import { ISecureRequest, JwtManager } from '@overnightjs/jwt';
 import { User } from '../models/user';
@@ -11,14 +11,14 @@ import { ResourceValidation } from '../middlewares/resource_validation_middlewar
 export class PostsController extends BaseController {
   @Get('')
   @Middleware(JwtManager.middleware)
-  private async getSomePost(req: ISecureRequest, res: Response): Promise<void> {
+  private async getSomePost(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('getSomePost params POST_QUERY:', { ...req.query });
-    const offset = req.query?.offset ?? 0;
-    const limit = req.query?.limit ?? 10;
+    const offset = Number(req.query?.offset ?? 0);
+    const limit = Number(req.query?.limit || 10);
     try {
       // comments are my attempts not to use query builder! ggrr!
 
-      // const p = PostModel.find({
+      // const asd = PostModel.find({
       //   select: ['id', 'title', 'body', 'createdAt'],
       //   skip: offset,
       //   take: limit,
@@ -61,29 +61,26 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Post('')
   @Middleware(JwtManager.middleware)
-  private async createPost(req: ISecureRequest, res: Response): Promise<void> {
+  private async createPost(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('createPost params USER_PAYLOAD:', { ...req.payload });
     logger.info('ceratePost params POST_BODY:', { ...req.body });
     const { id } = req.payload;
     /**
      * {@link https://github.com/typeorm/typeorm/issues/5699}
      */
-    const post: PostModel = PostModel.create(req.body as PostModel);
+    const post: PostModel = PostModel.create({
+      title: req.body.title,
+      body: req.body.body,
+      user: id
+    });
 
     try {
-      const user: User = await User.findOneOrFail(id);
-      post.user = user;
       const { id: postID, title, body, updatedAt, createdAt } = await post.save();
 
       res.status(201).json({
@@ -99,18 +96,13 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Get(':id')
   @Middleware(JwtManager.middleware)
-  private async readPost(req: ISecureRequest, res: Response): Promise<void> {
+  private async readPost(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('readPost params POST_ID:', { ...req.params });
     const { id } = req.params;
     try {
@@ -130,17 +122,13 @@ export class PostsController extends BaseController {
       });
     } catch (error) {
       logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Put(':id')
   @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new PostModel())])
-  private async updatePost(req: ISecureRequest, res: Response): Promise<void> {
+  private async updatePost(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('updatePost params POST_ID:', { ...req.params });
     logger.info('updatePost params POST_BODY:', { ...req.body });
     const { id } = req.params;
@@ -164,31 +152,21 @@ export class PostsController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Delete(':id')
   @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new PostModel())])
-  private async deletePost(req: ISecureRequest, res: Response): Promise<void> {
+  private async deletePost(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('deletePost params POST_ID:', { ...req.params });
     const { id } = req.params;
     try {
       const post = await PostModel.findOneOrFail(id);
-      await post.remove();
+      await post.softRemove();
       res.status(204).json();
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 }

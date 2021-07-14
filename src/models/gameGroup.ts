@@ -35,16 +35,16 @@ export class GameGroup extends BaseModel {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
-  @OneToMany(
-    (type) => UsersGameGroup,
-    (userGameGroup) => userGameGroup.gameGroup,
-    { cascade: true }
-  )
+  @OneToMany((type) => UsersGameGroup, (userGameGroup) => userGameGroup.gameGroup, { cascade: true })
   usersGameGroups!: UsersGameGroup[];
 
   @BeforeInsert()
   @BeforeUpdate()
   private async modelValidation(): Promise<void> {
     await this.validateModel();
+  }
+
+  isOwnerOfResource(currentUserId: number, requestParamsId: number): boolean | Promise<boolean> {
+    throw new Error('Method not implemented.');
   }
 }

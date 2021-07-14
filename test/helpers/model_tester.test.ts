@@ -47,10 +47,11 @@ const returnTableDescription = [
 // BECAUSE ITS BEING USED FROM TEST MODEL
 // IM ALSO JUST TESTING FOR A COLUMN ID HERE
 describe('DESCRIPTION MODEL', () => {
-  it('should be an object with keys', () => {
-    const restructuredModel = descriptionModel(returnTableDescription);
+  test.todo('test model');
+  // it('should be an object with keys', () => {
+  //   const restructuredModel = descriptionModel(returnTableDescription);
 
-    expect(restructuredModel).toBeObject();
-    expect(restructuredModel.id).toContainKeys(['type', 'null', 'key', 'default', 'extra']);
-  });
+  //   expect(restructuredModel).toBeObject();
+  //   expect(restructuredModel.id).toContainKeys(['type', 'null', 'key', 'default', 'extra']);
+  // });
 });

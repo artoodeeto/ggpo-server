@@ -60,8 +60,8 @@ describe('GameGroup controllers', () => {
         .send({ title: '', description: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(400);
-      expect(res.body).toContainKey('errorMessage');
-      expect(res.body.errorMessage.isNotEmpty).toBe('description should not be empty');
+      expect(res.body).toContainKeys(['error', 'errorType']);
+      expect(res.body.error.errors[0].isNotEmpty).toBe('description should not be empty');
     });
 
     test('should have keys', async () => {
@@ -141,7 +141,7 @@ describe('GameGroup controllers', () => {
         'usersGameGroups'
       ]);
       expect(res.body.payload.gameGroup.usersGameGroups).toBeArray();
-      expect(res.body.payload.gameGroup.usersGameGroups[0].user).toContainAllKeys(['id', 'username', 'email']);
+      expect(res.body.payload.gameGroup.usersGameGroups[0].user).toContainAllKeys(['username', 'email']);
     });
   });
 

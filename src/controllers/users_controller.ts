@@ -1,33 +1,30 @@
 import { Controller, Get, Middleware, Delete, Put } from '@overnightjs/core';
 import { JwtManager, ISecureRequest } from '@overnightjs/jwt';
-import { Response } from 'express';
+import { Response, NextFunction } from 'express';
 import { BaseController } from './base_controller';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
 import { ResourceValidation } from '../middlewares/resource_validation_middleware';
 import { Post as PostModel } from '../models/post';
+import { nextTick } from 'node:process';
 
 @Controller('users')
 export class UsersController extends BaseController {
   @Get('')
   @Middleware(JwtManager.middleware)
-  private async getSomeUsers(req: ISecureRequest, res: Response): Promise<void> {
+  private async getSomeUsers(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('getSomeUsers params USER_ID:', { ...req.query });
-    const offset = req.query?.offset ?? 0;
-    const limit = req.query?.limit ?? 10;
-
-    const u = User.find({
-      select: ['id', 'email', 'username'],
-      skip: offset,
-      take: limit,
-      order: { id: 'ASC' }
-    });
-    /** explanation on why theres a separate query for count is on getSomeGameGroup */
-    const c = User.count();
-
-    const [count, users] = await Promise.all([c, u]);
+    const offset = Number(req.query?.offset ?? 0);
+    const limit = Number(req.query?.limit ?? 10);
 
     try {
+      const [users, count] = await User.findAndCount({
+        select: ['id', 'email', 'username'],
+        skip: offset,
+        take: limit,
+        order: { createdAt: 'DESC' }
+      });
+
       res.status(200).json({
         meta: {
           count
@@ -37,32 +34,17 @@ export class UsersController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Get(':id')
   @Middleware(JwtManager.middleware)
-  private async readUser(req: ISecureRequest, res: Response): Promise<void> {
+  private async readUser(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('readUser params USER_ID:', { ...req.params });
     const { id } = req.params;
     try {
       const { username, email } = await User.findOneOrFail(id);
-
-      // const u = await User.createQueryBuilder()
-      //   .select(['user.id', 'user.username', 'user.email', 'p.title', 'gg.id', 'ugg.id'])
-      //   .from(User, 'user')
-      //   .leftJoin('user.posts', 'p')
-      //   .leftJoin('user.usersGameGroups', 'ugg')
-      //   .leftJoin('ugg.gameGroup', 'gg')
-      //   .limit(10)
-      //   .where('user.id = :id', { id })
-      //   .getOne();
 
       res.status(200).json({
         meta: {},
@@ -75,18 +57,13 @@ export class UsersController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Put(':id')
   @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
-  private async updateUser(req: ISecureRequest, res: Response): Promise<void> {
+  private async updateUser(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('updateUser params USER_ID:', { ...req.params });
     logger.info('updateUser params USER_BODY:', { ...req.body });
     const { id } = req.params;
@@ -95,30 +72,26 @@ export class UsersController extends BaseController {
       const user: User = await User.findOneOrFail(id);
       Object.assign(user, { ...req.body });
       await user.hashPasswordOnUpdate(req.body);
-      const { password, updatedAt, createdAt, deletedAt, ...restOfUserObject } = await user.save();
+      const { password, updatedAt, createdAt, deletedAt, ...restOfUserObject } = await user.save({
+        data: req.body.password
+      });
       res.status(201).json({
         meta: {
           updatedAt,
-          createdAt,
-          deletedAt
+          createdAt
         },
         payload: {
           user: restOfUserObject
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
   @Delete(':id')
   @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
-  private async deleteUser(req: ISecureRequest, res: Response): Promise<void> {
+  private async deleteUser(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('deleteUser params USER_ID:', { ...req.params });
     const { id } = req.params;
     try {
@@ -127,26 +100,22 @@ export class UsersController extends BaseController {
        * softRemove doesn't work on 1:n relation.
        */
       const user: User = await User.findOneOrFail(id);
-      await user.remove();
+      await user.softRemove();
 
       res.status(204).json();
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 
+  // FIXME: I think this should be move in the POST controller
   @Get(':id/posts')
   @Middleware([JwtManager.middleware, ResourceValidation.checkIfCurrentUserIsOwnerOfResource(new User())])
-  private async getCurrentUserPosts(req: ISecureRequest, res: Response): Promise<void> {
+  private async getCurrentUserPosts(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
     logger.info('getSomeUsers params USER_ID:', { ...req.query });
     const { id } = req.params;
-    const offset = req.query?.offset ?? 0;
-    const limit = req.query?.limit ?? 10;
+    const offset = Number(req.query?.offset ?? 0);
+    const limit = Number(req.query?.limit ?? 10);
 
     const [posts, count] = await PostModel.findAndCount({
       select: ['id', 'title', 'body', 'updatedAt', 'createdAt'],
@@ -168,12 +137,7 @@ export class UsersController extends BaseController {
         }
       });
     } catch (error) {
-      logger.error(error);
-      const { statusCode, errorMessage, errorType } = super.controllerErrors(error);
-      res.status(statusCode).json({
-        errorType,
-        errorMessage
-      });
+      next(error);
     }
   }
 

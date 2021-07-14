@@ -1,7 +1,7 @@
 export interface ErrorResponseType {
   errorType: string;
   statusCode: number;
-  errorMessage: object | undefined;
+  error: object;
 }
 
 export interface ErrorType {
@@ -13,5 +13,11 @@ export enum ErrorTypeEnums {
   QueryFailedError = 'QueryFailedError',
   ValidationError = 'ValidationError',
   EntityNotFoundError = 'EntityNotFoundError',
-  EntityNotFound = 'EntityNotFound'
+  EntityNotFound = 'EntityNotFound',
+  IncorrectCredentials = 'IncorrectCredentials',
+  JWTokenError = 'JWTokenError',
+  EntityValidationError = 'EntityValidationError',
+  DuplicateEntryError = 'DuplicateEntryError',
+  UnauthorizedError = 'UnauthorizedError',
+  Unauthorized = 'Unauthorized'
 }

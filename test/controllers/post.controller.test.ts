@@ -96,7 +96,7 @@ describe('Post controllers', () => {
         .send({ title: '', body: '' })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
       expect(res.status).toBe(400);
-      expect(res.body).toContainKey('errorMessage');
+      expect(res.body).toContainKeys(['error', 'errorType']);
     });
 
     test('should fail if no ID is given', async () => {
@@ -112,7 +112,7 @@ describe('Post controllers', () => {
         .put('/api/v1/posts/123123123123')
         .send({ ...samplePost })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(404);
     });
 
     test('should return status code 401 if user tries to update other users posts', async () => {
@@ -155,7 +155,7 @@ describe('Post controllers', () => {
         .delete('/api/v1/posts/123123123123')
         .send({ ...samplePost })
         .set('Authorization', `Bearer ${ACTIVE_JWT}`);
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(404);
     });
 
     test('should return status code 401 if user tries to delete other users posts', async () => {

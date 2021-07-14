@@ -15,6 +15,9 @@ import { BaseModel } from './base_model';
 import { Post } from './post';
 import { UsersGameGroup } from './usersGameGroup';
 import { ResourceChecker } from '../interfaces/resource_owner_checker';
+import { IncorrectCredentials } from '../errors/incorrectCredentials';
+import { JwtManager } from '@overnightjs/jwt';
+import { JWTokenError } from '../errors/JWTokenError';
 
 @Entity({ name: 'users' })
 export class User extends BaseModel implements ResourceChecker {
@@ -47,33 +50,59 @@ export class User extends BaseModel implements ResourceChecker {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date;
 
-  @OneToMany((type) => Post, (post) => post.user, { cascade: true })
+  @OneToMany(() => Post, (post) => post.user, { cascade: true })
   posts!: Post[];
 
-  @OneToMany((type) => UsersGameGroup, (userGameGroup) => userGameGroup.user, { cascade: true })
+  @OneToMany(() => UsersGameGroup, (userGameGroup) => userGameGroup.user, { cascade: true })
   usersGameGroups!: UsersGameGroup[];
 
-  @BeforeInsert()
-  private async beforeInsertAsyncMethods(): Promise<void> {
-    await Promise.all([this.hashPassword(), this.validateModel()]);
-  }
+  private _token!: string;
+
+  // @BeforeInsert()
+  // private async beforeInsertAsyncMethods(): Promise<void> {
+  //   await Promise.all([this.hashPassword(), this.validateModel()]);
+  // }
 
   @BeforeUpdate()
+  @BeforeInsert()
   private async modelValidation(): Promise<void> {
     await this.validateModel();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isOwnerOfResource(currentUserId: number, requestParamsId: number): boolean {
     return currentUserId === requestParamsId;
   }
 
+  // ! Don't add a BeforeUpdate decorator here
+  // * if a before update decorator is added it will hash a hashed password
+  @BeforeInsert()
   private async hashPassword(): Promise<void> {
     try {
       this.password = await bcrypt.hash(this.password, Number(process.env.SALT_ROUNDS));
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  public async hasCorrectPassword(password: string): Promise<void> {
+    const result: boolean = await bcrypt.compare(password, this.password);
+    if (!result) throw new IncorrectCredentials();
+  }
+
+  public generateJWToken(): void {
+    const aHhToken: string = JwtManager.jwt({
+      id: this.id,
+      email: this.email,
+      username: this.username
+    });
+
+    if (!aHhToken) throw new JWTokenError();
+
+    this._token = aHhToken;
+  }
+
+  public get token(): string {
+    return this._token;
   }
 
   /**
@@ -88,14 +117,24 @@ export class User extends BaseModel implements ResourceChecker {
    * when a user wants to update its account
    */
   public async hashPasswordOnUpdate(requestBody: { password?: string }): Promise<void> {
-    if ('password' in requestBody) await this.hashPassword();
+    try {
+      if ('password' in requestBody) {
+        await this.validateModel();
+        await this.hashPassword();
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
   static async isUserFollowingGameGroup(userId: number | string, gameGroupId: number | string): Promise<boolean> {
-    const isFollower = await UsersGameGroup.findOne({
-      where: [{ userId, gameGroupId }]
-    });
-
-    return !!isFollower;
+    try {
+      const isFollower = await UsersGameGroup.findOneOrFail({
+        where: [{ userId, gameGroupId }]
+      });
+      return !!isFollower;
+    } catch (error) {
+      return false;
+    }
   }
 }

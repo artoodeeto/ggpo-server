@@ -10,13 +10,14 @@ const rekwest = request(appInstance);
  * ! hold on for now
  */
 describe('Testing User middleware', () => {
+  test.todo('Test User middleware');
   // jest.mock('../../src/controllers/users_controller');
   // afterEach(() => {
   //   jest.clearAllMocks();
   // });
-  it('should validate a user', async () => {
-    // await rekwest.get('/api/v1/users/signup');
-    // expect(UserMiddleware.validateUser).toBeCalledTimes(1);
-    expect(true).toBe(true);
-  });
+  // it('should validate a user', async () => {
+  //   // await rekwest.get('/api/v1/users/signup');
+  //   // expect(UserMiddleware.validateUser).toBeCalledTimes(1);
+  //   expect(true).toBe(true);
+  // });
 });

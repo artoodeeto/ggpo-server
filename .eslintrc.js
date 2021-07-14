@@ -33,7 +33,8 @@ module.exports = {
     'no-undef': 1,
     'import/order': 0,
     'import/no-cycle': 0,
-    'dot-notation': 0
+    'dot-notation': 0,
+    'no-underscore-dangle': 0
   },
   overrides: [
     {
