@@ -16,6 +16,10 @@ import * as swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from './swagger';
 import express from 'express';
 import { errorHandler } from '../src/middlewares/errors';
+import * as passport from 'passport';
+// import { Strategy as FacebookStrategy } from 'passport-facebook';
+// var passport = require('passport');
+// passport.use(new LocalStrategy(function (username: string, password: string, done: any) {}));
 
 export class AppServer extends Server {
   constructor() {
@@ -28,6 +32,8 @@ export class AppServer extends Server {
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.setupControllers();
     this.app.use(errorHandler);
+    this.app.use(passport.initialize());
+    // this.app.use(passport.session());
   }
 
   /**

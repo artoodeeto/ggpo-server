@@ -1,4 +1,4 @@
-import { Controller, Post, Middleware } from '@overnightjs/core';
+import { Controller, Post, Middleware, Get } from '@overnightjs/core';
 import { BaseController } from './base_controller';
 import { SessionsMiddleware } from '../middlewares/sessions_middlewares';
 import { Request, Response } from 'express';
@@ -28,6 +28,7 @@ export class SessionsController extends BaseController {
     });
   }
 
+  // FIXME: change this to GET request
   @Post('login')
   @Middleware([SessionsMiddleware.checkUserBeforeLogin])
   public async userLogin(req: Request, res: Response): Promise<void> {
@@ -49,4 +50,7 @@ export class SessionsController extends BaseController {
       }
     });
   }
+
+  @Get('facebook-auth')
+  public async facebookLogin(req: Request, res: Response): Promise<void> {}
 }
