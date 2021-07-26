@@ -18,6 +18,7 @@ import { ResourceChecker } from '../interfaces/resource_owner_checker';
 import { IncorrectCredentials } from '../errors/incorrectCredentials';
 import { JwtManager } from '@overnightjs/jwt';
 import { JWTokenError } from '../errors/JWTokenError';
+import { AuthProvider } from './auth_provider';
 
 @Entity({ name: 'users' })
 export class User extends BaseModel implements ResourceChecker {
@@ -53,8 +54,14 @@ export class User extends BaseModel implements ResourceChecker {
   @OneToMany(() => Post, (post) => post.user, { cascade: true })
   posts!: Post[];
 
+  @Column({ type: 'varchar', length: 255 })
+  accessToken!: string;
+
   @OneToMany(() => UsersGameGroup, (userGameGroup) => userGameGroup.user, { cascade: true })
   usersGameGroups!: UsersGameGroup[];
+
+  @OneToMany(() => AuthProvider, (authProvider) => authProvider.user, { cascade: true })
+  authProvider!: AuthProvider[];
 
   private _token!: string;
 
@@ -62,6 +69,12 @@ export class User extends BaseModel implements ResourceChecker {
   // private async beforeInsertAsyncMethods(): Promise<void> {
   //   await Promise.all([this.hashPassword(), this.validateModel()]);
   // }
+
+  @BeforeUpdate()
+  @BeforeInsert()
+  public async setEmailToLowerCase(): Promise<void> {
+    this.email = this.email.toLowerCase();
+  }
 
   @BeforeUpdate()
   @BeforeInsert()

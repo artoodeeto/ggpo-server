@@ -50,7 +50,4 @@ export class SessionsController extends BaseController {
       }
     });
   }
-
-  @Get('facebook-auth')
-  public async facebookLogin(req: Request, res: Response): Promise<void> {}
 }
