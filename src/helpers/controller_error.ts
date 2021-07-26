@@ -53,7 +53,7 @@ function getError(error: any | QueryFailedError | ValidationError[] | Validation
  * @returns {ErrorResponseType}
  */
 export function errorControllerHandler(error: Error): ErrorResponseType {
-  logger.error({ error }, 'ERROR-------');
+  logger.error(error, 'ERROR-------');
 
   // if(error instanceof DuplicateEntryError(User);) {
   // }

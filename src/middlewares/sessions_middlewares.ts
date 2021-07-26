@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/user';
 import { logger } from '../../config/logger';
-import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
-import { IncorrectCredentials } from '../errors/incorrectCredentials';
 
 export class SessionsMiddleware {
   static async validateUserOnSignup(req: Request, res: Response, next: NextFunction): Promise<void> {

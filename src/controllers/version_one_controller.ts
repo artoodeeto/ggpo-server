@@ -4,12 +4,19 @@ import { BaseController } from './base_controller';
 import { PostsController } from './posts_controller';
 import { SessionsController } from './sessions_controller';
 import { GameGroupsController } from './game_groups_controller';
+import { FacebookAuthController } from './facebook-auth_controller';
 import { reqResLogger } from '../middlewares/controller_logs';
 
 /**
  * Use this for client API
  */
 @Controller(`${process.env.PREFIX}/${process.env.API_VERSION}`)
-@ChildControllers([new UsersController(), new PostsController(), new SessionsController(), new GameGroupsController()])
+@ChildControllers([
+  new UsersController(),
+  new PostsController(),
+  new SessionsController(),
+  new GameGroupsController(),
+  new FacebookAuthController()
+])
 @ClassMiddleware([reqResLogger])
 export class VersionOne extends BaseController {}
