@@ -19,5 +19,6 @@ export enum ErrorTypeEnums {
   EntityValidationError = 'EntityValidationError',
   DuplicateEntryError = 'DuplicateEntryError',
   UnauthorizedError = 'UnauthorizedError',
-  Unauthorized = 'Unauthorized'
+  Unauthorized = 'Unauthorized',
+  FacebookAuthError = 'FacebookAuthError'
 }

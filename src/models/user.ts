@@ -54,7 +54,7 @@ export class User extends BaseModel implements ResourceChecker {
   @OneToMany(() => Post, (post) => post.user, { cascade: true })
   posts!: Post[];
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   accessToken!: string;
 
   @OneToMany(() => UsersGameGroup, (userGameGroup) => userGameGroup.user, { cascade: true })

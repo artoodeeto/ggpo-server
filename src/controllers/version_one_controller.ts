@@ -4,7 +4,7 @@ import { BaseController } from './base_controller';
 import { PostsController } from './posts_controller';
 import { SessionsController } from './sessions_controller';
 import { GameGroupsController } from './game_groups_controller';
-import { FacebookAuthController } from './facebook-auth_controller';
+import { PassportAuthController } from './passport-auth_controller';
 import { reqResLogger } from '../middlewares/controller_logs';
 
 /**
@@ -16,7 +16,7 @@ import { reqResLogger } from '../middlewares/controller_logs';
   new PostsController(),
   new SessionsController(),
   new GameGroupsController(),
-  new FacebookAuthController()
+  new PassportAuthController()
 ])
 @ClassMiddleware([reqResLogger])
 export class VersionOne extends BaseController {}

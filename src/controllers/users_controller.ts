@@ -6,8 +6,6 @@ import { User } from '../models/user';
 import { logger } from '../../config/logger';
 import { ResourceValidation } from '../middlewares/resource_validation_middleware';
 import { Post as PostModel } from '../models/post';
-import { nextTick } from 'node:process';
-
 @Controller('users')
 export class UsersController extends BaseController {
   @Get('')
@@ -41,7 +39,7 @@ export class UsersController extends BaseController {
   @Get(':id')
   @Middleware(JwtManager.middleware)
   private async readUser(req: ISecureRequest, res: Response, next: NextFunction): Promise<void> {
-    logger.info('readUser params USER_ID:', { ...req.params });
+    logger.info(req.params, 'readUser params USER_ID:');
     const { id } = req.params;
     try {
       const { username, email } = await User.findOneOrFail(id);

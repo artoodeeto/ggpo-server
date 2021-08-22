@@ -8,6 +8,7 @@ import { IncorrectCredentials } from '../errors/incorrectCredentials';
 import { DuplicateEntryError } from '../errors/duplicateEntryError';
 import { Unauthorized } from '../errors/unauthorized';
 import { User } from '../models/user';
+import { FacebookAuthError } from '../errors/facebookAuthError';
 
 const reduceValidationError = (acc: any, nxt: any): any => {
   const newErr = { ...acc, ...nxt['constraints'] };
@@ -118,6 +119,15 @@ export function errorControllerHandler(error: Error): ErrorResponseType {
     return {
       errorType: ErrorTypeEnums.Unauthorized,
       statusCode: 401,
+      error: {
+        msg: error.message
+      }
+    };
+  }
+  if (error instanceof FacebookAuthError) {
+    return {
+      errorType: ErrorTypeEnums.FacebookAuthError,
+      statusCode: 500,
       error: {
         msg: error.message
       }

@@ -11,33 +11,45 @@ import * as controllers from '../src/controllers/controller_imports';
 
 import helmet from 'helmet';
 import cors from 'cors';
-
+import cookieParser from 'cookie-parser';
 import * as swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from './swagger';
-import express from 'express';
+import express, { Application, RequestHandler } from 'express';
 import { errorHandler } from '../src/middlewares/errors';
 import passport from 'passport';
+import { passportUtils } from '../src/utils/passport';
+import { corsOptions } from './corsOptions';
 
 export class AppServer extends Server {
   constructor() {
     super(process.env.NODE_ENV === 'development');
+    this.app.use(cookieParser());
+    this.app.use(passport.initialize()); // this and passport.session should be initialized before controllers
+    this.app.use(passport.session());
     this.app.use(helmet());
-    this.app.use(cors());
+    this.app.use(cors(corsOptions));
     this.app.use(pinoExpress({ logger }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    this.app.use(passport.initialize()); // this and passport.session should be initialized before controllers
-    this.app.use(passport.session());
-    this.setupControllers();
+    passportUtils(passport);
+    this.setupControllers(); // ! CONTROLLERS
     this.app.use(errorHandler);
   }
 
   /**
    * this is being export into the test file so request package can use this instance
    */
-  get appInstance(): any {
+  get appInstance(): Application {
     return this.app;
+  }
+
+  private excludePassportOnTesting(): void {
+    // ? gets error when mocking passport
+    // if (process.env.NODE_ENV !== 'test') {
+    this.app.use(passport.initialize()); // this and passport.session should be initialized before controllers
+    this.app.use(passport.session());
+    // }
   }
 
   private setupControllers(): void {
