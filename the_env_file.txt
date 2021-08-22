@@ -1,5 +1,6 @@
 # APPLICATION
 NODE_ENV=development
+#UV_THREADPOOL_SIZE=6
 API_VERSION=v1
 PREFIX=api
 # 3hours in milisec. this should be the same with OVERNIGHT_JWT_EXP
@@ -38,8 +39,6 @@ TYPEORM_CACHE=true
 # 5secs cache
 TYPEORM_CACHE_DURATION=5000
 
-
-
 # MYSQL
 MYSQL_PASSWORD=password
 MYSQL_ROOT_PASSWORD=password
@@ -48,3 +47,16 @@ MYSQL_DATABASE=development_db
 # Overnight js JWT package
 OVERNIGHT_JWT_SECRET='dis iss sikrit misig'
 OVERNIGHT_JWT_EXP='3h'
+
+# Facebook Authentication
+FACEBOOK_CLIENT_ID='CREATE YOUR OWN FACEBOOK DEV ACCOUNT'
+FACEBOOK_CLIENT_SECRET='CREATE YOUR OWN FACEBOOK DEV ACCOUNT'
+
+# FRONTEND URL
+FRONTEND_BASE_URL='http://localhost:3000'
+
+# BACKEND URl
+BACKEND_BASE_URL='http://localhost:8000/api/v1'
+
+# COOKIE NAMES
+GGPO_COOKIE='_ggpo'

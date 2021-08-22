@@ -12,7 +12,7 @@ module.exports = {
   // browser: false,
 
   // The directory where Jest should store its cached dependency information
-  // cacheDirectory: "/private/var/folders/7b/fdnrvnr92g35swbnqb_vbnc40000gn/T/jest_dx",
+  // cacheDirectory: '/private/var/folders/7b/fdnrvnr92g35swbnqb_vbnc40000gn/T/jest_dx',
 
   // Automatically clear mock calls and instances between every test
   clearMocks: true,

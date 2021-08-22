@@ -27,9 +27,10 @@ sidebar_label: Stack 📚
 - **[Cookie-Parser](https://www.npmjs.com/package/cookie-parser)** as Cookie parser middleware
 - **[Dotenv](https://www.npmjs.com/package/cookie-parser)** as Environment variables manager
 - **[JS-Yaml](https://www.npmjs.com/package/js-yaml)** used for API yaml parser
-- **[Node](https://nodejs.org/en/)**
-- **[Docker](https://www.docker.com/)**
-- **[Cors](https://www.npmjs.com/package/cors)**
+- **[Node](https://nodejs.org/en/)** Backend JS runtime
+- **[Docker](https://www.docker.com/)** Development/Production deployment
+- **[Cors](https://www.npmjs.com/package/cors)** Managing HTTP Cors
+- **[Passport](http://www.passportjs.org/packages/passport-facebook/)** Facebook authentication
 
 ## Frontend Stack
 
