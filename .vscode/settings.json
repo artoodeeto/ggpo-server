@@ -1,19 +1,21 @@
 {
   "workbench.colorCustomizations": {
-    "activityBar.activeBackground": "#aaf178",
-    "activityBar.activeBorder": "#5292ed",
-    "activityBar.background": "#aaf178",
+    "activityBar.activeBackground": "#fef4f0",
+    "activityBar.activeBorder": "#0cb33c",
+    "activityBar.background": "#fef4f0",
     "activityBar.foreground": "#15202b",
     "activityBar.inactiveForeground": "#15202b99",
-    "activityBarBadge.background": "#5292ed",
-    "activityBarBadge.foreground": "#15202b",
-    "statusBar.background": "#8dec4a",
+    "activityBarBadge.background": "#0cb33c",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "statusBar.background": "#fad3c1",
     "statusBar.foreground": "#15202b",
-    "statusBarItem.hoverBackground": "#70e71c",
-    "titleBar.activeBackground": "#8dec4a",
+    "statusBarItem.hoverBackground": "#f6b192",
+    "titleBar.activeBackground": "#fad3c1",
     "titleBar.activeForeground": "#15202b",
-    "titleBar.inactiveBackground": "#8dec4a99",
+    "titleBar.inactiveBackground": "#fad3c199",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "peacock.color": "#8dec4a"
+  "peacock.color": "#fad3c1",
+  "javascript.suggest.completeJSDocs": true,
+  "prettier.requireConfig": true
 }
