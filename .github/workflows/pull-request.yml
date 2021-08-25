@@ -49,6 +49,8 @@ jobs:
 
           cat .env
 
+          mysql -h 127.0.0.1 -P 3306 -u root -ppassword
+
           docker-compose up --build -d && echo "server runnning"
 
           npm run migration:show
