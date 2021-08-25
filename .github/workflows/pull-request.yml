@@ -9,6 +9,16 @@ jobs:
     runs-on: ubuntu-20.04
     name: run test
     steps:
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3306
+          container port: 3306
+          character set server: 'utf8'
+          mysql version: '8.0.18'
+          mysql database: 'test_db'
+          mysql root password: 'password'
+          mysql user: 'root'
+          mysql password: 'password'
       - uses: actions/checkout@v2
       - name: running test
         run: |
@@ -48,5 +58,9 @@ jobs:
           npm install
 
           docker-compose up --build -d && echo "server runnning"
+
+          mysql -h 127.0.0.1 -P 3306 -u root -ppassword
+
+          npm run migration:show
 
           npm test
