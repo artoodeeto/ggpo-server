@@ -57,10 +57,6 @@ jobs:
 
           npm install
 
-          docker-compose up --build -d && echo "server runnning"
-
-          mysql -h 127.0.0.1 -P 3306 -u root -ppassword
-
           npm run migration:show
 
           npm test
