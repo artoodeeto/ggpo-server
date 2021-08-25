@@ -19,7 +19,7 @@ jobs:
   testing:
     runs-on: ubuntu-20.04
     name: run test
-    needs: setup-docker
+    # needs: setup-docker
     steps:
       - uses: actions/checkout@v2
       - name: running test
