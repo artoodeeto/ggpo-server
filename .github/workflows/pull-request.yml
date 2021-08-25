@@ -11,12 +11,11 @@ jobs:
     needs: setup-docker
     steps:
       - uses: docker-practice/actions-setup-docker@master
-      - run: |
-          set -x
-          docker version
       - uses: actions/checkout@v2
       - name: running test
         run: |
+          set -x
+          docker version
           docker-compose up --build
           npm test
 
