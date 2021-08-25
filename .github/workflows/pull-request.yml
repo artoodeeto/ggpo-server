@@ -55,10 +55,9 @@ jobs:
       # - name: setup docker
       #   run: docker-compose up --build -d && echo "server runnning"
       - name: run docker-compose
-        uses: parisk/setup-compose-cli@v1
+        uses: sudo-bot/action-docker-compose@latest
         with:
-          version: 3.3
-      - run: docker-compose up --build
+          cli-args: 'up'
       - name: run migration
         run: npm run migration:show
       - name: run tests
