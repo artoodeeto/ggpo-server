@@ -32,7 +32,7 @@ jobs:
           echo TOKEN_EXP=10800000  >> .env
           echo SALT_ROUNDS=11 >> .env
           echo TYPEORM_CONNECTION=mysql >> .env
-          echo TYPEORM_HOST=localhost >> .env
+          echo TYPEORM_HOST=db >> .env
           echo TYPEORM_PORT=3306 >> .env
           echo TYPEORM_LOGGING=true >> .env
           echo #TYPEORM_LOGGER=file #use only for production >> .env
@@ -60,8 +60,6 @@ jobs:
           npm install
 
           npm run migration:run
-
-          echo TYPEORM_HOST=db >> .env
 
           docker-compose up --build -d
 
