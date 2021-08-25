@@ -58,7 +58,7 @@ jobs:
         uses: parisk/setup-compose-cli@v1
         with:
           version: 3.3
-        run: docker-compose up --build
+      - run: docker-compose up --build
       - name: run migration
         run: npm run migration:show
       - name: run tests
