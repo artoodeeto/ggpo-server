@@ -5,16 +5,6 @@ on:
       - master
 
 jobs:
-  # setup-docker:
-  #   runs-on: ubuntu-20.04
-  #   name: setup-docker
-  #   steps:
-  #     - uses: docker-practice/actions-setup-docker@master
-  #     - run: |
-  #         set -x
-  #         docker version
-  #         docker-compose up --build
-
   testing:
     runs-on: ubuntu-20.04
     name: run test
