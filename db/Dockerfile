@@ -1,5 +1,5 @@
 FROM mysql:8.0.18
-# RUN "ALTER USER 'root' IDENTIFIED WITH mysql_native_password BY 'password';"
+# RUN "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';"
 # RUN "FLUSH PRIVILEGES;"
 # ENV MYSQL_DATABASE development_db
 # ENV MYSQL_ROOT_PASSWORD password
