@@ -5,17 +5,27 @@ on:
       - master
 
 jobs:
+  setup-docker:
+    runs-on: ubuntu-20.04
+    name: setup-docker
+    steps:
+      - uses: docker-practice/actions-setup-docker@master
+      - run: |
+          set -x
+          docker version
+
   testing:
     runs-on: ubuntu-20.04
     name: run test
     needs: setup-docker
     steps:
-      - uses: docker-practice/actions-setup-docker@master
+      # - uses: docker-practice/actions-setup-docker@master
+      # - run: |
+      #     set -x
+      #     docker version
       - uses: actions/checkout@v2
       - name: running test
         run: |
-          set -x
-          docker version
           docker-compose up --build
           npm test
 
