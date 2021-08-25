@@ -51,6 +51,6 @@ jobs:
 
           docker-compose up --build -d && echo "server runnning"
 
-          npm run migration:run
+          npm run migration:show
 
           npm test
