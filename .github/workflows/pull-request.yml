@@ -49,11 +49,6 @@ jobs:
 
           docker-compose up --build -d && echo "server runnning"
 
-          firewall-cmd --permanent --zone=trusted --add-port=3306/tcp
-          firewall-cmd --reload
-
           mysql -h 127.0.0.1 -P 3306 -u root -ppassword
-
-          npm run migration:show
 
           npm test
