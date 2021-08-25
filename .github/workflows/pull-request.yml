@@ -10,7 +10,7 @@ jobs:
     name: run test
     steps:
       - uses: actions/checkout@v2
-      - name: setup docker
+      - name: setup env file
         run: |
           touch .env
 
@@ -45,25 +45,11 @@ jobs:
           echo BACKEND_BASE_URL='http://localhost:8000/api/v1' >> .env
           echo GGPO_COOKIE='_ggpo' >> .env
 
-          npm install
-
-          docker-compose up --build -d && echo "server runnning"
-
-      - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
-
-      - uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: 3306
-          container port: 3306
-          character set server: 'utf8'
-          mysql version: '8.0.18'
-          mysql database: 'test_db'
-          mysql root password: 'password'
-          mysql user: 'root'
-          mysql password: 'password'
+      - name: install packages
+        run: npm install
+      - name: setup docker
+        run: docker-compose up --build -d && echo "server runnning"
+      - name: run migration
+        run: npm run migration:show
       - name: run tests
-        run: |
-          npm run migration:show
-
-          npm test
+        run: npm test
