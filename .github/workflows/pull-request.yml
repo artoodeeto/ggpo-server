@@ -48,7 +48,7 @@ jobs:
       - name: install packages
         run: npm install
       - name: setup docker
-        run: docker-compose up --build -d && echo "server runnning"
+        run: docker-compose up --build
       - name: run migration
         run: npm run migration:show
       - name: run tests
