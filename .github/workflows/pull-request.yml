@@ -61,8 +61,6 @@ jobs:
 
           docker-compose up --build -d && echo "server runnning"
 
-          echo TYPEORM_HOST=localhost >> .env
           npm run migration:run
-          echo TYPEORM_HOST=db >> .env
 
           npm test
