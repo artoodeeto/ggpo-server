@@ -10,10 +10,10 @@ jobs:
     name: run test
     steps:
       - uses: actions/checkout@v2
-      - uses: dcodeIO/setup-node-nvm@v4
+      - uses: browniebroke/read-nvmrc-action@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: '${{ steps.nvmrc.outputs.node_version }}'
+          node-version: '{{ steps.nvmrc.outputs.node_version }}'
       - name: setup env file
         run: |
           touch .env
