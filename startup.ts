@@ -26,7 +26,7 @@ async function runner(): Promise<void> {
 
     clearTimeout(promiseTimer);
     runner();
-    logger.error({ error }, 'SERVER ERROR:');
+    logger.error(error, 'SERVER ERROR:');
     logger.info('still awaiting for database...');
   }
 }

@@ -1,0 +1,51 @@
+name: pull-request
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  testing:
+    runs-on: ubuntu-20.04
+    name: run test
+    steps:
+      - uses: actions/checkout@v2
+      - name: docker setup
+        id: docker-setup
+        uses: actions/setup-docker@v1
+        run: docker-compose up --build
+
+    env:
+      # APPLICATION
+      NODE_ENV: development
+      API_VERSION: v1
+      PREFIX: api
+      TOKEN_EXP: 10800000
+      SALT_ROUNDS: 11
+      TYPEORM_CONNECTION: mysql
+      TYPEORM_HOST: db
+      # TYPEORM_HOST: localhost
+      TYPEORM_PORT: 3306
+      TYPEORM_LOGGING: true
+      #TYPEORM_LOGGER=file #use only for production
+      TYPEORM_USERNAME: root
+      TYPEORM_PASSWORD: password
+      TYPEORM_DATABASE: development_db
+      TYPEORM_ENTITIES: src/models/**/*.ts
+      TYPEORM_MIGRATIONS: db/migrations/**/*.ts
+      TYPEORM_SUBSCRIBERS: src/subscriberTYPEORM_LOGGERs/**/*.ts
+      TYPEORM_MAX_QUERY_EXECUTION_TIME: 2000
+      TYPEORM_ENTITIES_DIR: src/models
+      TYPEORM_MIGRATIONS_DIR: db/migrations
+      TYPEORM_SUBSCRIBERS_DIR: src/subscribers
+      TYPEORM_CACHE_DURATION: 5000
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: development_db
+      # Overnight js JWT package
+      OVERNIGHT_JWT_SECRET: 'dis iss sikrit misig'
+      OVERNIGHT_JWT_EXP: '3h'
+      # FRONTEND URL
+      FRONTEND_BASE_URL: 'http://localhost:3000'
+      # BACKEND URl
+      BACKEND_BASE_URL: 'http://localhost:8000/api/v1'
