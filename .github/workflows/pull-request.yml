@@ -49,6 +49,9 @@ jobs:
 
           docker-compose up --build -d && echo "server runnning"
 
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
+
       - uses: mirromutth/mysql-action@v1.1
         with:
           host port: 3306
