@@ -10,7 +10,8 @@ jobs:
     name: run test
     steps:
       - uses: actions/checkout@v2
-      - uses: browniebroke/read-nvmrc-action@v1
+      - id: nvmrc
+        uses: browniebroke/read-nvmrc-action@v1
       - uses: actions/setup-node@v1
         with:
           node-version: '{{ steps.nvmrc.outputs.node_version }}'
