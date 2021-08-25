@@ -10,6 +10,10 @@ jobs:
     name: run test
     steps:
       - uses: actions/checkout@v2
+      - uses: dcodeIO/setup-node-nvm@v4
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '${{ steps.nvmrc.outputs.node_version }}'
       - name: setup env file
         run: |
           touch .env
@@ -48,7 +52,7 @@ jobs:
       - name: install packages
         run: npm install
       - name: setup docker
-        run: docker-compose up --build
+        run: docker-compose up --build -d && echo "server runnning"
       - name: run migration
         run: npm run migration:show
       - name: run tests
