@@ -1,0 +1,5 @@
+name: 'Setup Docker'
+description: 'Setups docker environment for testing'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
