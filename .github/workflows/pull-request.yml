@@ -59,8 +59,10 @@ jobs:
 
           npm install
 
-          npm run migration:run
+          docker-compose up --build -d && echo "server runnning"
 
-          docker-compose up --build -d
+          echo TYPEORM_HOST=localhost >> .env
+          npm run migration:run
+          echo TYPEORM_HOST=db >> .env
 
           npm test
