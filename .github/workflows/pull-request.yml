@@ -20,7 +20,7 @@ jobs:
           mysql-version: '8.0'
           auto-start: true
       - name: create test database
-        run: mysql -h 127.0.0.1 -P 3306 -u root -e 'CREATE DATABASE test_db;'
+        run: mysql -h 127.0.0.1 -P 3306 -u root -e 'CREATE DATABASE test_db; CREATE DATABASE development_db;'
       - name: show databases
         run: mysql -h 127.0.0.1 -P 3306 -u root -e 'SHOW DATABASES;'
       - name: setup user
