@@ -52,12 +52,12 @@ jobs:
 
       - name: install packages
         run: npm install
-      # - name: setup docker
-      #   run: docker-compose up --build -d && echo "server runnning"
-      - name: run docker-compose
-        uses: sudo-bot/action-docker-compose@latest
-        with:
-          cli-args: 'up'
+      - name: setup docker
+        run: docker-compose up --build -d && echo "server runnning"
+      # - name: run docker-compose
+      #   uses: sudo-bot/action-docker-compose@latest
+      #   with:
+      #     cli-args: 'up'
       - name: run migration
         run: npm run migration:show
       - name: run tests
