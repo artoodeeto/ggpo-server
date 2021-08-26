@@ -71,6 +71,6 @@ jobs:
       #   with:
       #     cli-args: 'up'
       - name: run migration
-        run: npm run migration:show
+        run: npm run migration:run
       - name: run tests
         run: npm test
