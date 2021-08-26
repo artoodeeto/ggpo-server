@@ -15,6 +15,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '${{ steps.nvmrc.outputs.node_version }}'
+      - uses: jordiprats/mysql-action@v1.1
+        with:
+          mysql version: '8.0'
+          test dir: '../../db/init_db.sql'
+      - name: test mysql
+        run: mysql -h 127.0.0.1 -P 3306 -u root -ppassword
       - name: setup env file
         run: |
           touch .env
@@ -25,7 +31,7 @@ jobs:
           echo TOKEN_EXP=10800000  >> .env
           echo SALT_ROUNDS=11 >> .env
           echo TYPEORM_CONNECTION=mysql >> .env
-          echo TYPEORM_HOST=db >> .env
+          echo TYPEORM_HOST=localhost>> .env
           echo TYPEORM_PORT=3306 >> .env
           echo TYPEORM_LOGGING=true >> .env
           echo #TYPEORM_LOGGER=file #use only for production >> .env
@@ -52,8 +58,8 @@ jobs:
 
       - name: install packages
         run: npm install
-      - name: setup docker
-        run: docker-compose up --build -d && echo "server runnning"
+      # - name: setup docker
+      #   run: docker-compose up --build -d && echo "server runnning"
       # - name: run docker-compose
       #   uses: sudo-bot/action-docker-compose@latest
       #   with:
