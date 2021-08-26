@@ -15,12 +15,18 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '${{ steps.nvmrc.outputs.node_version }}'
-      - uses: jordiprats/mysql-action@v1.1
+      - uses: shogo82148/actions-setup-mysql@v1.3.0
         with:
-          mysql version: '8.0'
-          test dir: '../../db/init_db.sql'
-      - name: test mysql
-        run: mysql -h 127.0.0.1 -P 3306 -u root -ppassword
+          mysql-version: '8.0'
+          auto-start: true
+      - name: create test database
+        run: mysql -h 127.0.0.1 -P 3306 -u root -e 'CREATE DATABASE test_db;'
+      - name: show databases
+        run: mysql -h 127.0.0.1 -P 3306 -u root -e 'SHOW DATABASES;'
+      - name: setup user
+        run: mysql -h 127.0.0.1 -P 3306 -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';"
+      - name: flush privileges
+        run: mysql -h 127.0.0.1 -P 3306 -u root -e 'FLUSH PRIVILEGES' -ppassword
       - name: setup env file
         run: |
           touch .env
